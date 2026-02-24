@@ -38,6 +38,9 @@ import {
   Plus,
   Check,
   RotateCcw,
+  UserCheck,
+  XCircle,
+  Phone,
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import Colors from '@/constants/colors';
@@ -50,10 +53,11 @@ import { useMaintenanceRecommendations } from '@/hooks/useMaintenanceRecommendat
 export default function ApplianceDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const { getApplianceById, tasks, deleteAppliance, budgetItems, updateAppliance, addTask } = useHome();
+  const { getApplianceById, tasks, deleteAppliance, budgetItems, updateAppliance, addTask, trustedPros, linkApplianceToPro, unlinkApplianceFromPro } = useHome();
 
   const appliance = getApplianceById(id ?? '');
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
+  const [showProPicker, setShowProPicker] = useState(false);
   const screenWidth = Dimensions.get('window').width;
 
   const { isSearchingManual, handleUploadManual, handleFindManual } = useManualSearch({
@@ -71,6 +75,45 @@ export default function ApplianceDetailScreen() {
     handleAddRecommendationAsTask,
     handleAddAllRecommendations,
   } = useMaintenanceRecommendations(appliance, addTask);
+
+  const linkedPro = useMemo(
+    () => trustedPros.find((p) => (p.linkedApplianceIds ?? []).includes(id ?? '')),
+    [trustedPros, id]
+  );
+
+  const handleAssignPro = useCallback((pro: typeof trustedPros[number]) => {
+    if (!id) return;
+    console.log('[ApplianceDetail] Assigning trusted pro:', pro.name, 'to appliance:', id);
+    lightImpact();
+    linkApplianceToPro(pro.id, id);
+    setShowProPicker(false);
+  }, [id, linkApplianceToPro]);
+
+  const handleRemovePro = useCallback(() => {
+    if (!linkedPro || !id) return;
+    Alert.alert('Remove Pro', 'Unlink this trusted pro from the item?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Remove',
+        style: 'destructive',
+        onPress: () => {
+          lightImpact();
+          unlinkApplianceFromPro(linkedPro.id, id);
+          console.log('[ApplianceDetail] Removed trusted pro from appliance:', id);
+        },
+      },
+    ]);
+  }, [linkedPro, id, unlinkApplianceFromPro]);
+
+  const handleNavigateToPro = useCallback(() => {
+    if (linkedPro) {
+      router.push(`/provider/${linkedPro.id}` as any);
+    }
+  }, [linkedPro, router]);
+
+  const handleFindAPro = useCallback(() => {
+    router.push('/trusted-pros' as any);
+  }, [router]);
 
   const relatedTasks = useMemo(
     () => tasks.filter((t) => t.applianceId === id).sort((a, b) => a.dueDate.localeCompare(b.dueDate)),
@@ -446,6 +489,94 @@ export default function ApplianceDetailScreen() {
             )}
           </View>
 
+          <View style={styles.proSection}>
+            <View style={styles.proSectionHeader}>
+              <View style={styles.proTitleRow}>
+                <UserCheck size={16} color={Colors.textSecondary} />
+                <Text style={styles.proSectionTitle}>Trusted Pro</Text>
+              </View>
+              {linkedPro && (
+                <TouchableOpacity style={styles.proRemoveBtn} onPress={handleRemovePro} activeOpacity={0.7} hitSlop={8}>
+                  <XCircle size={16} color={Colors.textTertiary} />
+                </TouchableOpacity>
+              )}
+            </View>
+
+            {linkedPro ? (
+              <TouchableOpacity style={styles.proCard} onPress={handleNavigateToPro} activeOpacity={0.7} testID="appliance-linked-pro">
+                <View style={styles.proAvatarWrap}>
+                  <UserCheck size={20} color={Colors.primary} />
+                </View>
+                <View style={styles.proCardInfo}>
+                  <Text style={styles.proCardName}>{linkedPro.name}</Text>
+                  <Text style={styles.proCardSpecialty}>{linkedPro.specialty}</Text>
+                  {linkedPro.phone ? (
+                    <View style={styles.proCardPhoneRow}>
+                      <Phone size={11} color={Colors.textTertiary} />
+                      <Text style={styles.proCardPhone}>{linkedPro.phone}</Text>
+                    </View>
+                  ) : null}
+                </View>
+                {linkedPro.ratings && linkedPro.ratings.length > 0 && (
+                  <View style={styles.proRatingBadge}>
+                    <Star size={11} color="#F5A623" />
+                    <Text style={styles.proRatingText}>{linkedPro.ratings[0].rating.toFixed(1)}</Text>
+                  </View>
+                )}
+                <ChevronRight size={16} color={Colors.textTertiary} />
+              </TouchableOpacity>
+            ) : showProPicker ? (
+              <View style={styles.proPickerWrap}>
+                {trustedPros.length > 0 ? (
+                  <>
+                    <Text style={styles.proPickerLabel}>Select from your Trusted Pros</Text>
+                    <ScrollView horizontal={false} nestedScrollEnabled style={styles.proPickerList} showsVerticalScrollIndicator={false}>
+                      {trustedPros.map((pro) => (
+                        <TouchableOpacity key={pro.id} style={styles.proPickerItem} onPress={() => handleAssignPro(pro)} activeOpacity={0.7}>
+                          <View style={styles.proPickerAvatar}>
+                            <UserCheck size={16} color={Colors.primary} />
+                          </View>
+                          <View style={styles.proPickerInfo}>
+                            <Text style={styles.proPickerName}>{pro.name}</Text>
+                            <Text style={styles.proPickerSpecialty}>{pro.specialty}</Text>
+                          </View>
+                          <Plus size={16} color={Colors.primary} />
+                        </TouchableOpacity>
+                      ))}
+                    </ScrollView>
+                    <TouchableOpacity style={styles.proPickerCancelBtn} onPress={() => setShowProPicker(false)} activeOpacity={0.7}>
+                      <Text style={styles.proPickerCancelText}>Cancel</Text>
+                    </TouchableOpacity>
+                  </>
+                ) : (
+                  <View style={styles.proPickerEmpty}>
+                    <Text style={styles.proPickerEmptyText}>No trusted pros saved yet</Text>
+                    <TouchableOpacity style={styles.findProBtn} onPress={handleFindAPro} activeOpacity={0.7} testID="appliance-find-pro-btn">
+                      <Search size={15} color={Colors.white} />
+                      <Text style={styles.findProBtnText}>Find a Pro</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
+            ) : (
+              <View style={styles.proEmptyState}>
+                <Text style={styles.proEmptyText}>No pro assigned to this item</Text>
+                <View style={styles.proEmptyActions}>
+                  {trustedPros.length > 0 && (
+                    <TouchableOpacity style={styles.proSelectBtn} onPress={() => setShowProPicker(true)} activeOpacity={0.7} testID="appliance-select-pro-btn">
+                      <UserCheck size={15} color={Colors.primary} />
+                      <Text style={styles.proSelectBtnText}>Assign a Pro</Text>
+                    </TouchableOpacity>
+                  )}
+                  <TouchableOpacity style={styles.findProBtn} onPress={handleFindAPro} activeOpacity={0.7} testID="appliance-find-pro-btn">
+                    <Search size={15} color={Colors.white} />
+                    <Text style={styles.findProBtnText}>Find a Pro</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+          </View>
+
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Text style={styles.cardTitle}>Maintenance</Text>
@@ -638,6 +769,39 @@ const styles = StyleSheet.create({
   receiptImageWrap: { padding: 14, alignItems: 'center', gap: 8 },
   receiptImage: { width: '100%', height: 160, borderRadius: 12 },
   receiptImageLabel: { fontSize: 12, color: Colors.textTertiary, fontWeight: '500' as const },
+  proSection: { backgroundColor: Colors.surface, borderRadius: 18, padding: 16, marginBottom: 16, shadowColor: Colors.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2 },
+  proSectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+  proTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  proSectionTitle: { fontSize: 15, fontWeight: '600' as const, color: Colors.text },
+  proRemoveBtn: { padding: 4 },
+  proCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.primaryLight, borderRadius: 12, padding: 12, gap: 10 },
+  proAvatarWrap: { width: 40, height: 40, borderRadius: 12, backgroundColor: Colors.surface, justifyContent: 'center', alignItems: 'center' },
+  proCardInfo: { flex: 1 },
+  proCardName: { fontSize: 15, fontWeight: '600' as const, color: Colors.text },
+  proCardSpecialty: { fontSize: 12, color: Colors.textSecondary, marginTop: 1 },
+  proCardPhoneRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 3 },
+  proCardPhone: { fontSize: 12, color: Colors.textTertiary },
+  proRatingBadge: { flexDirection: 'row', alignItems: 'center', gap: 3, backgroundColor: Colors.surface, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8 },
+  proRatingText: { fontSize: 12, fontWeight: '600' as const, color: Colors.text },
+  proEmptyState: { alignItems: 'center', paddingVertical: 8, gap: 12 },
+  proEmptyText: { fontSize: 13, color: Colors.textTertiary },
+  proEmptyActions: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  proSelectBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: Colors.primaryLight, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 10 },
+  proSelectBtnText: { fontSize: 14, fontWeight: '600' as const, color: Colors.primary },
+  findProBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: Colors.primary, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 10 },
+  findProBtnText: { fontSize: 14, fontWeight: '600' as const, color: Colors.white },
+  proPickerWrap: { gap: 8 },
+  proPickerLabel: { fontSize: 12, fontWeight: '500' as const, color: Colors.textTertiary, textTransform: 'uppercase' as const, letterSpacing: 0.5, marginBottom: 4 },
+  proPickerList: { maxHeight: 200 },
+  proPickerItem: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 10, paddingHorizontal: 8, borderBottomWidth: 1, borderBottomColor: Colors.borderLight },
+  proPickerAvatar: { width: 34, height: 34, borderRadius: 10, backgroundColor: Colors.primaryLight, justifyContent: 'center', alignItems: 'center' },
+  proPickerInfo: { flex: 1 },
+  proPickerName: { fontSize: 14, fontWeight: '600' as const, color: Colors.text },
+  proPickerSpecialty: { fontSize: 12, color: Colors.textSecondary },
+  proPickerCancelBtn: { alignItems: 'center', paddingVertical: 10, marginTop: 4 },
+  proPickerCancelText: { fontSize: 14, fontWeight: '500' as const, color: Colors.textSecondary },
+  proPickerEmpty: { alignItems: 'center', gap: 12, paddingVertical: 8 },
+  proPickerEmptyText: { fontSize: 13, color: Colors.textTertiary },
   actionRow: { gap: 10, marginTop: 8 },
   editBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, borderRadius: 14, borderWidth: 1, borderColor: Colors.primary + '30', backgroundColor: Colors.primaryLight },
   editBtnText: { fontSize: 14, fontWeight: '600' as const, color: Colors.primary },

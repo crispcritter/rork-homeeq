@@ -48,6 +48,7 @@ export default function ApplianceForm({ mode, initialData, onSave }: ApplianceFo
   const [orderNumber, setOrderNumber] = useState(initialData?.purchaseData?.orderNumber ?? '');
   const [receiptImageUri, setReceiptImageUri] = useState<string | null>(initialData?.purchaseData?.receiptImageUrl ?? null);
   const [manual, setManual] = useState<ManualInfo | undefined>(initialData?.manual);
+  const [hasWarranty, setHasWarranty] = useState<boolean>(initialData?.hasWarranty ?? (initialData?.warrantyExpiry ? true : false));
 
   const nameRef = useRef(name);
   nameRef.current = name;
@@ -111,7 +112,8 @@ export default function ApplianceForm({ mode, initialData, onSave }: ApplianceFo
       serialNumber: serialNumber.trim(),
       category,
       purchaseDate: purchaseDate.trim() || new Date().toISOString().split('T')[0],
-      warrantyExpiry: warrantyExpiry.trim() || '',
+      warrantyExpiry: hasWarranty ? (warrantyExpiry.trim() || '') : '',
+      hasWarranty,
       notes: notes.trim(),
       location: location.trim(),
       imageUrl: primaryImageUrl,
@@ -120,7 +122,7 @@ export default function ApplianceForm({ mode, initialData, onSave }: ApplianceFo
       manual,
     });
     router.back();
-  }, [name, brand, model, serialNumber, category, purchaseDate, warrantyExpiry, notes, location, imageUri, photos, purchasePrice, retailer, paymentMethod, orderNumber, receiptImageUri, manual, initialData, mode, onSave, router]);
+  }, [name, brand, model, serialNumber, category, purchaseDate, warrantyExpiry, hasWarranty, notes, location, imageUri, photos, purchasePrice, retailer, paymentMethod, orderNumber, receiptImageUri, manual, initialData, mode, onSave, router]);
 
   const handleManualUpload = useCallback(async () => {
     const result = await handleUploadManual();
@@ -266,7 +268,26 @@ export default function ApplianceForm({ mode, initialData, onSave }: ApplianceFo
             <View style={styles.divider} />
             <View style={styles.inputRow}><View style={styles.inputContent}><Text style={styles.inputLabel}>Purchase date</Text><TextInput style={styles.textInput} placeholder="YYYY-MM-DD" placeholderTextColor={Colors.textTertiary} value={purchaseDate} onChangeText={setPurchaseDate} testID={`${testIdPrefix}input-purchase-date`} /></View></View>
             <View style={styles.divider} />
-            <View style={styles.inputRow}><View style={styles.inputContent}><Text style={styles.inputLabel}>Warranty expires</Text><TextInput style={styles.textInput} placeholder="YYYY-MM-DD" placeholderTextColor={Colors.textTertiary} value={warrantyExpiry} onChangeText={setWarrantyExpiry} testID={`${testIdPrefix}input-warranty`} /></View></View>
+            <View style={styles.warrantyToggleRow}>
+              <View style={styles.warrantyToggleLabel}>
+                <Text style={styles.inputLabel}>Warranty</Text>
+                <Text style={styles.textInput}>{hasWarranty ? 'Yes' : 'No'}</Text>
+              </View>
+              <View style={styles.warrantyToggleBtns}>
+                <TouchableOpacity style={[styles.warrantyToggleBtn, hasWarranty && styles.warrantyToggleBtnActive]} onPress={() => setHasWarranty(true)} activeOpacity={0.7} testID={`${testIdPrefix}warranty-yes`}>
+                  <Text style={[styles.warrantyToggleBtnText, hasWarranty && styles.warrantyToggleBtnTextActive]}>Yes</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.warrantyToggleBtn, !hasWarranty && styles.warrantyToggleBtnActive]} onPress={() => { setHasWarranty(false); setWarrantyExpiry(''); }} activeOpacity={0.7} testID={`${testIdPrefix}warranty-no`}>
+                  <Text style={[styles.warrantyToggleBtnText, !hasWarranty && styles.warrantyToggleBtnTextActive]}>No</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            {hasWarranty && (
+              <>
+                <View style={styles.divider} />
+                <View style={styles.inputRow}><View style={styles.inputContent}><Text style={styles.inputLabel}>Warranty expires</Text><TextInput style={styles.textInput} placeholder="YYYY-MM-DD" placeholderTextColor={Colors.textTertiary} value={warrantyExpiry} onChangeText={setWarrantyExpiry} testID={`${testIdPrefix}input-warranty`} /></View></View>
+              </>
+            )}
           </View>
         </View>
 

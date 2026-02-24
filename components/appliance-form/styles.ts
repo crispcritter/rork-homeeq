@@ -419,4 +419,38 @@ export const formStyles = StyleSheet.create({
     fontWeight: '600' as const,
     color: Colors.white,
   },
+  warrantyToggleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+  },
+  warrantyToggleLabel: {
+    flex: 1,
+  },
+  warrantyToggleBtns: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  warrantyToggleBtn: {
+    paddingHorizontal: 18,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: Colors.surfaceAlt,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  warrantyToggleBtnActive: {
+    backgroundColor: Colors.primary,
+    borderColor: Colors.primary,
+  },
+  warrantyToggleBtnText: {
+    fontSize: 13,
+    fontWeight: '600' as const,
+    color: Colors.textSecondary,
+  },
+  warrantyToggleBtnTextActive: {
+    color: Colors.white,
+  },
 });

@@ -159,7 +159,8 @@ export default function ApplianceDetailScreen() {
     );
   }
 
-  const warranty = getWarrantyStatus(appliance.warrantyExpiry, Colors);
+  const hasWarranty = appliance.hasWarranty ?? (appliance.warrantyExpiry ? true : false);
+  const warranty = hasWarranty ? getWarrantyStatus(appliance.warrantyExpiry, Colors) : null;
 
   return (
     <>
@@ -212,22 +213,24 @@ export default function ApplianceDetailScreen() {
             <Text style={styles.subtitle}>{appliance.brand} · {appliance.model}</Text>
           </View>
 
-          <View style={styles.warrantyCard}>
-            <View style={styles.warrantyHeader}>
-              <Shield size={20} color={warranty.color} />
-              <Text style={[styles.warrantyStatus, { color: warranty.color }]}>{warranty.label}</Text>
+          {hasWarranty && warranty && (
+            <View style={styles.warrantyCard}>
+              <View style={styles.warrantyHeader}>
+                <Shield size={20} color={warranty.color} />
+                <Text style={[styles.warrantyStatus, { color: warranty.color }]}>{warranty.label}</Text>
+              </View>
+              <Text style={styles.warrantyExpiry}>
+                {warranty.daysLeft > 0
+                  ? `${warranty.daysLeft} days remaining`
+                  : warranty.daysLeft === 0
+                  ? 'Expires today'
+                  : `Expired ${Math.abs(warranty.daysLeft)} days ago`}
+              </Text>
+              <Text style={styles.warrantyDate}>
+                Warranty ends {formatLongDate(appliance.warrantyExpiry)}
+              </Text>
             </View>
-            <Text style={styles.warrantyExpiry}>
-              {warranty.daysLeft > 0
-                ? `${warranty.daysLeft} days remaining`
-                : warranty.daysLeft === 0
-                ? 'Expires today'
-                : `Expired ${Math.abs(warranty.daysLeft)} days ago`}
-            </Text>
-            <Text style={styles.warrantyDate}>
-              Warranty ends {formatLongDate(appliance.warrantyExpiry)}
-            </Text>
-          </View>
+          )}
 
           <View style={styles.detailsCard}>
             <View style={styles.detailItem}>
@@ -249,6 +252,30 @@ export default function ApplianceDetailScreen() {
                 <Text style={styles.detailValue}>{formatMonthYear(appliance.purchaseDate)}</Text>
               </View>
             </View>
+            <View style={styles.detailDivider} />
+            <View style={styles.detailItem}>
+              <View style={[styles.detailIcon, { backgroundColor: hasWarranty ? '#DCFCE7' : '#FEE2E2' }]}>
+                <Shield size={16} color={hasWarranty ? '#16A34A' : '#DC2626'} />
+              </View>
+              <View style={styles.detailTextWrap}>
+                <Text style={styles.detailLabel}>Warranty</Text>
+                <Text style={styles.detailValue}>{hasWarranty ? 'Yes' : 'No'}</Text>
+              </View>
+            </View>
+            {hasWarranty && appliance.warrantyExpiry ? (
+              <>
+                <View style={styles.detailDivider} />
+                <View style={styles.detailItem}>
+                  <View style={[styles.detailIcon, { backgroundColor: '#FEF3C7' }]}>
+                    <Calendar size={16} color={Colors.warning} />
+                  </View>
+                  <View style={styles.detailTextWrap}>
+                    <Text style={styles.detailLabel}>Warranty Expires</Text>
+                    <Text style={styles.detailValue}>{formatMonthYear(appliance.warrantyExpiry)}</Text>
+                  </View>
+                </View>
+              </>
+            ) : null}
             <View style={styles.detailDivider} />
             <View style={styles.detailItem}>
               <View style={[styles.detailIcon, { backgroundColor: '#EDE9FE' }]}>

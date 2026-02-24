@@ -51,6 +51,7 @@ export interface Appliance {
   location: string;
   purchaseData?: PurchaseData;
   manual?: ManualInfo;
+  hasWarranty?: boolean;
 }
 
 export interface MaintenanceTask {

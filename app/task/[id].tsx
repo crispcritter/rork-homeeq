@@ -39,6 +39,10 @@ import {
   Phone,
   Star,
   XCircle,
+  CalendarPlus,
+  Bell,
+  CalendarCheck,
+  BellRing,
 } from 'lucide-react-native';
 import Colors from '@/constants/colors';
 import { TaskPriority } from '@/types';
@@ -46,7 +50,8 @@ import { PRIORITIES } from '@/constants/priorities';
 import formStyles from '@/constants/formStyles';
 import { formatLongDate, formatRelativeDate } from '@/utils/dates';
 import { lightImpact } from '@/utils/haptics';
-import { Linking } from 'react-native';
+import { isCalendarAvailable, isRemindersAvailable } from '@/utils/calendar';
+import { Linking, ActivityIndicator } from 'react-native';
 import LinkPreview from '@/components/LinkPreview';
 import ApplianceChipSelector from '@/components/ApplianceChipSelector';
 import { useTaskDetail } from '@/hooks/useTaskDetail';
@@ -72,6 +77,12 @@ export default function TaskDetailScreen() {
     handleAssignPro,
     handleRemovePro,
     handleSaveEdit,
+    handleAddToCalendar,
+    handleRemoveFromCalendar,
+    handleAddToReminders,
+    handleRemoveFromReminders,
+    calendarLoading,
+    reminderLoading,
   } = useTaskDetail(id);
 
   const [showProPicker, setShowProPicker] = useState(false);
@@ -738,6 +749,93 @@ export default function TaskDetailScreen() {
             </View>
           )}
         </View>
+
+        {!isArchived && (
+          <View style={styles.calendarSection}>
+            <View style={styles.calendarSectionHeader}>
+              <CalendarPlus size={16} color={Colors.textSecondary} />
+              <Text style={styles.calendarSectionTitle}>Calendar & Reminders</Text>
+            </View>
+
+            {isCalendarAvailable() ? (
+              <View style={styles.calendarRow}>
+                {task.calendarEventId ? (
+                  <View style={styles.calendarSyncedBtn}>
+                    <CalendarCheck size={18} color="#2563EB" />
+                    <View style={styles.calendarSyncedContent}>
+                      <Text style={styles.calendarSyncedLabel}>In Calendar</Text>
+                      <Text style={styles.calendarSyncedSub}>With 1-day & 1-hour alerts</Text>
+                    </View>
+                    <TouchableOpacity
+                      style={styles.calendarRemoveBtn}
+                      onPress={handleRemoveFromCalendar}
+                      hitSlop={8}
+                    >
+                      <XCircle size={16} color="#93B8F0" />
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <TouchableOpacity
+                    style={[styles.calendarAddBtn, calendarLoading && styles.calendarAddBtnDisabled]}
+                    onPress={handleAddToCalendar}
+                    activeOpacity={0.7}
+                    disabled={calendarLoading}
+                    testID="task-add-calendar-btn"
+                  >
+                    {calendarLoading ? (
+                      <ActivityIndicator size="small" color={Colors.textSecondary} />
+                    ) : (
+                      <CalendarPlus size={17} color={Colors.text} />
+                    )}
+                    <Text style={styles.calendarAddBtnText}>Add to Calendar</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            ) : null}
+
+            {isRemindersAvailable() ? (
+              <View style={[styles.calendarRow, styles.calendarRowLast]}>
+                {task.reminderEventId ? (
+                  <View style={styles.reminderSyncedBtn}>
+                    <BellRing size={18} color="#D97706" />
+                    <View style={styles.calendarSyncedContent}>
+                      <Text style={styles.reminderSyncedLabel}>In Reminders</Text>
+                      <Text style={styles.reminderSyncedSub}>Synced with Apple Reminders</Text>
+                    </View>
+                    <TouchableOpacity
+                      style={styles.calendarRemoveBtn}
+                      onPress={handleRemoveFromReminders}
+                      hitSlop={8}
+                    >
+                      <XCircle size={16} color="#E5C78E" />
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <TouchableOpacity
+                    style={[styles.calendarAddBtn, reminderLoading && styles.calendarAddBtnDisabled]}
+                    onPress={handleAddToReminders}
+                    activeOpacity={0.7}
+                    disabled={reminderLoading}
+                    testID="task-add-reminder-btn"
+                  >
+                    {reminderLoading ? (
+                      <ActivityIndicator size="small" color={Colors.textSecondary} />
+                    ) : (
+                      <Bell size={17} color={Colors.text} />
+                    )}
+                    <Text style={styles.calendarAddBtnText}>Add to Reminders</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            ) : null}
+
+            {!isCalendarAvailable() && (
+              <Text style={styles.calendarWebNote}>
+                Calendar integration is available on mobile devices
+              </Text>
+            )}
+          </View>
+        )}
 
         <View style={styles.notesSection}>
           <View style={styles.notesSectionHeader}>

@@ -69,6 +69,8 @@ export interface MaintenanceTask {
   archivedDate?: string;
   productLink?: string;
   trustedProId?: string;
+  calendarEventId?: string;
+  reminderEventId?: string;
 }
 
 export interface ExpenseProvider {

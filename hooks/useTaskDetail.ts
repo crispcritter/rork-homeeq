@@ -1,8 +1,17 @@
 import { useMemo, useCallback, useState } from 'react';
-import { Alert } from 'react-native';
+import { Alert, Platform } from 'react-native';
 import { useHome } from '@/contexts/HomeContext';
 import { TaskPriority, TrustedPro } from '@/types';
 import { successNotification, mediumImpact, lightImpact } from '@/utils/haptics';
+import {
+  addTaskToCalendar,
+  addTaskToReminders,
+  removeCalendarEvent,
+  removeReminder,
+  updateReminderCompletion,
+  isCalendarAvailable,
+  isRemindersAvailable,
+} from '@/utils/calendar';
 
 export function useTaskDetail(taskId: string | undefined) {
   const {
@@ -30,6 +39,9 @@ export function useTaskDetail(taskId: string | undefined) {
     [task, trustedPros]
   );
 
+  const [calendarLoading, setCalendarLoading] = useState(false);
+  const [reminderLoading, setReminderLoading] = useState(false);
+
   const handleComplete = useCallback(() => {
     if (!task) return;
     const isRecurring = task.recurring && task.recurringInterval;
@@ -41,8 +53,11 @@ export function useTaskDetail(taskId: string | undefined) {
       { text: 'Not yet', style: 'cancel' },
       {
         text: 'Done!',
-        onPress: () => {
+        onPress: async () => {
           successNotification();
+          if (task.reminderEventId) {
+            await updateReminderCompletion(task.reminderEventId, true);
+          }
           completeTask(task.id);
           if (isRecurring) {
             setTimeout(() => {
@@ -170,6 +185,86 @@ export function useTaskDetail(taskId: string | undefined) {
     ]);
   }, [task, updateTaskTrustedPro]);
 
+  const handleAddToCalendar = useCallback(async () => {
+    if (!task) return;
+    if (!isCalendarAvailable()) {
+      Alert.alert('Not Available', 'Calendar integration is only available on mobile devices.');
+      return;
+    }
+    setCalendarLoading(true);
+    console.log('[useTaskDetail] Adding task to calendar:', task.title);
+    const result = await addTaskToCalendar(task);
+    setCalendarLoading(false);
+    if (result.success && result.eventId) {
+      successNotification();
+      updateTask({ ...task, calendarEventId: result.eventId });
+      Alert.alert('Added to Calendar', `"${task.title}" has been added to your calendar with reminders set for 1 day and 1 hour before.`);
+    } else {
+      Alert.alert('Could Not Add', result.error ?? 'Something went wrong. Please try again.');
+    }
+  }, [task, updateTask]);
+
+  const handleRemoveFromCalendar = useCallback(async () => {
+    if (!task?.calendarEventId) return;
+    Alert.alert('Remove from Calendar', 'Remove this event from your calendar?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Remove',
+        style: 'destructive',
+        onPress: async () => {
+          const success = await removeCalendarEvent(task.calendarEventId!);
+          if (success) {
+            lightImpact();
+            updateTask({ ...task, calendarEventId: undefined });
+            console.log('[useTaskDetail] Removed calendar event for task:', task.id);
+          } else {
+            Alert.alert('Error', 'Could not remove the calendar event.');
+          }
+        },
+      },
+    ]);
+  }, [task, updateTask]);
+
+  const handleAddToReminders = useCallback(async () => {
+    if (!task) return;
+    if (!isRemindersAvailable()) {
+      Alert.alert('Not Available', 'Reminders integration is only available on iOS devices.');
+      return;
+    }
+    setReminderLoading(true);
+    console.log('[useTaskDetail] Adding task to reminders:', task.title);
+    const result = await addTaskToReminders(task);
+    setReminderLoading(false);
+    if (result.success && result.reminderId) {
+      successNotification();
+      updateTask({ ...task, reminderEventId: result.reminderId });
+      Alert.alert('Added to Reminders', `"${task.title}" has been added to your Apple Reminders with a notification 1 day before.`);
+    } else {
+      Alert.alert('Could Not Add', result.error ?? 'Something went wrong. Please try again.');
+    }
+  }, [task, updateTask]);
+
+  const handleRemoveFromReminders = useCallback(async () => {
+    if (!task?.reminderEventId) return;
+    Alert.alert('Remove from Reminders', 'Remove this task from Apple Reminders?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Remove',
+        style: 'destructive',
+        onPress: async () => {
+          const success = await removeReminder(task.reminderEventId!);
+          if (success) {
+            lightImpact();
+            updateTask({ ...task, reminderEventId: undefined });
+            console.log('[useTaskDetail] Removed reminder for task:', task.id);
+          } else {
+            Alert.alert('Error', 'Could not remove the reminder.');
+          }
+        },
+      },
+    ]);
+  }, [task, updateTask]);
+
   const handleSaveEdit = useCallback((edits: {
     title: string;
     description: string;
@@ -227,5 +322,11 @@ export function useTaskDetail(taskId: string | undefined) {
     handleAssignPro,
     handleRemovePro,
     handleSaveEdit,
+    handleAddToCalendar,
+    handleRemoveFromCalendar,
+    handleAddToReminders,
+    handleRemoveFromReminders,
+    calendarLoading,
+    reminderLoading,
   };
 }

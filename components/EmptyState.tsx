@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Colors from '@/constants/colors';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface EmptyStateProps {
   icon: React.ReactNode;
@@ -12,14 +13,16 @@ interface EmptyStateProps {
 }
 
 function EmptyState({ icon, title, subtitle, actionLabel, onAction, compact }: EmptyStateProps) {
+  const { colors: c } = useTheme();
+
   return (
-    <View style={[styles.container, compact && styles.containerCompact]}>
-      <View style={[styles.iconWrap, compact && styles.iconWrapCompact]}>{icon}</View>
-      <Text style={styles.title}>{title}</Text>
-      {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
+    <View style={[styles.container, { backgroundColor: c.surface, shadowColor: c.cardShadow }, compact && styles.containerCompact]}>
+      <View style={[styles.iconWrap, { backgroundColor: c.primaryLight }, compact && styles.iconWrapCompact]}>{icon}</View>
+      <Text style={[styles.title, { color: c.text }]}>{title}</Text>
+      {subtitle ? <Text style={[styles.subtitle, { color: c.textSecondary }]}>{subtitle}</Text> : null}
       {actionLabel && onAction ? (
-        <TouchableOpacity style={styles.actionBtn} onPress={onAction} activeOpacity={0.7}>
-          <Text style={styles.actionText}>{actionLabel}</Text>
+        <TouchableOpacity style={[styles.actionBtn, { backgroundColor: c.primaryLight }]} onPress={onAction} activeOpacity={0.7}>
+          <Text style={[styles.actionText, { color: c.primary }]}>{actionLabel}</Text>
         </TouchableOpacity>
       ) : null}
     </View>

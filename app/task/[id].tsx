@@ -45,6 +45,7 @@ import {
   BellRing,
 } from 'lucide-react-native';
 import Colors from '@/constants/colors';
+import { useTheme } from '@/contexts/ThemeContext';
 import { TaskPriority } from '@/types';
 import { PRIORITIES } from '@/constants/priorities';
 import formStyles from '@/constants/formStyles';
@@ -60,6 +61,7 @@ import styles from '@/styles/taskDetail';
 export default function TaskDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { colors: c } = useTheme();
   const {
     task,
     appliance,

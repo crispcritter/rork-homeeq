@@ -44,6 +44,7 @@ import {
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import Colors from '@/constants/colors';
+import { useTheme } from '@/contexts/ThemeContext';
 import { categoryLabels } from '@/constants/categories';
 import { getWarrantyStatus, formatMonthDay, formatMonthYear, formatLongDate } from '@/utils/dates';
 import { lightImpact, successNotification, warningNotification } from '@/utils/haptics';
@@ -53,6 +54,7 @@ import { useMaintenanceRecommendations } from '@/hooks/useMaintenanceRecommendat
 export default function ApplianceDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { colors: c } = useTheme();
   const { getApplianceById, tasks, deleteAppliance, budgetItems, updateAppliance, addTask, trustedPros, linkApplianceToPro, unlinkApplianceFromPro } = useHome();
 
   const appliance = getApplianceById(id ?? '');
@@ -203,12 +205,12 @@ export default function ApplianceDetailScreen() {
   }
 
   const hasWarranty = appliance.hasWarranty ?? (appliance.warrantyExpiry ? true : false);
-  const warranty = hasWarranty ? getWarrantyStatus(appliance.warrantyExpiry, Colors) : null;
+  const warranty = hasWarranty ? getWarrantyStatus(appliance.warrantyExpiry, c) : null;
 
   return (
     <>
       <Stack.Screen options={{ title: appliance.name }} />
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <ScrollView style={[styles.container, { backgroundColor: c.background }]} showsVerticalScrollIndicator={false}>
         {appliance.photos && appliance.photos.length > 1 ? (
           <View>
             <FlatList

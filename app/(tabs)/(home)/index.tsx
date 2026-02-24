@@ -10,6 +10,7 @@ import { useRouter } from 'expo-router';
 import { AlertTriangle, ChevronRight, Plus, Clock, Star, CirclePlus, Wrench, DollarSign, Search } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import Colors from '@/constants/colors';
+import { useTheme } from '@/contexts/ThemeContext';
 import PressableCard from '@/components/PressableCard';
 import AnimatedCard from '@/components/AnimatedCard';
 import { formatRelativeDate } from '@/utils/dates';
@@ -30,6 +31,7 @@ function getGreeting(): string {
 
 export default function DashboardScreen() {
   const router = useRouter();
+  const { colors: c } = useTheme();
   const {
     appliances,
     upcomingTasks,
@@ -110,42 +112,42 @@ export default function DashboardScreen() {
         <AnimatedCard index={1} style={styles.quickActionsGrid}>
           <View style={styles.quickAction}>
             <PressableCard
-              style={styles.quickActionInner}
+              style={[styles.quickActionInner, { backgroundColor: c.surface, shadowColor: c.cardShadow }]}
               onPress={() => handlePress('/add-appliance')}
               testID="add-appliance-quick"
             >
-              <View style={[styles.quickActionIcon, { backgroundColor: Colors.primaryLight }]}>
-                <Wrench size={18} color={Colors.primary} />
+              <View style={[styles.quickActionIcon, { backgroundColor: c.primaryLight }]}>
+                <Wrench size={18} color={c.primary} />
               </View>
               <Text style={styles.quickActionLabel}>Add item</Text>
             </PressableCard>
           </View>
           <View style={styles.quickAction}>
             <PressableCard
-              style={styles.quickActionInner}
+              style={[styles.quickActionInner, { backgroundColor: c.surface, shadowColor: c.cardShadow }]}
               onPress={() => handlePress('/add-task')}
               testID="add-task-quick"
             >
-              <View style={[styles.quickActionIcon, { backgroundColor: Colors.accentLight }]}>
-                <CirclePlus size={18} color={Colors.accent} />
+              <View style={[styles.quickActionIcon, { backgroundColor: c.accentLight }]}>
+                <CirclePlus size={18} color={c.accent} />
               </View>
               <Text style={styles.quickActionLabel}>New task</Text>
             </PressableCard>
           </View>
           <View style={styles.quickAction}>
             <PressableCard
-              style={styles.quickActionInner}
+              style={[styles.quickActionInner, { backgroundColor: c.surface, shadowColor: c.cardShadow }]}
               onPress={() => handlePress('/add-expense')}
             >
-              <View style={[styles.quickActionIcon, { backgroundColor: Colors.warningLight }]}>
-                <DollarSign size={18} color={Colors.warning} />
+              <View style={[styles.quickActionIcon, { backgroundColor: c.warningLight }]}>
+                <DollarSign size={18} color={c.warning} />
               </View>
               <Text style={styles.quickActionLabel}>Log expense</Text>
             </PressableCard>
           </View>
           <View style={styles.quickAction}>
             <PressableCard
-              style={styles.quickActionInner}
+              style={[styles.quickActionInner, { backgroundColor: c.surface, shadowColor: c.cardShadow }]}
               onPress={() => handlePress('/trusted-pros')}
               testID="find-pro-quick"
             >
@@ -159,19 +161,19 @@ export default function DashboardScreen() {
 
         <AnimatedCard index={2}>
           <PressableCard
-            style={styles.budgetCard}
+            style={[styles.budgetCard, { backgroundColor: c.surface, shadowColor: c.cardShadow }]}
             onPress={() => handlePress('/(tabs)/budget')}
           >
             <View style={styles.budgetTop}>
-              <Text style={styles.budgetLabel}>Monthly spending</Text>
+              <Text style={[styles.budgetLabel, { color: c.textSecondary }]}>Monthly spending</Text>
               <View style={styles.budgetRightCol}>
                 <Text style={[styles.budgetHighlight, { color: budgetColor }]}>
                   ${remaining.toLocaleString()}
                 </Text>
-                <Text style={styles.budgetRightSub}>remaining</Text>
+                <Text style={[styles.budgetRightSub, { color: c.textTertiary }]}>remaining</Text>
               </View>
             </View>
-            <View style={styles.budgetBarBg}>
+            <View style={[styles.budgetBarBg, { backgroundColor: c.surfaceAlt }]}>
               <Animated.View
                 style={[
                   styles.budgetBarFill,
@@ -186,32 +188,32 @@ export default function DashboardScreen() {
               />
             </View>
             <View style={styles.budgetBottom}>
-              <Text style={styles.budgetSpent}>${totalSpent.toLocaleString()} spent</Text>
-              <Text style={styles.budgetTotal}>of ${monthlyBudget.toLocaleString()}</Text>
+              <Text style={[styles.budgetSpent, { color: c.textSecondary }]}>${totalSpent.toLocaleString()} spent</Text>
+              <Text style={[styles.budgetTotal, { color: c.textTertiary }]}>of ${monthlyBudget.toLocaleString()}</Text>
             </View>
           </PressableCard>
         </AnimatedCard>
 
         <AnimatedCard index={3} style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Coming up next</Text>
+            <Text style={[styles.sectionTitle, { color: c.text }]}>Coming up next</Text>
             {upcomingTasks.length > 0 && (
               <TouchableOpacity onPress={() => handlePress('/(tabs)/schedule')}>
-                <Text style={styles.seeAllText}>See all</Text>
+                <Text style={[styles.seeAllText, { color: c.primary }]}>See all</Text>
               </TouchableOpacity>
             )}
           </View>
           {upcomingTasks.length === 0 ? (
-            <View style={styles.emptyCard}>
-              <Text style={styles.emptyTitle}>You're all caught up!</Text>
-              <Text style={styles.emptySubtitle}>No upcoming tasks right now</Text>
+            <View style={[styles.emptyCard, { backgroundColor: c.surface, shadowColor: c.cardShadow }]}>
+              <Text style={[styles.emptyTitle, { color: c.text }]}>You're all caught up!</Text>
+              <Text style={[styles.emptySubtitle, { color: c.textSecondary }]}>No upcoming tasks right now</Text>
               <TouchableOpacity
                 onPress={() => handlePress('/add-task')}
-                style={styles.emptyAction}
+                style={[styles.emptyAction, { backgroundColor: c.primaryLight }]}
                 activeOpacity={0.7}
               >
-                <Plus size={16} color={Colors.primary} />
-                <Text style={styles.emptyActionText}>Add a task</Text>
+                <Plus size={16} color={c.primary} />
+                <Text style={[styles.emptyActionText, { color: c.primary }]}>Add a task</Text>
               </TouchableOpacity>
             </View>
           ) : (
@@ -219,7 +221,7 @@ export default function DashboardScreen() {
               const appliance = task.applianceId ? appliances.find((a) => a.id === task.applianceId) : null;
               return (
                 <AnimatedCard key={task.id} index={4 + idx}>
-                  <PressableCard style={styles.taskCard} onPress={() => handlePress('/(tabs)/schedule')}>
+                  <PressableCard style={[styles.taskCard, { backgroundColor: c.surface, shadowColor: c.cardShadow }]} onPress={() => handlePress('/(tabs)/schedule')}>
                     <View
                       style={[
                         styles.priorityIndicator,
@@ -227,20 +229,20 @@ export default function DashboardScreen() {
                       ]}
                     />
                     <View style={styles.taskContent}>
-                      <Text style={styles.taskTitle}>{task.title}</Text>
+                      <Text style={[styles.taskTitle, { color: c.text }]}>{task.title}</Text>
                       <View style={styles.taskMeta}>
-                        <Clock size={11} color={Colors.textSecondary} />
-                        <Text style={styles.taskDate}>{formatRelativeDate(task.dueDate)}</Text>
+                        <Clock size={11} color={c.textSecondary} />
+                        <Text style={[styles.taskDate, { color: c.textSecondary }]}>{formatRelativeDate(task.dueDate)}</Text>
                         {appliance && (
                           <>
                             <View style={styles.metaDot} />
-                            <Text style={styles.taskAppliance}>{appliance.name}</Text>
+                            <Text style={[styles.taskAppliance, { color: c.textTertiary }]}>{appliance.name}</Text>
                           </>
                         )}
                       </View>
                     </View>
                     {task.estimatedCost != null && task.estimatedCost > 0 && (
-                      <Text style={styles.taskCost}>${task.estimatedCost}</Text>
+                      <Text style={[styles.taskCost, { color: c.text }]}>${task.estimatedCost}</Text>
                     )}
                   </PressableCard>
                 </AnimatedCard>
@@ -251,18 +253,18 @@ export default function DashboardScreen() {
 
         <AnimatedCard index={7} style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Trusted pros</Text>
+            <Text style={[styles.sectionTitle, { color: c.text }]}>Trusted pros</Text>
             <TouchableOpacity onPress={() => handlePress('/trusted-pros')}>
               <Text style={styles.seeAllText}>{trustedPros.length > 0 ? 'See all' : 'Find pros'}</Text>
             </TouchableOpacity>
           </View>
           {trustedPros.length === 0 ? (
-            <PressableCard style={styles.emptyProviderCard} onPress={() => handlePress('/trusted-pros')}>
+            <PressableCard style={[styles.emptyProviderCard, { backgroundColor: c.surface, shadowColor: c.cardShadow }]} onPress={() => handlePress('/trusted-pros')}>
               <View style={styles.emptyProviderIcon}>
                 <Search size={20} color="#7B61A8" />
               </View>
-              <Text style={styles.emptyProviderTitle}>No pros saved yet</Text>
-              <Text style={styles.emptyProviderSub}>Add providers when logging expenses to build your list</Text>
+              <Text style={[styles.emptyProviderTitle, { color: c.text }]}>No pros saved yet</Text>
+              <Text style={[styles.emptyProviderSub, { color: c.textSecondary }]}>Add providers when logging expenses to build your list</Text>
             </PressableCard>
           ) : (
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.providersRow}>
@@ -271,18 +273,18 @@ export default function DashboardScreen() {
                 return (
                   <PressableCard
                     key={pro.id}
-                    style={styles.providerCard}
+                    style={[styles.providerCard, { backgroundColor: c.surface, shadowColor: c.cardShadow }]}
                     onPress={() => handlePress(`/provider/${pro.id}`)}
                   >
                     <View style={[styles.providerAvatar, { backgroundColor: (PROVIDER_COLORS[idx % PROVIDER_COLORS.length]) + '20' }]}>
                       <Text style={[styles.providerInitial, { color: PROVIDER_COLORS[idx % PROVIDER_COLORS.length] }]}>{pro.name[0]}</Text>
                     </View>
-                    <Text style={styles.providerName} numberOfLines={1}>{pro.name}</Text>
-                    <Text style={styles.providerSpecialty} numberOfLines={1}>{pro.specialty}</Text>
+                    <Text style={[styles.providerName, { color: c.text }]} numberOfLines={1}>{pro.name}</Text>
+                    <Text style={[styles.providerSpecialty, { color: c.textSecondary }]} numberOfLines={1}>{pro.specialty}</Text>
                     {avgRating !== null && (
                       <View style={styles.ratingRow}>
-                        <Star size={11} color={Colors.warning} fill={Colors.warning} />
-                        <Text style={styles.ratingText}>{formatRating(avgRating)}</Text>
+                        <Star size={11} color={c.warning} fill={c.warning} />
+                        <Text style={[styles.ratingText, { color: c.text }]}>{formatRating(avgRating)}</Text>
                       </View>
                     )}
                   </PressableCard>

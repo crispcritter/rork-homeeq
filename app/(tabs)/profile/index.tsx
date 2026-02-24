@@ -50,6 +50,9 @@ import {
 import { Alert, Linking, Modal } from 'react-native';
 import { useHome } from '@/contexts/HomeContext';
 import Colors from '@/constants/colors';
+import { useTheme, ThemeMode } from '@/contexts/ThemeContext';
+import { ColorScheme } from '@/constants/colors';
+import { Settings, Moon, Sun, Smartphone } from 'lucide-react-native';
 import { successNotification } from '@/utils/haptics';
 import PickerModal from '@/components/PickerModal';
 import LinkPreview from '@/components/LinkPreview';
@@ -84,9 +87,10 @@ interface CollapsibleSectionProps {
   defaultOpen?: boolean;
 }
 
-function CollapsibleSection({ title, children, defaultOpen = true }: CollapsibleSectionProps) {
+function CollapsibleSection({ title, children, defaultOpen = true, themeColors }: CollapsibleSectionProps & { themeColors?: ColorScheme }) {
   const [isOpen, setIsOpen] = useState<boolean>(defaultOpen);
   const rotateAnim = useRef(new Animated.Value(defaultOpen ? 1 : 0)).current;
+  const c = themeColors ?? Colors;
 
   const toggle = useCallback(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -110,9 +114,9 @@ function CollapsibleSection({ title, children, defaultOpen = true }: Collapsible
         onPress={toggle}
         activeOpacity={0.6}
       >
-        <Text style={styles.sectionLabel}>{title}</Text>
+        <Text style={[styles.sectionLabel, { color: c.textSecondary }]}>{title}</Text>
         <Animated.View style={{ transform: [{ rotate: rotation }] }}>
-          <ChevronDown size={16} color={Colors.textSecondary} />
+          <ChevronDown size={16} color={c.textSecondary} />
         </Animated.View>
       </TouchableOpacity>
       {isOpen && children}
@@ -135,6 +139,7 @@ const getRoleLabel = (role: HouseholdRole): string => {
 
 export default function ProfileScreen() {
   const { homeProfile, updateHomeProfile, resetData, isResetting, addHouseholdMember, removeHouseholdMember } = useHome();
+  const { colors: c, themeMode, setThemeMode, isDark } = useTheme();
   const [form, setForm] = useState<HomeProfile>(homeProfile);
   const [activePicker, setActivePicker] = useState<string | null>(null);
   const [showZillowModal, setShowZillowModal] = useState<boolean>(false);
@@ -231,7 +236,7 @@ export default function ProfileScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[styles.container, { backgroundColor: c.background }]}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <Stack.Screen
@@ -239,7 +244,7 @@ export default function ProfileScreen() {
           title: 'Home Profile',
           headerRight: () => (
             <TouchableOpacity onPress={handleSave} testID="save-profile">
-              <Text style={styles.saveButton}>Save</Text>
+              <Text style={[styles.saveButton, { color: c.primary }]}>Save</Text>
             </TouchableOpacity>
           ),
         }}
@@ -257,147 +262,147 @@ export default function ProfileScreen() {
             testID="profile-image-button"
           >
             {form.profileImage ? (
-              <Image source={{ uri: form.profileImage }} style={styles.profileImage} />
+              <Image source={{ uri: form.profileImage }} style={[styles.profileImage, { backgroundColor: c.surfaceAlt }]} />
             ) : (
-              <View style={styles.profileImagePlaceholder}>
-                <Home size={36} color={Colors.primary} />
+              <View style={[styles.profileImagePlaceholder, { backgroundColor: c.primaryLight }]}>
+                <Home size={36} color={c.primary} />
               </View>
             )}
-            <View style={styles.cameraButton}>
-              <Camera size={14} color={Colors.white} />
+            <View style={[styles.cameraButton, { backgroundColor: c.primary, borderColor: c.background }]}>
+              <Camera size={14} color={c.white} />
             </View>
           </TouchableOpacity>
-          <Text style={styles.heroTitle}>
+          <Text style={[styles.heroTitle, { color: c.text }]}>
             {form.nickname || 'Name your home'}
           </Text>
-          <Text style={styles.heroSubtitle}>
+          <Text style={[styles.heroSubtitle, { color: c.textSecondary }]}>
             This info helps personalize maintenance reminders and budgeting
           </Text>
         </View>
 
-        <CollapsibleSection title="Basics">
-          <View style={styles.card}>
+        <CollapsibleSection title="Basics" themeColors={c}>
+          <View style={[styles.card, { backgroundColor: c.surface }]}>
             <View style={styles.inputRow}>
               <View style={styles.inputIcon}>
-                <Home size={18} color={Colors.primary} />
+                <Home size={18} color={c.primary} />
               </View>
               <View style={styles.inputContent}>
-                <Text style={styles.inputLabel}>Nickname</Text>
+                <Text style={[styles.inputLabel, { color: c.textSecondary }]}>Nickname</Text>
                 <TextInput
-                  style={styles.textInput}
+                  style={[styles.textInput, { color: c.text }]}
                   value={form.nickname}
                   onChangeText={(v) => updateField('nickname', v)}
                   placeholder="e.g. Our Cozy Nest"
-                  placeholderTextColor={Colors.textTertiary}
+                  placeholderTextColor={c.textTertiary}
                   testID="nickname-input"
                 />
               </View>
             </View>
-            <View style={styles.divider} />
+            <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
             <TouchableOpacity
               style={styles.inputRow}
               onPress={() => setActivePicker('homeType')}
               activeOpacity={0.7}
             >
-              <View style={styles.inputIcon}>
-                <Building size={18} color={Colors.primary} />
+              <View style={[styles.inputIcon, { backgroundColor: c.primaryLight }]}>
+                <Building size={18} color={c.primary} />
               </View>
               <View style={styles.inputContent}>
-                <Text style={styles.inputLabel}>Home type</Text>
+                <Text style={[styles.inputLabel, { color: c.textSecondary }]}>Home type</Text>
                 <View style={styles.pickerTrigger}>
-                  <Text style={styles.pickerValue}>
+                  <Text style={[styles.pickerValue, { color: c.text }]}>
                     {getPickerLabel(HOME_TYPE_OPTIONS, form.homeType)}
                   </Text>
-                  <ChevronDown size={16} color={Colors.textTertiary} />
+                  <ChevronDown size={16} color={c.textTertiary} />
                 </View>
               </View>
             </TouchableOpacity>
-            <View style={styles.divider} />
+            <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
             <View style={styles.inputRow}>
-              <View style={styles.inputIcon}>
-                <Calendar size={18} color={Colors.primary} />
+              <View style={[styles.inputIcon, { backgroundColor: c.primaryLight }]}>
+                <Calendar size={18} color={c.primary} />
               </View>
               <View style={styles.inputContent}>
-                <Text style={styles.inputLabel}>Year built</Text>
+                <Text style={[styles.inputLabel, { color: c.textSecondary }]}>Year built</Text>
                 <TextInput
-                  style={styles.textInput}
+                  style={[styles.textInput, { color: c.text }]}
                   value={form.yearBuilt}
                   onChangeText={(v) => updateField('yearBuilt', v)}
                   placeholder="e.g. 1998"
-                  placeholderTextColor={Colors.textTertiary}
+                  placeholderTextColor={c.textTertiary}
                   keyboardType="number-pad"
                   maxLength={4}
                 />
               </View>
             </View>
-            <View style={styles.divider} />
+            <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
             <View style={styles.inputRow}>
-              <View style={styles.inputIcon}>
-                <Calendar size={18} color={Colors.primary} />
+              <View style={[styles.inputIcon, { backgroundColor: c.primaryLight }]}>
+                <Calendar size={18} color={c.primary} />
               </View>
               <View style={styles.inputContent}>
-                <Text style={styles.inputLabel}>Purchase date</Text>
+                <Text style={[styles.inputLabel, { color: c.textSecondary }]}>Purchase date</Text>
                 <TextInput
-                  style={styles.textInput}
+                  style={[styles.textInput, { color: c.text }]}
                   value={form.purchaseDate}
                   onChangeText={(v) => updateField('purchaseDate', v)}
                   placeholder="e.g. March 2020"
-                  placeholderTextColor={Colors.textTertiary}
+                  placeholderTextColor={c.textTertiary}
                 />
               </View>
             </View>
           </View>
         </CollapsibleSection>
 
-        <CollapsibleSection title="Address">
-          <View style={styles.card}>
+        <CollapsibleSection title="Address" themeColors={c}>
+          <View style={[styles.card, { backgroundColor: c.surface }]}>
             <View style={styles.inputRow}>
               <View style={styles.inputIcon}>
-                <MapPin size={18} color={Colors.accent} />
+                <MapPin size={18} color={c.accent} />
               </View>
               <View style={styles.inputContent}>
-                <Text style={styles.inputLabel}>Street address</Text>
+                <Text style={[styles.inputLabel, { color: c.textSecondary }]}>Street address</Text>
                 <TextInput
-                  style={styles.textInput}
+                  style={[styles.textInput, { color: c.text }]}
                   value={form.address}
                   onChangeText={(v) => updateField('address', v)}
                   placeholder="123 Main Street"
-                  placeholderTextColor={Colors.textTertiary}
+                  placeholderTextColor={c.textTertiary}
                 />
               </View>
             </View>
-            <View style={styles.divider} />
+            <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
             <View style={styles.inlineRow}>
               <View style={styles.inlineField}>
-                <Text style={styles.inputLabel}>City</Text>
+                <Text style={[styles.inputLabel, { color: c.textSecondary }]}>City</Text>
                 <TextInput
-                  style={styles.textInput}
+                  style={[styles.textInput, { color: c.text }]}
                   value={form.city}
                   onChangeText={(v) => updateField('city', v)}
                   placeholder="City"
-                  placeholderTextColor={Colors.textTertiary}
+                  placeholderTextColor={c.textTertiary}
                 />
               </View>
               <View style={styles.inlineFieldSmall}>
-                <Text style={styles.inputLabel}>State</Text>
+                <Text style={[styles.inputLabel, { color: c.textSecondary }]}>State</Text>
                 <TextInput
-                  style={styles.textInput}
+                  style={[styles.textInput, { color: c.text }]}
                   value={form.state}
                   onChangeText={(v) => updateField('state', v)}
                   placeholder="ST"
-                  placeholderTextColor={Colors.textTertiary}
+                  placeholderTextColor={c.textTertiary}
                   maxLength={2}
                   autoCapitalize="characters"
                 />
               </View>
               <View style={styles.inlineFieldSmall}>
-                <Text style={styles.inputLabel}>ZIP</Text>
+                <Text style={[styles.inputLabel, { color: c.textSecondary }]}>ZIP</Text>
                 <TextInput
-                  style={styles.textInput}
+                  style={[styles.textInput, { color: c.text }]}
                   value={form.zipCode}
                   onChangeText={(v) => updateField('zipCode', v)}
                   placeholder="00000"
-                  placeholderTextColor={Colors.textTertiary}
+                  placeholderTextColor={c.textTertiary}
                   keyboardType="number-pad"
                   maxLength={5}
                 />
@@ -425,94 +430,94 @@ export default function ProfileScreen() {
               activeOpacity={0.7}
               testID="add-zillow-link"
             >
-              <View style={styles.zillowAddIconContainer}>
-                <Link size={16} color={Colors.primary} />
+              <View style={[styles.zillowAddIconContainer, { backgroundColor: c.primaryLight }]}>
+                <Link size={16} color={c.primary} />
               </View>
-              <Text style={styles.zillowAddText}>Zillow Profile</Text>
-              <ChevronDown size={16} color={Colors.textTertiary} style={{ transform: [{ rotate: '-90deg' }] }} />
+              <Text style={[styles.zillowAddText, { color: c.text }]}>Zillow Profile</Text>
+              <ChevronDown size={16} color={c.textTertiary} style={{ transform: [{ rotate: '-90deg' }] }} />
             </TouchableOpacity>
           )}
         </CollapsibleSection>
 
-        <CollapsibleSection title="Size & Layout">
-          <View style={styles.card}>
+        <CollapsibleSection title="Size & Layout" themeColors={c}>
+          <View style={[styles.card, { backgroundColor: c.surface }]}>
             <View style={styles.gridRow}>
               <View style={styles.gridItem}>
                 <View style={styles.gridIcon}>
-                  <BedDouble size={16} color={Colors.primary} />
+                  <BedDouble size={16} color={c.primary} />
                 </View>
-                <Text style={styles.gridLabel}>Bedrooms</Text>
+                <Text style={[styles.gridLabel, { color: c.textSecondary }]}>Bedrooms</Text>
                 <TextInput
                   style={styles.gridInput}
                   value={form.bedrooms}
                   onChangeText={(v) => updateField('bedrooms', v)}
                   keyboardType="number-pad"
                   placeholder="—"
-                  placeholderTextColor={Colors.textTertiary}
+                  placeholderTextColor={c.textTertiary}
                   maxLength={2}
                 />
               </View>
               <View style={styles.gridItem}>
-                <View style={styles.gridIcon}>
-                  <Bath size={16} color={Colors.primary} />
+                <View style={[styles.gridIcon, { backgroundColor: c.primaryLight }]}>
+                  <Bath size={16} color={c.primary} />
                 </View>
-                <Text style={styles.gridLabel}>Bathrooms</Text>
+                <Text style={[styles.gridLabel, { color: c.textSecondary }]}>Bathrooms</Text>
                 <TextInput
                   style={styles.gridInput}
                   value={form.bathrooms}
                   onChangeText={(v) => updateField('bathrooms', v)}
                   keyboardType="decimal-pad"
                   placeholder="—"
-                  placeholderTextColor={Colors.textTertiary}
+                  placeholderTextColor={c.textTertiary}
                   maxLength={3}
                 />
               </View>
               <View style={styles.gridItem}>
-                <View style={styles.gridIcon}>
-                  <Layers size={16} color={Colors.primary} />
+                <View style={[styles.gridIcon, { backgroundColor: c.primaryLight }]}>
+                  <Layers size={16} color={c.primary} />
                 </View>
-                <Text style={styles.gridLabel}>Stories</Text>
+                <Text style={[styles.gridLabel, { color: c.textSecondary }]}>Stories</Text>
                 <TextInput
                   style={styles.gridInput}
                   value={form.stories}
                   onChangeText={(v) => updateField('stories', v)}
                   keyboardType="number-pad"
                   placeholder="—"
-                  placeholderTextColor={Colors.textTertiary}
+                  placeholderTextColor={c.textTertiary}
                   maxLength={2}
                 />
               </View>
             </View>
-            <View style={styles.divider} />
+            <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
             <View style={styles.inputRow}>
-              <View style={styles.inputIcon}>
-                <Ruler size={18} color={Colors.primary} />
+              <View style={[styles.inputIcon, { backgroundColor: c.primaryLight }]}>
+                <Ruler size={18} color={c.primary} />
               </View>
               <View style={styles.inputContent}>
-                <Text style={styles.inputLabel}>Square footage</Text>
+                <Text style={[styles.inputLabel, { color: c.textSecondary }]}>Square footage</Text>
                 <TextInput
-                  style={styles.textInput}
+                  style={[styles.textInput, { color: c.text }]}
                   value={form.squareFootage}
                   onChangeText={(v) => updateField('squareFootage', v)}
                   placeholder="e.g. 2,400"
-                  placeholderTextColor={Colors.textTertiary}
+                  placeholderTextColor={c.textTertiary}
                   keyboardType="number-pad"
                 />
               </View>
             </View>
-            <View style={styles.divider} />
+            <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
             <View style={styles.inputRow}>
-              <View style={styles.inputIcon}>
-                <Ruler size={18} color={Colors.primary} />
+              <View style={[styles.inputIcon, { backgroundColor: c.primaryLight }]}>
+                <Ruler size={18} color={c.primary} />
               </View>
               <View style={styles.inputContent}>
-                <Text style={styles.inputLabel}>Lot size (acres)</Text>
+                <Text style={[styles.inputLabel, { color: c.textSecondary }]}>Lot size (acres)</Text>
                 <TextInput
-                  style={styles.textInput}
+                  style={[styles.textInput, { color: c.text }]}
                   value={form.lotSize}
                   onChangeText={(v) => updateField('lotSize', v)}
                   placeholder="e.g. 0.25"
-                  placeholderTextColor={Colors.textTertiary}
+                  placeholderTextColor={c.textTertiary}
                   keyboardType="decimal-pad"
                 />
               </View>
@@ -520,169 +525,169 @@ export default function ProfileScreen() {
           </View>
         </CollapsibleSection>
 
-        <CollapsibleSection title="Systems & Structure">
-          <View style={styles.card}>
+        <CollapsibleSection title="Systems & Structure" themeColors={c}>
+          <View style={[styles.card, { backgroundColor: c.surface }]}>
             <TouchableOpacity
               style={styles.inputRow}
               onPress={() => setActivePicker('foundationType')}
               activeOpacity={0.7}
             >
-              <View style={styles.inputIcon}>
-                <Layers size={18} color={Colors.accent} />
+              <View style={[styles.inputIcon, { backgroundColor: c.accentLight }]}>
+                <Layers size={18} color={c.accent} />
               </View>
               <View style={styles.inputContent}>
-                <Text style={styles.inputLabel}>Foundation</Text>
+                <Text style={[styles.inputLabel, { color: c.textSecondary }]}>Foundation</Text>
                 <View style={styles.pickerTrigger}>
-                  <Text style={styles.pickerValue}>
+                  <Text style={[styles.pickerValue, { color: c.text }]}>
                     {getPickerLabel(FOUNDATION_OPTIONS, form.foundationType)}
                   </Text>
-                  <ChevronDown size={16} color={Colors.textTertiary} />
+                  <ChevronDown size={16} color={c.textTertiary} />
                 </View>
               </View>
             </TouchableOpacity>
-            <View style={styles.divider} />
+            <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
             <TouchableOpacity
               style={styles.inputRow}
               onPress={() => setActivePicker('roofType')}
               activeOpacity={0.7}
             >
-              <View style={styles.inputIcon}>
-                <Home size={18} color={Colors.accent} />
+              <View style={[styles.inputIcon, { backgroundColor: c.accentLight }]}>
+                <Home size={18} color={c.accent} />
               </View>
               <View style={styles.inputContent}>
-                <Text style={styles.inputLabel}>Roof type</Text>
+                <Text style={[styles.inputLabel, { color: c.textSecondary }]}>Roof type</Text>
                 <View style={styles.pickerTrigger}>
-                  <Text style={styles.pickerValue}>
+                  <Text style={[styles.pickerValue, { color: c.text }]}>
                     {getPickerLabel(ROOF_OPTIONS, form.roofType)}
                   </Text>
-                  <ChevronDown size={16} color={Colors.textTertiary} />
+                  <ChevronDown size={16} color={c.textTertiary} />
                 </View>
               </View>
             </TouchableOpacity>
-            <View style={styles.divider} />
+            <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
             <View style={styles.inputRow}>
-              <View style={styles.inputIcon}>
-                <Home size={18} color={Colors.accent} />
+              <View style={[styles.inputIcon, { backgroundColor: c.accentLight }]}>
+                <Home size={18} color={c.accent} />
               </View>
               <View style={styles.inputContent}>
-                <Text style={styles.inputLabel}>Roof age (years)</Text>
+                <Text style={[styles.inputLabel, { color: c.textSecondary }]}>Roof age (years)</Text>
                 <TextInput
-                  style={styles.textInput}
+                  style={[styles.textInput, { color: c.text }]}
                   value={form.roofAge}
                   onChangeText={(v) => updateField('roofAge', v)}
                   placeholder="e.g. 8"
-                  placeholderTextColor={Colors.textTertiary}
+                  placeholderTextColor={c.textTertiary}
                   keyboardType="number-pad"
                   maxLength={3}
                 />
               </View>
             </View>
-            <View style={styles.divider} />
+            <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
             <TouchableOpacity
               style={styles.inputRow}
               onPress={() => setActivePicker('heatingCoolingType')}
               activeOpacity={0.7}
             >
-              <View style={styles.inputIcon}>
-                <Flame size={18} color={Colors.accent} />
+              <View style={[styles.inputIcon, { backgroundColor: c.accentLight }]}>
+                <Flame size={18} color={c.accent} />
               </View>
               <View style={styles.inputContent}>
-                <Text style={styles.inputLabel}>Heating & cooling</Text>
+                <Text style={[styles.inputLabel, { color: c.textSecondary }]}>Heating & cooling</Text>
                 <View style={styles.pickerTrigger}>
-                  <Text style={styles.pickerValue}>
+                  <Text style={[styles.pickerValue, { color: c.text }]}>
                     {getPickerLabel(HVAC_OPTIONS, form.heatingCoolingType)}
                   </Text>
-                  <ChevronDown size={16} color={Colors.textTertiary} />
+                  <ChevronDown size={16} color={c.textTertiary} />
                 </View>
               </View>
             </TouchableOpacity>
-            <View style={styles.divider} />
+            <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
             <TouchableOpacity
               style={styles.inputRow}
               onPress={() => setActivePicker('waterHeaterType')}
               activeOpacity={0.7}
             >
-              <View style={styles.inputIcon}>
-                <Droplets size={18} color={Colors.accent} />
+              <View style={[styles.inputIcon, { backgroundColor: c.accentLight }]}>
+                <Droplets size={18} color={c.accent} />
               </View>
               <View style={styles.inputContent}>
-                <Text style={styles.inputLabel}>Water heater</Text>
+                <Text style={[styles.inputLabel, { color: c.textSecondary }]}>Water heater</Text>
                 <View style={styles.pickerTrigger}>
-                  <Text style={styles.pickerValue}>
+                  <Text style={[styles.pickerValue, { color: c.text }]}>
                     {getPickerLabel(WATER_HEATER_OPTIONS, form.waterHeaterType)}
                   </Text>
-                  <ChevronDown size={16} color={Colors.textTertiary} />
+                  <ChevronDown size={16} color={c.textTertiary} />
                 </View>
               </View>
             </TouchableOpacity>
-            <View style={styles.divider} />
+            <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
             <TouchableOpacity
               style={styles.inputRow}
               onPress={() => setActivePicker('garageType')}
               activeOpacity={0.7}
             >
-              <View style={styles.inputIcon}>
-                <Car size={18} color={Colors.accent} />
+              <View style={[styles.inputIcon, { backgroundColor: c.accentLight }]}>
+                <Car size={18} color={c.accent} />
               </View>
               <View style={styles.inputContent}>
-                <Text style={styles.inputLabel}>Garage</Text>
+                <Text style={[styles.inputLabel, { color: c.textSecondary }]}>Garage</Text>
                 <View style={styles.pickerTrigger}>
-                  <Text style={styles.pickerValue}>
+                  <Text style={[styles.pickerValue, { color: c.text }]}>
                     {getPickerLabel(GARAGE_OPTIONS, form.garageType)}
                   </Text>
-                  <ChevronDown size={16} color={Colors.textTertiary} />
+                  <ChevronDown size={16} color={c.textTertiary} />
                 </View>
               </View>
             </TouchableOpacity>
           </View>
         </CollapsibleSection>
 
-        <CollapsibleSection title="Extras">
-          <View style={styles.card}>
+        <CollapsibleSection title="Extras" themeColors={c}>
+          <View style={[styles.card, { backgroundColor: c.surface }]}>
             <View style={styles.switchRow}>
               <View style={styles.switchLeft}>
-                <View style={[styles.inputIcon, { backgroundColor: Colors.primaryLight }]}>
-                  <Waves size={18} color={Colors.primary} />
+                <View style={[styles.inputIcon, { backgroundColor: c.primaryLight }]}>
+                  <Waves size={18} color={c.primary} />
                 </View>
-                <Text style={styles.switchLabel}>Pool / Spa</Text>
+                <Text style={[styles.switchLabel, { color: c.text }]}>Pool / Spa</Text>
               </View>
               <Switch
                 value={form.hasPool}
                 onValueChange={(v) => updateField('hasPool', v)}
-                trackColor={{ false: Colors.surfaceAlt, true: Colors.primaryLight }}
-                thumbColor={form.hasPool ? Colors.primary : Colors.textTertiary}
+                trackColor={{ false: c.surfaceAlt, true: c.primaryLight }}
+                thumbColor={form.hasPool ? c.primary : c.textTertiary}
               />
             </View>
-            <View style={styles.divider} />
+            <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
             <View style={styles.switchRow}>
               <View style={styles.switchLeft}>
-                <View style={[styles.inputIcon, { backgroundColor: Colors.accentLight }]}>
-                  <Building size={18} color={Colors.accent} />
+                <View style={[styles.inputIcon, { backgroundColor: c.accentLight }]}>
+                  <Building size={18} color={c.accent} />
                 </View>
-                <Text style={styles.switchLabel}>HOA</Text>
+                <Text style={[styles.switchLabel, { color: c.text }]}>HOA</Text>
               </View>
               <Switch
                 value={form.hasHoa}
                 onValueChange={(v) => updateField('hasHoa', v)}
-                trackColor={{ false: Colors.surfaceAlt, true: Colors.primaryLight }}
-                thumbColor={form.hasHoa ? Colors.primary : Colors.textTertiary}
+                trackColor={{ false: c.surfaceAlt, true: c.primaryLight }}
+                thumbColor={form.hasHoa ? c.primary : c.textTertiary}
               />
             </View>
             {form.hasHoa && (
               <>
-                <View style={styles.divider} />
+                <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
                 <View style={styles.inputRow}>
-                  <View style={styles.inputIcon}>
-                    <Building size={18} color={Colors.accent} />
+                  <View style={[styles.inputIcon, { backgroundColor: c.accentLight }]}>
+                    <Building size={18} color={c.accent} />
                   </View>
                   <View style={styles.inputContent}>
-                    <Text style={styles.inputLabel}>Monthly HOA dues</Text>
+                    <Text style={[styles.inputLabel, { color: c.textSecondary }]}>Monthly HOA dues</Text>
                     <TextInput
-                      style={styles.textInput}
+                      style={[styles.textInput, { color: c.text }]}
                       value={form.hoaAmount}
                       onChangeText={(v) => updateField('hoaAmount', v)}
                       placeholder="e.g. 250"
-                      placeholderTextColor={Colors.textTertiary}
+                      placeholderTextColor={c.textTertiary}
                       keyboardType="number-pad"
                     />
                   </View>
@@ -692,38 +697,38 @@ export default function ProfileScreen() {
           </View>
         </CollapsibleSection>
 
-        <CollapsibleSection title="Household">
-          <View style={styles.card}>
+        <CollapsibleSection title="Household" themeColors={c}>
+          <View style={[styles.card, { backgroundColor: c.surface }]}>
             {(form.householdMembers ?? []).length === 0 ? (
               <View style={styles.householdEmpty}>
-                <View style={styles.householdEmptyIcon}>
-                  <Users size={28} color={Colors.textTertiary} />
+                <View style={[styles.householdEmptyIcon, { backgroundColor: c.surfaceAlt }]}>
+                  <Users size={28} color={c.textTertiary} />
                 </View>
-                <Text style={styles.householdEmptyTitle}>No household members yet</Text>
-                <Text style={styles.householdEmptySubtitle}>Invite your spouse, partner, or family members to collaborate</Text>
+                <Text style={[styles.householdEmptyTitle, { color: c.text }]}>No household members yet</Text>
+                <Text style={[styles.householdEmptySubtitle, { color: c.textTertiary }]}>Invite your spouse, partner, or family members to collaborate</Text>
               </View>
             ) : (
               (form.householdMembers ?? []).map((member, idx) => (
                 <View key={member.id}>
-                  {idx > 0 && <View style={styles.divider} />}
+                  {idx > 0 && <View style={[styles.divider, { backgroundColor: c.borderLight }]} />}
                   <View style={styles.householdMemberRow}>
-                    <View style={styles.householdAvatar}>
-                      <User size={18} color={Colors.primary} />
+                    <View style={[styles.householdAvatar, { backgroundColor: c.primaryLight }]}>
+                      <User size={18} color={c.primary} />
                     </View>
                     <View style={styles.householdMemberInfo}>
-                      <Text style={styles.householdMemberName}>{member.name}</Text>
+                      <Text style={[styles.householdMemberName, { color: c.text }]}>{member.name}</Text>
                       <View style={styles.householdMemberMeta}>
-                        <View style={styles.householdRoleBadge}>
-                          <Text style={styles.householdRoleBadgeText}>{getRoleLabel(member.role)}</Text>
+                        <View style={[styles.householdRoleBadge, { backgroundColor: c.primaryLight }]}>
+                          <Text style={[styles.householdRoleBadgeText, { color: c.primary }]}>{getRoleLabel(member.role)}</Text>
                         </View>
                         {member.status === 'pending' && (
-                          <View style={styles.householdPendingBadge}>
-                            <Text style={styles.householdPendingText}>Pending</Text>
+                          <View style={[styles.householdPendingBadge, { backgroundColor: c.warningLight }]}>
+                            <Text style={[styles.householdPendingText, { color: c.warning }]}>Pending</Text>
                           </View>
                         )}
                       </View>
                       {(member.email || member.phone) && (
-                        <Text style={styles.householdMemberContact}>
+                        <Text style={[styles.householdMemberContact, { color: c.textTertiary }]}>
                           {member.email || member.phone}
                         </Text>
                       )}
@@ -746,7 +751,7 @@ export default function ProfileScreen() {
                       hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                       style={styles.householdRemoveButton}
                     >
-                      <Trash2 size={16} color={Colors.danger} />
+                      <Trash2 size={16} color={c.danger} />
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -754,7 +759,7 @@ export default function ProfileScreen() {
             )}
           </View>
           <TouchableOpacity
-            style={styles.householdInviteButton}
+            style={[styles.householdInviteButton, { backgroundColor: c.surface }]}
             onPress={() => {
               setInviteName('');
               setInviteContact('');
@@ -765,26 +770,26 @@ export default function ProfileScreen() {
             activeOpacity={0.7}
             testID="invite-household-member"
           >
-            <View style={styles.householdInviteIconContainer}>
-              <UserPlus size={16} color={Colors.primary} />
+            <View style={[styles.householdInviteIconContainer, { backgroundColor: c.primaryLight }]}>
+              <UserPlus size={16} color={c.primary} />
             </View>
-            <Text style={styles.householdInviteText}>Invite a Household Member</Text>
-            <ChevronDown size={16} color={Colors.textTertiary} style={{ transform: [{ rotate: '-90deg' }] }} />
+            <Text style={[styles.householdInviteText, { color: c.text }]}>Invite a Household Member</Text>
+            <ChevronDown size={16} color={c.textTertiary} style={{ transform: [{ rotate: '-90deg' }] }} />
           </TouchableOpacity>
         </CollapsibleSection>
 
-        <CollapsibleSection title="Notes">
-          <View style={styles.card}>
+        <CollapsibleSection title="Notes" themeColors={c}>
+          <View style={[styles.card, { backgroundColor: c.surface }]}>
             <View style={styles.notesRow}>
-              <View style={styles.inputIcon}>
-                <StickyNote size={18} color={Colors.textSecondary} />
+              <View style={[styles.inputIcon, { backgroundColor: c.surfaceAlt }]}>
+                <StickyNote size={18} color={c.textSecondary} />
               </View>
               <TextInput
-                style={styles.notesInput}
+                style={[styles.notesInput, { color: c.text }]}
                 value={form.notes}
                 onChangeText={(v) => updateField('notes', v)}
                 placeholder="Any additional details about your home..."
-                placeholderTextColor={Colors.textTertiary}
+                placeholderTextColor={c.textTertiary}
                 multiline
                 numberOfLines={4}
                 textAlignVertical="top"
@@ -793,11 +798,91 @@ export default function ProfileScreen() {
           </View>
         </CollapsibleSection>
 
-        <TouchableOpacity style={styles.saveButtonLarge} onPress={handleSave} activeOpacity={0.8}>
+        <CollapsibleSection title="Settings" defaultOpen={false} themeColors={c}>
+          <View style={[styles.card, { backgroundColor: c.surface }]}>
+            <View style={styles.switchRow}>
+              <View style={styles.switchLeft}>
+                <View style={[styles.inputIcon, { backgroundColor: c.primaryLight }]}>
+                  <Moon size={18} color={c.primary} />
+                </View>
+                <View style={{ flex: 1, marginLeft: 14 }}>
+                  <Text style={[styles.switchLabel, { color: c.text, marginLeft: 0 }]}>Appearance</Text>
+                  <Text style={{ fontSize: 12, color: c.textTertiary, marginTop: 2 }}>
+                    {themeMode === 'system' ? 'Follows device settings' : themeMode === 'dark' ? 'Always dark' : 'Always light'}
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
+            <View style={{ paddingHorizontal: 16, paddingVertical: 14 }}>
+              <View style={styles.themeToggleRow}>
+                <TouchableOpacity
+                  style={[
+                    styles.themeToggleButton,
+                    { backgroundColor: c.surfaceAlt, borderColor: c.border },
+                    themeMode === 'system' && styles.themeToggleButtonActive,
+                    themeMode === 'system' && { backgroundColor: c.primary },
+                  ]}
+                  onPress={() => setThemeMode('system')}
+                  activeOpacity={0.7}
+                  testID="theme-system"
+                >
+                  <Smartphone size={14} color={themeMode === 'system' ? c.white : c.textSecondary} />
+                  <Text style={[
+                    styles.themeToggleText,
+                    { color: c.textSecondary },
+                    themeMode === 'system' && styles.themeToggleTextActive,
+                    themeMode === 'system' && { color: c.white },
+                  ]}>Auto</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.themeToggleButton,
+                    { backgroundColor: c.surfaceAlt, borderColor: c.border },
+                    themeMode === 'light' && styles.themeToggleButtonActive,
+                    themeMode === 'light' && { backgroundColor: c.primary },
+                  ]}
+                  onPress={() => setThemeMode('light')}
+                  activeOpacity={0.7}
+                  testID="theme-light"
+                >
+                  <Sun size={14} color={themeMode === 'light' ? c.white : c.textSecondary} />
+                  <Text style={[
+                    styles.themeToggleText,
+                    { color: c.textSecondary },
+                    themeMode === 'light' && styles.themeToggleTextActive,
+                    themeMode === 'light' && { color: c.white },
+                  ]}>Light</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.themeToggleButton,
+                    { backgroundColor: c.surfaceAlt, borderColor: c.border },
+                    themeMode === 'dark' && styles.themeToggleButtonActive,
+                    themeMode === 'dark' && { backgroundColor: c.primary },
+                  ]}
+                  onPress={() => setThemeMode('dark')}
+                  activeOpacity={0.7}
+                  testID="theme-dark"
+                >
+                  <Moon size={14} color={themeMode === 'dark' ? c.white : c.textSecondary} />
+                  <Text style={[
+                    styles.themeToggleText,
+                    { color: c.textSecondary },
+                    themeMode === 'dark' && styles.themeToggleTextActive,
+                    themeMode === 'dark' && { color: c.white },
+                  ]}>Dark</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </CollapsibleSection>
+
+        <TouchableOpacity style={[styles.saveButtonLarge, { backgroundColor: c.primary }]} onPress={handleSave} activeOpacity={0.8}>
           <Text style={styles.saveButtonLargeText}>Save Profile</Text>
         </TouchableOpacity>
 
-        <CollapsibleSection title="Data">
+        <CollapsibleSection title="Data" themeColors={c}>
           <TouchableOpacity
             style={styles.resetButton}
             activeOpacity={0.7}
@@ -894,28 +979,28 @@ export default function ProfileScreen() {
             activeOpacity={1}
             onPress={() => setShowInviteModal(false)}
           />
-          <View style={styles.modalContent}>
+          <View style={[styles.modalContent, { backgroundColor: c.surface }]}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Invite Member</Text>
+              <Text style={[styles.modalTitle, { color: c.text }]}>Invite Member</Text>
               <TouchableOpacity
                 onPress={() => setShowInviteModal(false)}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
-                <X size={22} color={Colors.textSecondary} />
+                <X size={22} color={c.textSecondary} />
               </TouchableOpacity>
             </View>
-            <Text style={styles.modalDescription}>
+            <Text style={[styles.modalDescription, { color: c.textSecondary }]}>
               Add a household member and send them an invitation to join.
             </Text>
 
-            <View style={styles.modalInputContainer}>
-              <User size={18} color={Colors.textTertiary} />
+            <View style={[styles.modalInputContainer, { backgroundColor: c.background }]}>
+              <User size={18} color={c.textTertiary} />
               <TextInput
-                style={styles.modalInput}
+                style={[styles.modalInput, { color: c.text }]}
                 value={inviteName}
                 onChangeText={setInviteName}
                 placeholder="Name"
-                placeholderTextColor={Colors.textTertiary}
+                placeholderTextColor={c.textTertiary}
                 testID="invite-name-input"
               />
             </View>
@@ -929,7 +1014,7 @@ export default function ProfileScreen() {
                 onPress={() => setInviteMethod('email')}
                 activeOpacity={0.7}
               >
-                <Mail size={14} color={inviteMethod === 'email' ? Colors.white : Colors.textSecondary} />
+                <Mail size={14} color={inviteMethod === 'email' ? c.white : c.textSecondary} />
                 <Text style={[
                   styles.inviteMethodText,
                   inviteMethod === 'email' && styles.inviteMethodTextActive,
@@ -943,7 +1028,7 @@ export default function ProfileScreen() {
                 onPress={() => setInviteMethod('sms')}
                 activeOpacity={0.7}
               >
-                <MessageSquare size={14} color={inviteMethod === 'sms' ? Colors.white : Colors.textSecondary} />
+                <MessageSquare size={14} color={inviteMethod === 'sms' ? c.white : c.textSecondary} />
                 <Text style={[
                   styles.inviteMethodText,
                   inviteMethod === 'sms' && styles.inviteMethodTextActive,
@@ -951,25 +1036,25 @@ export default function ProfileScreen() {
               </TouchableOpacity>
             </View>
 
-            <View style={styles.modalInputContainer}>
+            <View style={[styles.modalInputContainer, { backgroundColor: c.background }]}>
               {inviteMethod === 'email' ? (
-                <Mail size={18} color={Colors.textTertiary} />
+                <Mail size={18} color={c.textTertiary} />
               ) : (
-                <MessageSquare size={18} color={Colors.textTertiary} />
+                <MessageSquare size={18} color={c.textTertiary} />
               )}
               <TextInput
-                style={styles.modalInput}
+                style={[styles.modalInput, { color: c.text }]}
                 value={inviteContact}
                 onChangeText={setInviteContact}
                 placeholder={inviteMethod === 'email' ? 'Email address' : 'Phone number'}
-                placeholderTextColor={Colors.textTertiary}
+                placeholderTextColor={c.textTertiary}
                 keyboardType={inviteMethod === 'email' ? 'email-address' : 'phone-pad'}
                 autoCapitalize="none"
                 testID="invite-contact-input"
               />
             </View>
 
-            <Text style={styles.inviteRoleLabel}>Role</Text>
+            <Text style={[styles.inviteRoleLabel, { color: c.textSecondary }]}>Role</Text>
             <View style={styles.inviteRoleRow}>
               {ROLE_OPTIONS.map((opt) => (
                 <TouchableOpacity
@@ -994,6 +1079,7 @@ export default function ProfileScreen() {
               <TouchableOpacity
                 style={[
                   styles.modalSaveButton,
+                  { backgroundColor: c.primary },
                   (!inviteName.trim() || !inviteContact.trim()) && styles.modalSaveButtonDisabled,
                 ]}
                 disabled={!inviteName.trim() || !inviteContact.trim()}
@@ -1069,9 +1155,9 @@ export default function ProfileScreen() {
               setShowZillowModal(false);
             }}
           />
-          <View style={styles.modalContent}>
+          <View style={[styles.modalContent, { backgroundColor: c.surface }]}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Zillow Profile</Text>
+              <Text style={[styles.modalTitle, { color: c.text }]}>Zillow Profile</Text>
               <TouchableOpacity
                 onPress={() => {
                   setZillowInput(form.zillowLink ?? '');
@@ -1079,10 +1165,10 @@ export default function ProfileScreen() {
                 }}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
-                <X size={22} color={Colors.textSecondary} />
+                <X size={22} color={c.textSecondary} />
               </TouchableOpacity>
             </View>
-            <Text style={styles.modalDescription}>
+            <Text style={[styles.modalDescription, { color: c.textSecondary }]}>
               Search Zillow for your property, then copy and paste the link below.
             </Text>
 
@@ -1128,14 +1214,14 @@ export default function ProfileScreen() {
               <View style={styles.zillowDividerLine} />
             </View>
 
-            <View style={styles.modalInputContainer}>
-              <Link size={18} color={Colors.textTertiary} />
+            <View style={[styles.modalInputContainer, { backgroundColor: c.background }]}>
+              <Link size={18} color={c.textTertiary} />
               <TextInput
-                style={styles.modalInput}
+                style={[styles.modalInput, { color: c.text }]}
                 value={zillowInput}
                 onChangeText={setZillowInput}
                 placeholder="https://www.zillow.com/homedetails/..."
-                placeholderTextColor={Colors.textTertiary}
+                placeholderTextColor={c.textTertiary}
                 autoCapitalize="none"
                 autoCorrect={false}
                 keyboardType="url"
@@ -1143,7 +1229,7 @@ export default function ProfileScreen() {
               />
               {zillowInput.length > 0 && (
                 <TouchableOpacity onPress={() => setZillowInput('')}>
-                  <X size={16} color={Colors.textTertiary} />
+                  <X size={16} color={c.textTertiary} />
                 </TouchableOpacity>
               )}
             </View>
@@ -1774,5 +1860,29 @@ const styles = StyleSheet.create({
     color: Colors.textTertiary,
     textTransform: 'uppercase' as const,
     letterSpacing: 0.5,
+  },
+  themeToggleRow: {
+    flexDirection: 'row' as const,
+    gap: 10,
+  },
+  themeToggleButton: {
+    flex: 1,
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+    gap: 6,
+    paddingVertical: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  themeToggleButtonActive: {
+    borderWidth: 0,
+  },
+  themeToggleText: {
+    fontSize: 13,
+    fontWeight: '600' as const,
+  },
+  themeToggleTextActive: {
+    fontWeight: '600' as const,
   },
 });

@@ -4,6 +4,7 @@ import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
 import { Platform, View, StyleSheet } from "react-native";
 import { HomeProvider } from "../contexts/HomeContext";
+import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
 import Colors from "@/constants/colors";
 
 let GestureHandlerRootView: React.ComponentType<{ style?: any; children: React.ReactNode }> = ({ children, style }) => (
@@ -24,13 +25,16 @@ SplashScreen.preventAutoHideAsync();
 const queryClient = new QueryClient();
 
 function RootLayoutNav() {
+  const { colors } = useTheme();
+
   return (
     <Stack
       screenOptions={{
         headerBackTitle: "Back",
-        headerStyle: { backgroundColor: Colors.background },
-        headerTintColor: Colors.primary,
-        headerTitleStyle: { color: Colors.text, fontWeight: '600' as const },
+        headerStyle: { backgroundColor: colors.background },
+        headerTintColor: colors.primary,
+        headerTitleStyle: { color: colors.text, fontWeight: '600' as const },
+        contentStyle: { backgroundColor: colors.background },
       }}
     >
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -82,9 +86,11 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <HomeProvider>
-          <RootLayoutNav />
-        </HomeProvider>
+        <ThemeProvider>
+          <HomeProvider>
+            <RootLayoutNav />
+          </HomeProvider>
+        </ThemeProvider>
       </GestureHandlerRootView>
     </QueryClientProvider>
   );

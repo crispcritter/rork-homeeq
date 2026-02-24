@@ -12,6 +12,7 @@ import { Image } from 'expo-image';
 import { Plus, Search, MapPin, Shield, ChevronRight } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import Colors from '@/constants/colors';
+import { useTheme } from '@/contexts/ThemeContext';
 import PressableCard from '@/components/PressableCard';
 import FloatingActionButton from '@/components/FloatingActionButton';
 import ScreenHeader from '@/components/ScreenHeader';
@@ -24,6 +25,7 @@ import { Appliance } from '@/types';
 
 export default function AppliancesScreen() {
   const router = useRouter();
+  const { colors: c } = useTheme();
   const {
     appliances,
     addAppliance,
@@ -69,19 +71,19 @@ export default function AppliancesScreen() {
   }, [router]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: c.background }]}>
       <ScreenHeader
         title="My Items"
         subtitle={`${appliances.length} ${appliances.length === 1 ? 'item' : 'items'} tracked`}
       />
 
       <View style={styles.searchRow}>
-        <View style={styles.searchContainer}>
-          <Search size={16} color={Colors.textTertiary} />
+        <View style={[styles.searchContainer, { backgroundColor: c.surfaceAlt }]}>
+          <Search size={16} color={c.textTertiary} />
           <TextInput
-            style={styles.searchInput}
+            style={[styles.searchInput, { color: c.text }]}
             placeholder="Search by name, brand, or type..."
-            placeholderTextColor={Colors.textTertiary}
+            placeholderTextColor={c.textTertiary}
             value={search}
             onChangeText={setSearch}
             testID="search-appliances"
@@ -92,30 +94,30 @@ export default function AppliancesScreen() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.list}>
         {filtered.length === 0 ? (
           <View style={styles.emptyState}>
-            <View style={styles.emptyIconWrap}>
-              <Search size={28} color={Colors.primary} />
+            <View style={[styles.emptyIconWrap, { backgroundColor: c.primaryLight }]}>
+              <Search size={28} color={c.primary} />
             </View>
-            <Text style={styles.emptyTitle}>
+            <Text style={[styles.emptyTitle, { color: c.text }]}>
               {search ? 'No matches found' : 'Start tracking your home'}
             </Text>
-            <Text style={styles.emptySubtitle}>
+            <Text style={[styles.emptySubtitle, { color: c.textSecondary }]}>
               {search ? 'Try a different search term' : 'Add your first appliance or system to keep everything organized'}
             </Text>
             {!search && (
-              <TouchableOpacity style={styles.emptyBtn} onPress={handleAddAppliance}>
-                <Plus size={16} color={Colors.white} />
+              <TouchableOpacity style={[styles.emptyBtn, { backgroundColor: c.primary }]} onPress={handleAddAppliance}>
+                <Plus size={16} color={c.white} />
                 <Text style={styles.emptyBtnText}>Add your first item</Text>
               </TouchableOpacity>
             )}
           </View>
         ) : (
           filtered.map((appliance) => {
-            const warranty = getWarrantyStatus(appliance.warrantyExpiry, Colors);
-            const avatarColor = CATEGORY_AVATARS[appliance.category] || Colors.textTertiary;
+            const warranty = getWarrantyStatus(appliance.warrantyExpiry, c);
+            const avatarColor = CATEGORY_AVATARS[appliance.category] || c.textTertiary;
             return (
               <PressableCard
                 key={appliance.id}
-                style={styles.card}
+                style={[styles.card, { backgroundColor: c.surface, shadowColor: c.cardShadow }]}
                 onPress={() => handleAppliancePress(appliance.id)}
                 testID={`appliance-${appliance.id}`}
               >
@@ -128,13 +130,13 @@ export default function AppliancesScreen() {
                     </View>
                   )}
                   <View style={styles.cardInfo}>
-                    <Text style={styles.cardTitle} numberOfLines={1}>{appliance.name}</Text>
-                    <Text style={styles.cardBrand} numberOfLines={1}>{appliance.brand}</Text>
+                    <Text style={[styles.cardTitle, { color: c.text }]} numberOfLines={1}>{appliance.name}</Text>
+                    <Text style={[styles.cardBrand, { color: c.textSecondary }]} numberOfLines={1}>{appliance.brand}</Text>
                     <View style={styles.cardChips}>
                       {appliance.location ? (
-                        <View style={styles.chip}>
-                          <MapPin size={10} color={Colors.textSecondary} />
-                          <Text style={styles.chipText}>{appliance.location}</Text>
+                        <View style={[styles.chip, { backgroundColor: c.surfaceAlt }]}>
+                          <MapPin size={10} color={c.textSecondary} />
+                          <Text style={[styles.chipText, { color: c.textSecondary }]}>{appliance.location}</Text>
                         </View>
                       ) : null}
                       <View style={[styles.warrantyChip, { backgroundColor: warranty.color + '18' }]}>
@@ -143,7 +145,7 @@ export default function AppliancesScreen() {
                       </View>
                     </View>
                   </View>
-                  <ChevronRight size={18} color={Colors.textTertiary} />
+                  <ChevronRight size={18} color={c.textTertiary} />
                 </View>
               </PressableCard>
             );
@@ -164,7 +166,7 @@ export default function AppliancesScreen() {
 
       <FloatingActionButton
         onPress={handleAddAppliance}
-        color={Colors.primary}
+        color={c.primary}
         testID="add-appliance-btn"
       />
     </View>

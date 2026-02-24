@@ -12,6 +12,7 @@ import {
   Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useTheme } from '@/contexts/ThemeContext';
 import * as ImagePicker from 'expo-image-picker';
 import {
   Camera,

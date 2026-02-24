@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Colors from '@/constants/colors';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface ScreenHeaderProps {
   title: string;
@@ -8,10 +9,12 @@ interface ScreenHeaderProps {
 }
 
 function ScreenHeader({ title, subtitle }: ScreenHeaderProps) {
+  const { colors: c } = useTheme();
+
   return (
     <View style={styles.header}>
-      <Text style={styles.headerTitle}>{title}</Text>
-      <Text style={styles.headerSubtitle}>{subtitle}</Text>
+      <Text style={[styles.headerTitle, { color: c.text }]}>{title}</Text>
+      <Text style={[styles.headerSubtitle, { color: c.textSecondary }]}>{subtitle}</Text>
     </View>
   );
 }

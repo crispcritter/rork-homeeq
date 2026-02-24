@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { Check } from 'lucide-react-native';
 import Colors from '@/constants/colors';
+import { useTheme } from '@/contexts/ThemeContext';
 import { lightImpact } from '@/utils/haptics';
 
 interface PickerModalProps {
@@ -14,18 +15,20 @@ interface PickerModalProps {
 }
 
 function PickerModal({ visible, title, options, selected, onSelect, onClose }: PickerModalProps) {
+  const { colors: c } = useTheme();
+
   if (!visible) return null;
   return (
     <View style={styles.overlay}>
-      <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={onClose} />
-      <View style={styles.sheet}>
-        <View style={styles.handle} />
-        <Text style={styles.title}>{title}</Text>
+      <TouchableOpacity style={[styles.backdrop, { backgroundColor: c.overlay }]} activeOpacity={1} onPress={onClose} />
+      <View style={[styles.sheet, { backgroundColor: c.surface }]}>
+        <View style={[styles.handle, { backgroundColor: c.border }]} />
+        <Text style={[styles.title, { color: c.text }]}>{title}</Text>
         <ScrollView style={styles.optionsList} showsVerticalScrollIndicator={false}>
           {options.map((opt) => (
             <TouchableOpacity
               key={opt.value}
-              style={[styles.option, selected === opt.value && styles.optionSelected]}
+              style={[styles.option, selected === opt.value && { backgroundColor: c.primaryLight }]}
               onPress={() => {
                 onSelect(opt.value);
                 onClose();
@@ -33,10 +36,10 @@ function PickerModal({ visible, title, options, selected, onSelect, onClose }: P
               }}
               activeOpacity={0.7}
             >
-              <Text style={[styles.optionText, selected === opt.value && styles.optionTextSelected]}>
+              <Text style={[styles.optionText, { color: c.text }, selected === opt.value && { color: c.primary, fontWeight: '600' as const }]}>
                 {opt.label}
               </Text>
-              {selected === opt.value && <Check size={18} color={Colors.primary} />}
+              {selected === opt.value && <Check size={18} color={c.primary} />}
             </TouchableOpacity>
           ))}
         </ScrollView>

@@ -14,6 +14,7 @@ import {
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useHome } from '@/contexts/HomeContext';
 import Colors from '@/constants/colors';
+import { useTheme } from '@/contexts/ThemeContext';
 import { TaskPriority } from '@/types';
 import { PRIORITIES } from '@/constants/priorities';
 import formStyles from '@/constants/formStyles';
@@ -22,6 +23,7 @@ import { successNotification } from '@/utils/haptics';
 
 export default function AddTaskScreen() {
   const router = useRouter();
+  const { colors: c } = useTheme();
   const { addTask, appliances } = useHome();
 
   const [title, setTitle] = useState('');

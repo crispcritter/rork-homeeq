@@ -1,18 +1,20 @@
 import { Tabs } from "expo-router";
 import { Home, Refrigerator, CalendarCheck, PiggyBank, UserCircle } from "lucide-react-native";
 import React from "react";
-import Colors from "@/constants/colors";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export default function TabLayout() {
+  const { colors } = useTheme();
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: Colors.primary,
-        tabBarInactiveTintColor: Colors.textTertiary,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textTertiary,
         tabBarStyle: {
-          backgroundColor: Colors.white,
-          borderTopColor: Colors.borderLight,
+          backgroundColor: colors.surface,
+          borderTopColor: colors.borderLight,
           borderTopWidth: 1,
         },
         tabBarLabelStyle: {

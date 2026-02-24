@@ -19,6 +19,7 @@ import {
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import Colors from '@/constants/colors';
+import { useTheme } from '@/contexts/ThemeContext';
 import { categoryLabels, BUDGET_CATEGORY_COLORS } from '@/constants/categories';
 import FloatingActionButton from '@/components/FloatingActionButton';
 import ScreenHeader from '@/components/ScreenHeader';
@@ -29,6 +30,7 @@ import styles from '@/styles/budget';
 
 export default function BudgetScreen() {
   const router = useRouter();
+  const { colors: c } = useTheme();
   const { trustedPros, setMonthlyBudget } = useHome();
   const {
     budgetItems,
@@ -64,7 +66,7 @@ export default function BudgetScreen() {
   }, [setMonthlyBudget]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: c.background }]}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <ScreenHeader title="Spending" subtitle="Track your home expenses" />
 
@@ -290,7 +292,7 @@ export default function BudgetScreen() {
           mediumImpact();
           router.push('/add-expense' as any);
         }}
-        color={Colors.accent}
+        color={c.accent}
         testID="budget-add-expense"
       />
     </View>

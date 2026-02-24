@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { X, Check } from 'lucide-react-native';
 import Colors from '@/constants/colors';
+import { useTheme } from '@/contexts/ThemeContext';
 import { mediumImpact, lightImpact } from '@/utils/haptics';
 
 const QUICK_AMOUNTS = [500, 1000, 1500, 2000, 3000, 5000];
@@ -25,6 +26,7 @@ interface BudgetEditModalProps {
 }
 
 function BudgetEditModal({ visible, currentBudget, onSave, onClose }: BudgetEditModalProps) {
+  const { colors: c } = useTheme();
   const [editValue, setEditValue] = React.useState('');
   const modalAnim = useRef(new Animated.Value(0)).current;
 
@@ -75,6 +77,7 @@ function BudgetEditModal({ visible, currentBudget, onSave, onClose }: BudgetEdit
           style={[
             styles.modalContent,
             {
+              backgroundColor: c.surface,
               opacity: modalAnim,
               transform: [
                 {
@@ -88,23 +91,23 @@ function BudgetEditModal({ visible, currentBudget, onSave, onClose }: BudgetEdit
           ]}
         >
           <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Monthly Budget</Text>
+            <Text style={[styles.modalTitle, { color: c.text }]}>Monthly Budget</Text>
             <TouchableOpacity onPress={handleClose} activeOpacity={0.7}>
-              <X size={20} color={Colors.textTertiary} />
+              <X size={20} color={c.textTertiary} />
             </TouchableOpacity>
           </View>
 
-          <View style={styles.modalInputRow}>
-            <Text style={styles.modalCurrency}>$</Text>
+          <View style={[styles.modalInputRow, { backgroundColor: c.surfaceAlt }]}>
+            <Text style={[styles.modalCurrency, { color: c.textSecondary }]}>$</Text>
             <TextInput
-              style={styles.modalInput}
+              style={[styles.modalInput, { color: c.text }]}
               value={editValue}
               onChangeText={setEditValue}
               keyboardType="numeric"
               autoFocus
               selectTextOnFocus
               placeholder="0"
-              placeholderTextColor={Colors.textTertiary}
+              placeholderTextColor={c.textTertiary}
               testID="budget-edit-input"
             />
           </View>
@@ -136,12 +139,12 @@ function BudgetEditModal({ visible, currentBudget, onSave, onClose }: BudgetEdit
           </View>
 
           <TouchableOpacity
-            style={styles.modalSaveBtn}
+            style={[styles.modalSaveBtn, { backgroundColor: c.primary }]}
             onPress={handleSave}
             activeOpacity={0.8}
             testID="budget-save-btn"
           >
-            <Check size={18} color={Colors.white} />
+            <Check size={18} color={c.white} />
             <Text style={styles.modalSaveBtnText}>Save Budget</Text>
           </TouchableOpacity>
         </Animated.View>

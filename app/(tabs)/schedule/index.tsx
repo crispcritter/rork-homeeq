@@ -26,6 +26,7 @@ import {
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import Colors from '@/constants/colors';
+import { useTheme } from '@/contexts/ThemeContext';
 import PressableCard from '@/components/PressableCard';
 import FloatingActionButton from '@/components/FloatingActionButton';
 import ScreenHeader from '@/components/ScreenHeader';
@@ -87,6 +88,7 @@ function getImportanceAccentColor(priority: TaskPriority): string {
 
 export default function ScheduleScreen() {
   const router = useRouter();
+  const { colors: c } = useTheme();
   const { tasks, appliances, completeTask } = useHome();
   const [filter, setFilter] = useState<FilterType>('all');
   const [sortMode, setSortMode] = useState<SortMode>('item');
@@ -368,7 +370,7 @@ export default function ScheduleScreen() {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: c.background }]}>
       <ScreenHeader title="To-Do" subtitle="Stay on top of your home care" />
 
       <View style={styles.toolbarRow}>
@@ -489,7 +491,7 @@ export default function ScheduleScreen() {
           mediumImpact();
           router.push('/add-task' as any);
         }}
-        color={Colors.primary}
+        color={c.primary}
         testID="schedule-add-task"
       />
     </View>

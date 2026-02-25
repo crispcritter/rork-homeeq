@@ -240,6 +240,50 @@ export default function BudgetScreen() {
     }
   }, [budgetItems, buildHtmlTable]);
 
+  const handleCSV = useCallback(async () => {
+    mediumImpact();
+    if (budgetItems.length === 0) {
+      Alert.alert('No Data', 'There are no expenses to export yet.');
+      return;
+    }
+
+    try {
+      const csvContent = generateCSV(budgetItems, categoryLabels);
+      const fileName = `HomeEQ_Expenses_${new Date().toISOString().split('T')[0]}.csv`;
+
+      if (Platform.OS === 'web') {
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        successNotification();
+        console.log('[CSV] Web download triggered');
+        return;
+      }
+
+      const file = new File(Paths.cache, fileName);
+      file.write(csvContent);
+      console.log('[CSV] File written to:', file.uri);
+
+      const canShare = await isAvailableAsync();
+      if (canShare) {
+        await shareAsync(file.uri, { UTI: 'public.comma-separated-values-text', mimeType: 'text/csv' });
+        successNotification();
+        console.log('[CSV] Shared successfully');
+      } else {
+        Alert.alert('CSV Ready', 'CSV has been saved but sharing is not available on this device.');
+      }
+    } catch (e: any) {
+      console.error('[CSV] Error:', e?.message || e);
+      Alert.alert('CSV Error', 'Something went wrong while creating the CSV. Please try again.');
+    }
+  }, [budgetItems]);
+
   const handlePrint = useCallback(async () => {
     mediumImpact();
     if (budgetItems.length === 0) {
@@ -482,51 +526,55 @@ export default function BudgetScreen() {
           {exportExpanded && (
             <View style={styles.exportGrid}>
               <TouchableOpacity
-                style={styles.exportActionRow}
+                style={styles.exportGridItem}
                 onPress={handleEmail}
                 activeOpacity={0.7}
                 testID="export-email"
               >
-                <View style={[styles.exportActionIcon, { backgroundColor: '#EEF2FF' }]}>
-                  <Mail size={20} color="#4F46E5" />
+                <View style={[styles.exportGridIcon, { backgroundColor: '#EEF2FF' }]}>
+                  <Mail size={22} color="#4F46E5" />
                 </View>
-                <View style={styles.exportActionInfo}>
-                  <Text style={styles.exportActionTitle}>Email</Text>
-                  <Text style={styles.exportActionDesc}>Send as CSV attachment</Text>
-                </View>
-                <ChevronRight size={16} color={c.textTertiary} />
+                <Text style={styles.exportGridTitle}>Email</Text>
+                <Text style={styles.exportGridDesc}>Send as attachment</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={styles.exportActionRow}
+                style={styles.exportGridItem}
                 onPress={handlePDF}
                 activeOpacity={0.7}
                 testID="export-pdf"
               >
-                <View style={[styles.exportActionIcon, { backgroundColor: '#FEF2F2' }]}>
-                  <FileDown size={20} color="#DC2626" />
+                <View style={[styles.exportGridIcon, { backgroundColor: '#FEF2F2' }]}>
+                  <FileDown size={22} color="#DC2626" />
                 </View>
-                <View style={styles.exportActionInfo}>
-                  <Text style={styles.exportActionTitle}>PDF</Text>
-                  <Text style={styles.exportActionDesc}>Save or share as PDF</Text>
-                </View>
-                <ChevronRight size={16} color={c.textTertiary} />
+                <Text style={styles.exportGridTitle}>PDF</Text>
+                <Text style={styles.exportGridDesc}>Save or share</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.exportActionRow, { borderBottomWidth: 0 }]}
+                style={styles.exportGridItem}
+                onPress={handleCSV}
+                activeOpacity={0.7}
+                testID="export-csv"
+              >
+                <View style={[styles.exportGridIcon, { backgroundColor: '#FFF7ED' }]}>
+                  <Share2 size={22} color="#EA580C" />
+                </View>
+                <Text style={styles.exportGridTitle}>CSV</Text>
+                <Text style={styles.exportGridDesc}>Spreadsheet data</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.exportGridItem}
                 onPress={handlePrint}
                 activeOpacity={0.7}
                 testID="export-print"
               >
-                <View style={[styles.exportActionIcon, { backgroundColor: '#F0FDF4' }]}>
-                  <Printer size={20} color="#16A34A" />
+                <View style={[styles.exportGridIcon, { backgroundColor: '#F0FDF4' }]}>
+                  <Printer size={22} color="#16A34A" />
                 </View>
-                <View style={styles.exportActionInfo}>
-                  <Text style={styles.exportActionTitle}>Print</Text>
-                  <Text style={styles.exportActionDesc}>Send to AirPrint printer</Text>
-                </View>
-                <ChevronRight size={16} color={c.textTertiary} />
+                <Text style={styles.exportGridTitle}>Print</Text>
+                <Text style={styles.exportGridDesc}>AirPrint</Text>
               </TouchableOpacity>
             </View>
           )}

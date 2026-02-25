@@ -48,15 +48,25 @@ export async function resetAllData(): Promise<void> {
 }
 
 export async function loadFromStorage<T>(key: string, fallback: T): Promise<T> {
-  await initializeData();
-  const data = await AsyncStorage.getItem(key);
-  return data ? JSON.parse(data) : fallback;
+  try {
+    await initializeData();
+    const data = await AsyncStorage.getItem(key);
+    return data ? JSON.parse(data) : fallback;
+  } catch (e) {
+    console.error(`[Storage] loadFromStorage error for key "${key}":`, e);
+    return fallback;
+  }
 }
 
 export async function loadMonthlyBudget(): Promise<number> {
-  await initializeData();
-  const data = await AsyncStorage.getItem(STORAGE_KEYS.monthlyBudget);
-  return data ? parseFloat(data) : 1500;
+  try {
+    await initializeData();
+    const data = await AsyncStorage.getItem(STORAGE_KEYS.monthlyBudget);
+    return data ? parseFloat(data) : 1500;
+  } catch (e) {
+    console.error('[Storage] loadMonthlyBudget error:', e);
+    return 1500;
+  }
 }
 
 export async function saveToStorage(key: string, value: unknown): Promise<void> {

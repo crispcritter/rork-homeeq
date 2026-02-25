@@ -34,7 +34,7 @@ import ScreenHeader from '@/components/ScreenHeader';
 import { useBudgetSummary } from '@/hooks/useBudgetSummary';
 import { mediumImpact, lightImpact, successNotification } from '@/utils/haptics';
 import createStyles from '@/styles/budget';
-import { File, Paths } from 'expo-file-system';
+import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 
 function generateCSV(items: any[], categoryLabelsMap: Record<string, string>): string {
@@ -93,12 +93,15 @@ export default function BudgetScreen() {
 
     if (Platform.OS === 'web') {
       try {
-        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${fileName}.csv`;
-        a.click();
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', `${fileName}.csv`);
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
         URL.revokeObjectURL(url);
         successNotification();
         Alert.alert('Exported', `Your expenses have been downloaded as ${fileName}.csv`);
@@ -110,13 +113,17 @@ export default function BudgetScreen() {
     }
 
     try {
-      const file = new File(Paths.cache, `${fileName}.csv`);
-      file.create();
-      file.write(csvContent);
+      const fileUri = `${FileSystem.cacheDirectory}${fileName}.csv`;
+      console.log('[Export] Writing file to:', fileUri);
+      await FileSystem.writeAsStringAsync(fileUri, csvContent, {
+        encoding: FileSystem.EncodingType.UTF8,
+      });
+      console.log('[Export] File written successfully');
 
       const canShare = await Sharing.isAvailableAsync();
+      console.log('[Export] Sharing available:', canShare);
       if (canShare) {
-        await Sharing.shareAsync(file.uri, {
+        await Sharing.shareAsync(fileUri, {
           mimeType: 'text/csv',
           dialogTitle: `Export Expenses (${format.toUpperCase()})`,
           UTI: format === 'apple-numbers' ? 'com.apple.numbers.tables' : 'public.comma-separated-values-text',
@@ -124,10 +131,10 @@ export default function BudgetScreen() {
         successNotification();
         console.log('[Export] Shared successfully as', format);
       } else {
-        Alert.alert('Export Ready', `File saved successfully.`);
+        Alert.alert('Export Ready', 'File saved to cache. Sharing is not available on this device.');
       }
-    } catch (e) {
-      console.error('[Export] Error:', e);
+    } catch (e: any) {
+      console.error('[Export] Error:', e?.message || e);
       Alert.alert('Export Error', 'Something went wrong while exporting. Please try again.');
     }
   }, [budgetItems]);

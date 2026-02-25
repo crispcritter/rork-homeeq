@@ -60,6 +60,7 @@ import { getWarrantyStatus, formatMonthDay, formatMonthYear, formatLongDate, par
 import { lightImpact, successNotification, warningNotification } from '@/utils/haptics';
 import { useManualSearch } from '@/hooks/useManualSearch';
 import { useMaintenanceRecommendations } from '@/hooks/useMaintenanceRecommendations';
+import { useAppStoreSearch } from '@/hooks/useAppStoreSearch';
 import * as Clipboard from 'expo-clipboard';
 
 export default function ApplianceDetailScreen() {
@@ -111,6 +112,11 @@ export default function ApplianceDetailScreen() {
     handleAddRecommendationAsTask,
     handleAddAllRecommendations,
   } = useMaintenanceRecommendations(appliance, addTask);
+
+  const {
+    data: appStoreResult,
+    isLoading: isSearchingApp,
+  } = useAppStoreSearch(appliance?.name ?? '', appliance?.brand ?? '');
 
   const linkedPro = useMemo(
     () => trustedPros.find((p) => (p.linkedApplianceIds ?? []).includes(id ?? '')),
@@ -570,55 +576,70 @@ export default function ApplianceDetailScreen() {
           </View>
           </CollapsibleSection>
 
-          {appliance.appInfo && (appliance.appInfo.appStoreUrl || appliance.appInfo.appName || appliance.appInfo.username || appliance.appInfo.password) ? (
-            <CollapsibleSection
-              title="Associated App"
-              icon={<Smartphone size={16} color="#0A84FF" />}
-              isCollapsed={collapsedSections['app'] ?? false}
-              onToggle={() => toggleSection('app')}
-              styles={styles}
-              colors={c}
-            >
-            <View style={styles.appInfoCard}>
-              {appliance.appInfo.appName ? (
-                <View style={styles.appInfoNameRow}>
-                  <View style={styles.appInfoIconWrap}>
-                    <Smartphone size={20} color="#0A84FF" />
-                  </View>
-                  <View style={styles.appInfoNameText}>
-                    <Text style={styles.appInfoAppName}>{appliance.appInfo.appName}</Text>
-                    <Text style={styles.appInfoAppLabel}>Mobile App</Text>
+          <CollapsibleSection
+            title="Associated App"
+            icon={<Smartphone size={16} color="#0A84FF" />}
+            isCollapsed={collapsedSections['app'] ?? false}
+            onToggle={() => toggleSection('app')}
+            styles={styles}
+            colors={c}
+          >
+          <View style={styles.appInfoCard}>
+            {isSearchingApp ? (
+              <View style={styles.appSearchLoading}>
+                <ActivityIndicator size="small" color="#0A84FF" />
+                <Text style={styles.appSearchLoadingText}>Searching App Store...</Text>
+              </View>
+            ) : appStoreResult ? (
+              <TouchableOpacity
+                style={styles.appStoreResultRow}
+                onPress={() => {
+                  lightImpact();
+                  Linking.openURL(appStoreResult.trackViewUrl).catch(() => {
+                    Alert.alert('Error', 'Could not open the App Store link.');
+                  });
+                }}
+                activeOpacity={0.7}
+                testID="open-app-store-result"
+              >
+                <Image
+                  source={{ uri: appStoreResult.artworkUrl100 }}
+                  style={styles.appStoreIcon}
+                  contentFit="cover"
+                />
+                <View style={styles.appStoreResultInfo}>
+                  <Text style={styles.appStoreResultName} numberOfLines={1}>{appStoreResult.trackName}</Text>
+                  <Text style={styles.appStoreResultDev} numberOfLines={1}>{appStoreResult.sellerName}</Text>
+                  <View style={styles.appStoreResultMeta}>
+                    {appStoreResult.averageUserRating != null && (
+                      <View style={styles.appStoreRatingRow}>
+                        <Star size={10} color="#F5A623" fill="#F5A623" />
+                        <Text style={styles.appStoreRatingText}>{appStoreResult.averageUserRating.toFixed(1)}</Text>
+                        {appStoreResult.userRatingCount != null && (
+                          <Text style={styles.appStoreRatingCount}>({appStoreResult.userRatingCount > 1000 ? `${(appStoreResult.userRatingCount / 1000).toFixed(1)}K` : appStoreResult.userRatingCount})</Text>
+                        )}
+                      </View>
+                    )}
+                    {appStoreResult.formattedPrice ? (
+                      <Text style={styles.appStorePrice}>{appStoreResult.formattedPrice}</Text>
+                    ) : null}
                   </View>
                 </View>
-              ) : null}
-              {appliance.appInfo.appStoreUrl ? (
-                <>
-                  {appliance.appInfo.appName ? <View style={styles.appInfoDivider} /> : null}
-                  <TouchableOpacity
-                    style={styles.appInfoLinkRow}
-                    onPress={() => {
-                      lightImpact();
-                      Linking.openURL(appliance.appInfo!.appStoreUrl!).catch(() => {
-                        Alert.alert('Error', 'Could not open the App Store link.');
-                      });
-                    }}
-                    activeOpacity={0.7}
-                    testID="open-app-store-link"
-                  >
-                    <View style={styles.appInfoLinkIcon}>
-                      <ExternalLink size={16} color="#0A84FF" />
-                    </View>
-                    <View style={styles.appInfoLinkContent}>
-                      <Text style={styles.appInfoLinkTitle}>Open in App Store</Text>
-                      <Text style={styles.appInfoLinkUrl} numberOfLines={1}>{appliance.appInfo.appStoreUrl}</Text>
-                    </View>
-                    <ChevronRight size={16} color={c.textTertiary} />
-                  </TouchableOpacity>
-                </>
-              ) : null}
-              {appliance.appInfo.username ? (
-                <>
-                  <View style={styles.appInfoDivider} />
+                <View style={styles.appStoreGetBtn}>
+                  <Text style={styles.appStoreGetBtnText}>GET</Text>
+                </View>
+              </TouchableOpacity>
+            ) : (
+              <View style={styles.appSearchEmpty}>
+                <Smartphone size={20} color={c.textTertiary} />
+                <Text style={styles.appSearchEmptyText}>No app found for this item</Text>
+              </View>
+            )}
+
+            {appliance.appInfo && (appliance.appInfo.username || appliance.appInfo.password) ? (
+              <>
+                <View style={styles.appInfoDivider} />
+                {appliance.appInfo.username ? (
                   <View style={styles.appInfoCredRow}>
                     <View style={[styles.appInfoCredIcon, { backgroundColor: '#E8F5E9' }]}>
                       <User size={15} color="#43A047" />
@@ -639,49 +660,49 @@ export default function ApplianceDetailScreen() {
                       <Copy size={14} color={c.textTertiary} />
                     </TouchableOpacity>
                   </View>
-                </>
-              ) : null}
-              {appliance.appInfo.password ? (
-                <>
-                  <View style={styles.appInfoDivider} />
-                  <View style={styles.appInfoCredRow}>
-                    <View style={[styles.appInfoCredIcon, { backgroundColor: '#FFF3E0' }]}>
-                      <Lock size={15} color="#EF6C00" />
+                ) : null}
+                {appliance.appInfo.password ? (
+                  <>
+                    {appliance.appInfo.username ? <View style={styles.appInfoDivider} /> : null}
+                    <View style={styles.appInfoCredRow}>
+                      <View style={[styles.appInfoCredIcon, { backgroundColor: '#FFF3E0' }]}>
+                        <Lock size={15} color="#EF6C00" />
+                      </View>
+                      <View style={styles.appInfoCredContent}>
+                        <Text style={styles.appInfoCredLabel}>Password</Text>
+                        <Text style={styles.appInfoCredValue} selectable>
+                          {showAppPassword ? appliance.appInfo.password : '••••••••'}
+                        </Text>
+                      </View>
+                      <TouchableOpacity
+                        style={styles.appInfoCopyBtn}
+                        onPress={() => {
+                          lightImpact();
+                          setShowAppPassword((prev) => !prev);
+                        }}
+                        activeOpacity={0.7}
+                        hitSlop={8}
+                      >
+                        {showAppPassword ? <EyeOff size={14} color={c.textTertiary} /> : <Eye size={14} color={c.textTertiary} />}
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.appInfoCopyBtn}
+                        onPress={() => {
+                          lightImpact();
+                          Clipboard.setStringAsync(appliance.appInfo!.password!);
+                        }}
+                        activeOpacity={0.7}
+                        hitSlop={8}
+                      >
+                        <Copy size={14} color={c.textTertiary} />
+                      </TouchableOpacity>
                     </View>
-                    <View style={styles.appInfoCredContent}>
-                      <Text style={styles.appInfoCredLabel}>Password</Text>
-                      <Text style={styles.appInfoCredValue} selectable>
-                        {showAppPassword ? appliance.appInfo.password : '••••••••'}
-                      </Text>
-                    </View>
-                    <TouchableOpacity
-                      style={styles.appInfoCopyBtn}
-                      onPress={() => {
-                        lightImpact();
-                        setShowAppPassword((prev) => !prev);
-                      }}
-                      activeOpacity={0.7}
-                      hitSlop={8}
-                    >
-                      {showAppPassword ? <EyeOff size={14} color={c.textTertiary} /> : <Eye size={14} color={c.textTertiary} />}
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={styles.appInfoCopyBtn}
-                      onPress={() => {
-                        lightImpact();
-                        Clipboard.setStringAsync(appliance.appInfo!.password!);
-                      }}
-                      activeOpacity={0.7}
-                      hitSlop={8}
-                    >
-                      <Copy size={14} color={c.textTertiary} />
-                    </TouchableOpacity>
-                  </View>
-                </>
-              ) : null}
-            </View>
-            </CollapsibleSection>
-          ) : null}
+                  </>
+                ) : null}
+              </>
+            ) : null}
+          </View>
+          </CollapsibleSection>
 
           <CollapsibleSection
             title="Trusted Pro"
@@ -1137,4 +1158,20 @@ const createApplianceStyles = (c: any) => StyleSheet.create({
   appInfoCredLabel: { fontSize: 11, color: c.textTertiary, marginBottom: 2 },
   appInfoCredValue: { fontSize: 14, fontWeight: '500' as const, color: c.text },
   appInfoCopyBtn: { padding: 6 },
+  appSearchLoading: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 20, paddingHorizontal: 14 },
+  appSearchLoadingText: { fontSize: 13, color: '#0A84FF', fontWeight: '500' as const },
+  appStoreResultRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 14, paddingVertical: 12 },
+  appStoreIcon: { width: 56, height: 56, borderRadius: 13, backgroundColor: c.surfaceAlt },
+  appStoreResultInfo: { flex: 1 },
+  appStoreResultName: { fontSize: 15, fontWeight: '600' as const, color: c.text, marginBottom: 2 },
+  appStoreResultDev: { fontSize: 12, color: c.textSecondary, marginBottom: 4 },
+  appStoreResultMeta: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  appStoreRatingRow: { flexDirection: 'row', alignItems: 'center', gap: 3 },
+  appStoreRatingText: { fontSize: 11, fontWeight: '600' as const, color: c.text },
+  appStoreRatingCount: { fontSize: 11, color: c.textTertiary },
+  appStorePrice: { fontSize: 11, fontWeight: '500' as const, color: c.textTertiary },
+  appStoreGetBtn: { backgroundColor: '#0A84FF', paddingHorizontal: 16, paddingVertical: 7, borderRadius: 16 },
+  appStoreGetBtnText: { fontSize: 13, fontWeight: '700' as const, color: c.white },
+  appSearchEmpty: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 20, paddingHorizontal: 14 },
+  appSearchEmptyText: { fontSize: 13, color: c.textTertiary },
 });

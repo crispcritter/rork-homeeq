@@ -34,8 +34,8 @@ import ScreenHeader from '@/components/ScreenHeader';
 import { useBudgetSummary } from '@/hooks/useBudgetSummary';
 import { mediumImpact, lightImpact, successNotification } from '@/utils/haptics';
 import createStyles from '@/styles/budget';
-import * as FileSystem from 'expo-file-system';
-import * as Sharing from 'expo-sharing';
+import { File, Paths } from 'expo-file-system';
+import { shareAsync, isAvailableAsync } from 'expo-sharing';
 
 function generateCSV(items: any[], categoryLabelsMap: Record<string, string>): string {
   const headers = ['Date', 'Description', 'Category', 'Amount', 'Payment Method', 'Invoice #', 'Tax Deductible', 'Provider', 'Notes'];
@@ -113,17 +113,15 @@ export default function BudgetScreen() {
     }
 
     try {
-      const fileUri = `${FileSystem.cacheDirectory}${fileName}.csv`;
-      console.log('[Export] Writing file to:', fileUri);
-      await FileSystem.writeAsStringAsync(fileUri, csvContent, {
-        encoding: FileSystem.EncodingType.UTF8,
-      });
+      const file = new File(Paths.cache, `${fileName}.csv`);
+      console.log('[Export] Writing file to:', file.uri);
+      file.write(csvContent);
       console.log('[Export] File written successfully');
 
-      const canShare = await Sharing.isAvailableAsync();
+      const canShare = await isAvailableAsync();
       console.log('[Export] Sharing available:', canShare);
       if (canShare) {
-        await Sharing.shareAsync(fileUri, {
+        await shareAsync(file.uri, {
           mimeType: 'text/csv',
           dialogTitle: `Export Expenses (${format.toUpperCase()})`,
           UTI: format === 'apple-numbers' ? 'com.apple.numbers.tables' : 'public.comma-separated-values-text',

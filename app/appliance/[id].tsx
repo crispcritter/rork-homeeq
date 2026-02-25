@@ -274,7 +274,7 @@ export default function ApplianceDetailScreen() {
           <Image source={{ uri: appliance.imageUrl }} style={styles.heroImage} contentFit="cover" />
         ) : (
           <View style={[styles.heroImage, styles.heroPlaceholder]}>
-            <Text style={styles.heroInitial}>{appliance.name[0]}</Text>
+            <Text style={styles.heroInitial}>{appliance.name?.[0] ?? '?'}</Text>
           </View>
         )}
 

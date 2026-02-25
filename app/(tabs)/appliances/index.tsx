@@ -196,7 +196,7 @@ export default function AppliancesScreen() {
                     <Image source={{ uri: appliance.imageUrl }} style={styles.cardImage} contentFit="cover" />
                   ) : (
                     <View style={[styles.cardImage, styles.cardImagePlaceholder, { backgroundColor: avatarColor + '18' }]}>
-                      <Text style={[styles.cardImageText, { color: avatarColor }]}>{appliance.name[0]}</Text>
+                      <Text style={[styles.cardImageText, { color: avatarColor }]}>{appliance.name?.[0] ?? '?'}</Text>
                     </View>
                   )}
                   <View style={styles.cardInfo}>

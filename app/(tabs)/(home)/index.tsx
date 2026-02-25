@@ -290,7 +290,7 @@ export default function DashboardScreen() {
                     onPress={() => handlePress(`/provider/${pro.id}`)}
                   >
                     <View style={[styles.providerAvatar, { backgroundColor: (PROVIDER_COLORS[idx % PROVIDER_COLORS.length]) + '20' }]}>
-                      <Text style={[styles.providerInitial, { color: PROVIDER_COLORS[idx % PROVIDER_COLORS.length] }]}>{pro.name[0]}</Text>
+                      <Text style={[styles.providerInitial, { color: PROVIDER_COLORS[idx % PROVIDER_COLORS.length] }]}>{pro.name?.[0] ?? '?'}</Text>
                     </View>
                     <Text style={styles.providerName} numberOfLines={1}>{pro.name}</Text>
                     <Text style={styles.providerSpecialty} numberOfLines={1}>{pro.specialty}</Text>

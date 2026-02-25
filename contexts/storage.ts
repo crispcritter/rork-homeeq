@@ -41,10 +41,14 @@ export function initializeData(): Promise<void> {
 export async function resetAllData(): Promise<void> {
   console.log('[Storage] Resetting all data to defaults...');
   initPromise = null;
-  await Promise.all(
+  const results = await Promise.allSettled(
     Object.values(STORAGE_KEYS).map((key) => AsyncStorage.removeItem(key))
   );
-  console.log('[Storage] All data cleared, will re-seed on next load');
+  const failures = results.filter((r) => r.status === 'rejected') as PromiseRejectedResult[];
+  if (failures.length > 0) {
+    console.error(`[Storage] ${failures.length} key(s) failed to remove during reset:`, failures.map((f) => f.reason));
+  }
+  console.log('[Storage] Reset complete, will re-seed on next load');
 }
 
 export async function loadFromStorage<T>(key: string, fallback: T): Promise<T> {

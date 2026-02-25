@@ -42,26 +42,17 @@ export const APPLIANCE_TO_SERVICE: Record<string, string> = {
   other: 'home repair',
 };
 
-export const RADIUS_FILTER_OPTIONS = [
+export const RADIUS_OPTIONS = [5, 10, 15, 20, 25, 50] as const;
+
+export const RADIUS_FILTER_OPTIONS: { value: number; label: string }[] = [
   { value: 0, label: 'Any' },
-  { value: 5, label: '5 mi' },
-  { value: 10, label: '10 mi' },
-  { value: 15, label: '15 mi' },
-  { value: 20, label: '20 mi' },
-  { value: 25, label: '25 mi' },
-  { value: 50, label: '50 mi' },
+  ...RADIUS_OPTIONS.map((r) => ({ value: r, label: `${r} mi` })),
 ];
 
-export const SEARCH_RADIUS_OPTIONS = [
-  { value: 5, label: '5 miles' },
-  { value: 10, label: '10 miles' },
-  { value: 15, label: '15 miles' },
-  { value: 20, label: '20 miles' },
-  { value: 25, label: '25 miles' },
-  { value: 50, label: '50 miles' },
-];
-
-export const RADIUS_OPTIONS = [5, 10, 15, 20, 25, 30, 50, 75, 100];
+export const SEARCH_RADIUS_OPTIONS: { value: number; label: string }[] = RADIUS_OPTIONS.map((r) => ({
+  value: r,
+  label: `${r} miles`,
+}));
 
 export function getServiceCategoryLabel(value: string): string {
   return SERVICE_CATEGORY_OPTIONS.find((o) => o.value === value)?.label ?? value;

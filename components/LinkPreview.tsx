@@ -11,7 +11,7 @@ import {
   Platform,
 } from 'react-native';
 import { ExternalLink, Globe, X, ShoppingBag } from 'lucide-react-native';
-import { LightColors as Colors } from '@/constants/colors';
+import { ColorScheme } from '@/constants/colors';
 import { useTheme } from '@/contexts/ThemeContext';
 
 interface LinkMeta {
@@ -162,6 +162,7 @@ function cleanTitle(title: string, domain: string): string {
 
 const LinkPreview = React.memo(function LinkPreview({ url, onRemove }: LinkPreviewProps) {
   const { colors: c } = useTheme();
+  const styles = React.useMemo(() => createStyles(c), [c]);
   const [meta, setMeta] = useState<LinkMeta | null>(null);
   const [loading, setLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
@@ -345,7 +346,7 @@ const LinkPreview = React.memo(function LinkPreview({ url, onRemove }: LinkPrevi
 
 export default LinkPreview;
 
-const styles = StyleSheet.create({
+const createStyles = (c: ColorScheme) => StyleSheet.create({
   container: {
     position: 'relative' as const,
   },
@@ -356,23 +357,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    backgroundColor: Colors.surfaceAlt,
+    backgroundColor: c.surfaceAlt,
     borderRadius: 12,
     padding: 14,
   },
   loadingText: {
     fontSize: 12,
-    color: Colors.textTertiary,
+    color: c.textTertiary,
   },
   card: {
-    backgroundColor: Colors.surfaceAlt,
+    backgroundColor: c.surfaceAlt,
     borderRadius: 12,
     overflow: 'hidden',
   },
   imageContainer: {
     width: '100%',
     height: 140,
-    backgroundColor: Colors.border,
+    backgroundColor: c.border,
   },
   image: {
     width: '100%',
@@ -388,7 +389,7 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 7,
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 1,
@@ -411,7 +412,7 @@ const styles = StyleSheet.create({
   siteName: {
     fontSize: 11,
     fontWeight: '600' as const,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     textTransform: 'uppercase' as const,
     letterSpacing: 0.3,
     lineHeight: 14,
@@ -419,13 +420,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 14,
     fontWeight: '600' as const,
-    color: Colors.text,
+    color: c.text,
     lineHeight: 19,
     marginBottom: 2,
   },
   description: {
     fontSize: 12,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     lineHeight: 17,
   },
   removeBtn: {
@@ -435,7 +436,7 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22,
     borderRadius: 11,
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',

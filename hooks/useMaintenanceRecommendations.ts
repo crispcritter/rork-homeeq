@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { Alert } from 'react-native';
 import { generateObject } from '@rork-ai/toolkit-sdk';
 import { z } from 'zod';
-import { Appliance } from '@/types';
+import { Appliance, MaintenanceTask } from '@/types';
 import { categoryLabels } from '@/constants/categories';
 import { successNotification, lightImpact } from '@/utils/haptics';
 
@@ -35,7 +35,7 @@ interface UseMaintenanceRecommendationsResult {
 
 export function useMaintenanceRecommendations(
   appliance: Appliance | undefined,
-  addTask: (task: any) => void,
+  addTask: (task: MaintenanceTask) => void,
 ): UseMaintenanceRecommendationsResult {
   const [isGeneratingRecs, setIsGeneratingRecs] = useState(false);
   const [recommendations, setRecommendations] = useState<MaintenanceRecommendation[]>([]);

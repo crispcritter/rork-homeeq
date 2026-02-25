@@ -7,7 +7,7 @@ interface StarRatingProps {
   size?: number;
 }
 
-export default function StarRating({ rating, size = 14 }: StarRatingProps) {
+function StarRating({ rating, size = 14 }: StarRatingProps) {
   const stars = [];
   for (let i = 1; i <= 5; i++) {
     const filled = rating >= i;
@@ -24,3 +24,5 @@ export default function StarRating({ rating, size = 14 }: StarRatingProps) {
   }
   return <View style={{ flexDirection: 'row', alignItems: 'center', gap: 1 }}>{stars}</View>;
 }
+
+export default React.memo(StarRating);

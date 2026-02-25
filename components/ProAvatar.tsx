@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import Colors from '@/constants/colors';
 
 const AVATAR_COLORS = ['#C4826D', '#5A8A60', '#B08D57', '#A08670', '#4A7FBF', '#7B61A8'];
 

@@ -30,7 +30,7 @@ function ContactRow({ icon, text, url, onPress, numberOfLines }: ContactRowProps
     return (
       <TouchableOpacity style={styles.row} onPress={handlePress} activeOpacity={0.7}>
         {icon}
-        <Text style={[styles.text, { color: c.textSecondary }, styles.linkText]} numberOfLines={numberOfLines}>
+        <Text style={[styles.text, { color: c.primary }]} numberOfLines={numberOfLines}>
           {text}
         </Text>
         <ExternalLink size={14} color={c.textTertiary} />
@@ -60,9 +60,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 17,
   },
-  linkText: {
-    color: '#4A7FBF',
-  },
+  linkText: {},
 });
 
 export default React.memo(ContactRow);

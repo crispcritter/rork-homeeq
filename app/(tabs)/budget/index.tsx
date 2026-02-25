@@ -1,12 +1,9 @@
-import React, { useState, useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
   View,
   Text,
   ScrollView,
-  Animated,
   TouchableOpacity,
-  Alert,
-  Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import {
@@ -15,55 +12,30 @@ import {
   Camera,
   UserCheck,
   ChevronRight,
-  ChevronDown,
-  ChevronUp,
   Phone,
   CalendarDays,
   CalendarRange,
-  Share2,
   FileText,
-  Mail,
-  FileDown,
-  Printer,
-  Download,
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { categoryLabels, BUDGET_CATEGORY_COLORS } from '@/constants/categories';
 import FloatingActionButton from '@/components/FloatingActionButton';
 import ScreenHeader from '@/components/ScreenHeader';
+import ExportSection from '@/components/ExportSection';
 import { useBudgetSummary } from '@/hooks/useBudgetSummary';
-import { mediumImpact, lightImpact, successNotification } from '@/utils/haptics';
+import { mediumImpact, lightImpact } from '@/utils/haptics';
+import { rowsToCSV, buildHtmlReport } from '@/utils/export';
 import createStyles from '@/styles/budget';
-import { File, Paths } from 'expo-file-system';
-import { shareAsync, isAvailableAsync } from 'expo-sharing';
-import * as MailComposer from 'expo-mail-composer';
-import * as Print from 'expo-print';
-function escapeCSVField(value: string): string {
-  if (value.includes(',') || value.includes('"') || value.includes('\n') || value.includes('\r')) {
-    return `"${value.replace(/"/g, '""')}"`;
-  }
-  return value;
-}
+import { BudgetItem } from '@/types';
+const EXPENSE_HEADERS = [
+  'Date', 'Description', 'Category', 'Amount', 'Payment Method',
+  'Invoice #', 'Tax Deductible', 'Provider Name', 'Provider Phone',
+  'Provider Email', 'Provider Website', 'Provider Address',
+  'Provider Specialty', 'Notes', 'Appliance ID',
+];
 
-function buildExpenseRows(items: any[], categoryLabelsMap: Record<string, string>): string[][] {
-  const headers = [
-    'Date',
-    'Description',
-    'Category',
-    'Amount',
-    'Payment Method',
-    'Invoice #',
-    'Tax Deductible',
-    'Provider Name',
-    'Provider Phone',
-    'Provider Email',
-    'Provider Website',
-    'Provider Address',
-    'Provider Specialty',
-    'Notes',
-    'Appliance ID',
-  ];
+function buildExpenseRows(items: BudgetItem[], categoryLabelsMap: Record<string, string>): string[][] {
   const rows = items.map((item) => [
     item.date || '',
     item.description || '',
@@ -81,12 +53,7 @@ function buildExpenseRows(items: any[], categoryLabelsMap: Record<string, string
     item.notes || '',
     item.applianceId || '',
   ]);
-  return [headers, ...rows];
-}
-
-function generateCSV(items: any[], categoryLabelsMap: Record<string, string>): string {
-  const allRows = buildExpenseRows(items, categoryLabelsMap);
-  return allRows.map((row) => row.map(escapeCSVField).join(',')).join('\r\n');
+  return [EXPENSE_HEADERS, ...rows];
 }
 
 export default function BudgetScreen() {
@@ -102,216 +69,28 @@ export default function BudgetScreen() {
     recentItems,
   } = useBudgetSummary();
 
-  const [exportExpanded, setExportExpanded] = useState<boolean>(false);
-  const exportAnim = useRef(new Animated.Value(0)).current;
-
-  const toggleExport = useCallback(() => {
-    lightImpact();
-    const toValue = exportExpanded ? 0 : 1;
-    setExportExpanded(!exportExpanded);
-    Animated.timing(exportAnim, {
-      toValue,
-      duration: 250,
-      useNativeDriver: false,
-    }).start();
-  }, [exportExpanded, exportAnim]);
-
   const currentMonthName = new Date().toLocaleString('en-US', { month: 'long' });
 
-  const buildHtmlTable = useCallback((items: any[], catLabels: Record<string, string>): string => {
-    const rows = buildExpenseRows(items, catLabels);
-    const headers = rows[0];
-    const dataRows = rows.slice(1);
-    const dateStr = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-
-    return `<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<style>
-  body { font-family: -apple-system, Helvetica Neue, Arial, sans-serif; padding: 24px; color: #1a1a2e; }
-  h1 { font-size: 22px; margin-bottom: 4px; }
-  .subtitle { color: #6b7280; font-size: 13px; margin-bottom: 20px; }
-  .summary { display: flex; gap: 24px; margin-bottom: 20px; }
-  .summary-item { background: #f3f4f6; border-radius: 8px; padding: 12px 16px; }
-  .summary-label { font-size: 11px; color: #6b7280; text-transform: uppercase; }
-  .summary-value { font-size: 18px; font-weight: 700; }
-  table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  th { background: #1a1a2e; color: #fff; padding: 8px 10px; text-align: left; font-weight: 600; }
-  td { padding: 7px 10px; border-bottom: 1px solid #e5e7eb; }
-  tr:nth-child(even) td { background: #f9fafb; }
-  .footer { margin-top: 16px; font-size: 10px; color: #9ca3af; text-align: center; }
-</style>
-</head>
-<body>
-  <h1>HomeEQ Spending Report</h1>
-  <p class="subtitle">Generated ${dateStr} &bull; ${dataRows.length} expense${dataRows.length !== 1 ? 's' : ''}</p>
-  <div class="summary">
-    <div class="summary-item"><div class="summary-label">${currentMonthName}</div><div class="summary-value">${spentThisMonth.toLocaleString()}</div></div>
-    <div class="summary-item"><div class="summary-label">${new Date().getFullYear()}</div><div class="summary-value">${spentThisYear.toLocaleString()}</div></div>
-  </div>
-  <table>
-    <thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>
-    <tbody>${dataRows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('')}</tbody>
-  </table>
-  <p class="footer">HomeEQ &mdash; Home Expense Tracker</p>
-</body>
-</html>`;
-  }, [currentMonthName, spentThisMonth, spentThisYear]);
-
-  const handleEmail = useCallback(async () => {
-    mediumImpact();
-    if (budgetItems.length === 0) {
-      Alert.alert('No Data', 'There are no expenses to email yet.');
-      return;
-    }
-
-    try {
-      const csvContent = generateCSV(budgetItems, categoryLabels);
-      const fileName = `HomeEQ_Expenses_${new Date().toISOString().split('T')[0]}.csv`;
-
-      if (Platform.OS === 'web') {
-        const mailtoBody = encodeURIComponent(`HomeEQ Spending Report\n\nPlease find the expense data below:\n\n${csvContent}`);
-        const mailtoSubject = encodeURIComponent(`HomeEQ Spending Report - ${new Date().toLocaleDateString()}`);
-        window.open(`mailto:?subject=${mailtoSubject}&body=${mailtoBody}`, '_blank');
-        successNotification();
-        return;
-      }
-
-      const file = new File(Paths.cache, fileName);
-      file.write(csvContent);
-      console.log('[Email] CSV file written to:', file.uri);
-
-      const isAvailable = await MailComposer.isAvailableAsync();
-      if (!isAvailable) {
-        Alert.alert('Mail Unavailable', 'No email account is configured on this device. Please set up an email account in Settings.');
-        return;
-      }
-
-      await MailComposer.composeAsync({
-        subject: `HomeEQ Spending Report - ${new Date().toLocaleDateString()}`,
-        body: `<p>Please find attached the HomeEQ spending report with ${budgetItems.length} expense${budgetItems.length !== 1 ? 's' : ''}.</p><p>Total this month: <strong>${spentThisMonth.toLocaleString()}</strong><br/>Total this year: <strong>${spentThisYear.toLocaleString()}</strong></p>`,
-        isHtml: true,
-        attachments: [file.uri],
-      });
-      successNotification();
-      console.log('[Email] Mail composer opened successfully');
-    } catch (e: any) {
-      console.error('[Email] Error:', e?.message || e);
-      Alert.alert('Email Error', 'Something went wrong while preparing the email. Please try again.');
-    }
-  }, [budgetItems, spentThisMonth, spentThisYear]);
-
-  const handlePDF = useCallback(async () => {
-    mediumImpact();
-    if (budgetItems.length === 0) {
-      Alert.alert('No Data', 'There are no expenses to export yet.');
-      return;
-    }
-
-    try {
-      const html = buildHtmlTable(budgetItems, categoryLabels);
-
-      if (Platform.OS === 'web') {
-        const printWindow = window.open('', '_blank');
-        if (printWindow) {
-          printWindow.document.write(html);
-          printWindow.document.close();
-          printWindow.print();
-        }
-        successNotification();
-        return;
-      }
-
-      const { uri } = await Print.printToFileAsync({ html });
-      console.log('[PDF] File saved to:', uri);
-
-      const canShare = await isAvailableAsync();
-      if (canShare) {
-        await shareAsync(uri, { UTI: '.pdf', mimeType: 'application/pdf' });
-        successNotification();
-        console.log('[PDF] Shared successfully');
-      } else {
-        Alert.alert('PDF Ready', 'PDF has been saved but sharing is not available on this device.');
-      }
-    } catch (e: any) {
-      console.error('[PDF] Error:', e?.message || e);
-      Alert.alert('PDF Error', 'Something went wrong while creating the PDF. Please try again.');
-    }
-  }, [budgetItems, buildHtmlTable]);
-
-  const handleCSV = useCallback(async () => {
-    mediumImpact();
-    if (budgetItems.length === 0) {
-      Alert.alert('No Data', 'There are no expenses to export yet.');
-      return;
-    }
-
-    try {
-      const csvContent = generateCSV(budgetItems, categoryLabels);
-      const fileName = `HomeEQ_Expenses_${new Date().toISOString().split('T')[0]}.csv`;
-
-      if (Platform.OS === 'web') {
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        successNotification();
-        console.log('[CSV] Web download triggered');
-        return;
-      }
-
-      const file = new File(Paths.cache, fileName);
-      file.write(csvContent);
-      console.log('[CSV] File written to:', file.uri);
-
-      const canShare = await isAvailableAsync();
-      if (canShare) {
-        await shareAsync(file.uri, { UTI: 'public.comma-separated-values-text', mimeType: 'text/csv' });
-        successNotification();
-        console.log('[CSV] Shared successfully');
-      } else {
-        Alert.alert('CSV Ready', 'CSV has been saved but sharing is not available on this device.');
-      }
-    } catch (e: any) {
-      console.error('[CSV] Error:', e?.message || e);
-      Alert.alert('CSV Error', 'Something went wrong while creating the CSV. Please try again.');
-    }
+  const getCSV = useCallback(() => {
+    return rowsToCSV(buildExpenseRows(budgetItems, categoryLabels));
   }, [budgetItems]);
 
-  const handlePrint = useCallback(async () => {
-    mediumImpact();
-    if (budgetItems.length === 0) {
-      Alert.alert('No Data', 'There are no expenses to print yet.');
-      return;
-    }
+  const getHTML = useCallback(() => {
+    const rows = buildExpenseRows(budgetItems, categoryLabels);
+    return buildHtmlReport({
+      title: 'HomeEQ Spending Report',
+      headers: rows[0],
+      dataRows: rows.slice(1),
+      summaryItems: [
+        { label: currentMonthName, value: `${spentThisMonth.toLocaleString()}` },
+        { label: `${new Date().getFullYear()}`, value: `${spentThisYear.toLocaleString()}` },
+      ],
+      footerLabel: 'HomeEQ &mdash; Home Expense Tracker',
+    });
+  }, [budgetItems, currentMonthName, spentThisMonth, spentThisYear]);
 
-    try {
-      const html = buildHtmlTable(budgetItems, categoryLabels);
-
-      if (Platform.OS === 'web') {
-        const printWindow = window.open('', '_blank');
-        if (printWindow) {
-          printWindow.document.write(html);
-          printWindow.document.close();
-          printWindow.print();
-        }
-        return;
-      }
-
-      await Print.printAsync({ html });
-      successNotification();
-      console.log('[Print] Print dialog opened successfully');
-    } catch (e: any) {
-      console.error('[Print] Error:', e?.message || e);
-      Alert.alert('Print Error', 'Something went wrong while printing. Please try again.');
-    }
-  }, [budgetItems, buildHtmlTable]);
+  const emailSubject = `HomeEQ Spending Report - ${new Date().toLocaleDateString()}`;
+  const emailBodyHtml = `<p>Please find attached the HomeEQ spending report with ${budgetItems.length} expense${budgetItems.length !== 1 ? 's' : ''}.</p><p>Total this month: <strong>${spentThisMonth.toLocaleString()}</strong><br/>Total this year: <strong>${spentThisYear.toLocaleString()}</strong></p>`;
 
   return (
     <View style={styles.container}>
@@ -501,83 +280,17 @@ export default function BudgetScreen() {
         </View>
 
         <View style={styles.section}>
-          <TouchableOpacity
-            style={styles.exportHeader}
-            onPress={toggleExport}
-            activeOpacity={0.7}
-            testID="export-toggle"
-          >
-            <View style={styles.exportHeaderLeft}>
-              <View style={[styles.exportHeaderIcon, { backgroundColor: c.primaryLight }]}>
-                <Download size={18} color={c.primary} />
-              </View>
-              <View>
-                <Text style={styles.exportHeaderTitle}>Export</Text>
-                <Text style={styles.exportHeaderSubtitle}>Download your spending data</Text>
-              </View>
-            </View>
-            {exportExpanded ? (
-              <ChevronUp size={20} color={c.textTertiary} />
-            ) : (
-              <ChevronDown size={20} color={c.textTertiary} />
-            )}
-          </TouchableOpacity>
-
-          {exportExpanded && (
-            <View style={styles.exportGrid}>
-              <TouchableOpacity
-                style={styles.exportGridItem}
-                onPress={handleEmail}
-                activeOpacity={0.7}
-                testID="export-email"
-              >
-                <View style={[styles.exportGridIcon, { backgroundColor: '#EEF2FF' }]}>
-                  <Mail size={22} color="#4F46E5" />
-                </View>
-                <Text style={styles.exportGridTitle}>Email</Text>
-                <Text style={styles.exportGridDesc}>Send as attachment</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.exportGridItem}
-                onPress={handlePDF}
-                activeOpacity={0.7}
-                testID="export-pdf"
-              >
-                <View style={[styles.exportGridIcon, { backgroundColor: '#FEF2F2' }]}>
-                  <FileDown size={22} color="#DC2626" />
-                </View>
-                <Text style={styles.exportGridTitle}>PDF</Text>
-                <Text style={styles.exportGridDesc}>Save or share</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.exportGridItem}
-                onPress={handleCSV}
-                activeOpacity={0.7}
-                testID="export-csv"
-              >
-                <View style={[styles.exportGridIcon, { backgroundColor: '#FFF7ED' }]}>
-                  <Share2 size={22} color="#EA580C" />
-                </View>
-                <Text style={styles.exportGridTitle}>CSV</Text>
-                <Text style={styles.exportGridDesc}>Spreadsheet data</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.exportGridItem}
-                onPress={handlePrint}
-                activeOpacity={0.7}
-                testID="export-print"
-              >
-                <View style={[styles.exportGridIcon, { backgroundColor: '#F0FDF4' }]}>
-                  <Printer size={22} color="#16A34A" />
-                </View>
-                <Text style={styles.exportGridTitle}>Print</Text>
-                <Text style={styles.exportGridDesc}>AirPrint</Text>
-              </TouchableOpacity>
-            </View>
-          )}
+          <ExportSection
+            getCSV={getCSV}
+            getHTML={getHTML}
+            filePrefix="HomeEQ_Expenses"
+            entityName="expenses"
+            entityCount={budgetItems.length}
+            emailSubject={emailSubject}
+            emailBodyHtml={emailBodyHtml}
+            subtitle="Download your spending data"
+            testIDPrefix="export"
+          />
         </View>
 
         <View style={{ height: 90 }} />

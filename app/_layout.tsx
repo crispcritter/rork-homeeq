@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
-import { Platform, View, StyleSheet } from "react-native";
+import { Platform, View } from "react-native";
 import { HomeProvider } from "../contexts/HomeContext";
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
 import Colors from "@/constants/colors";

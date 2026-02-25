@@ -20,8 +20,12 @@ import {
   Phone,
   CalendarDays,
   CalendarRange,
-  Download,
+  Share2,
   FileText,
+  Mail,
+  FileDown,
+  Printer,
+  Download,
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -33,6 +37,8 @@ import { mediumImpact, lightImpact, successNotification } from '@/utils/haptics'
 import createStyles from '@/styles/budget';
 import { File, Paths } from 'expo-file-system';
 import { shareAsync, isAvailableAsync } from 'expo-sharing';
+import * as MailComposer from 'expo-mail-composer';
+import * as Print from 'expo-print';
 function escapeCSVField(value: string): string {
   if (value.includes(',') || value.includes('"') || value.includes('\n') || value.includes('\r')) {
     return `"${value.replace(/"/g, '""')}"`;
@@ -110,64 +116,158 @@ export default function BudgetScreen() {
     }).start();
   }, [exportExpanded, exportAnim]);
 
-  const handleExport = useCallback(async (format: 'csv' | 'excel' | 'google-sheets' | 'apple-numbers') => {
-    mediumImpact();
+  const currentMonthName = new Date().toLocaleString('en-US', { month: 'long' });
 
+  const buildHtmlTable = useCallback((items: any[], catLabels: Record<string, string>): string => {
+    const rows = buildExpenseRows(items, catLabels);
+    const headers = rows[0];
+    const dataRows = rows.slice(1);
+    const dateStr = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+    return `<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style>
+  body { font-family: -apple-system, Helvetica Neue, Arial, sans-serif; padding: 24px; color: #1a1a2e; }
+  h1 { font-size: 22px; margin-bottom: 4px; }
+  .subtitle { color: #6b7280; font-size: 13px; margin-bottom: 20px; }
+  .summary { display: flex; gap: 24px; margin-bottom: 20px; }
+  .summary-item { background: #f3f4f6; border-radius: 8px; padding: 12px 16px; }
+  .summary-label { font-size: 11px; color: #6b7280; text-transform: uppercase; }
+  .summary-value { font-size: 18px; font-weight: 700; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { background: #1a1a2e; color: #fff; padding: 8px 10px; text-align: left; font-weight: 600; }
+  td { padding: 7px 10px; border-bottom: 1px solid #e5e7eb; }
+  tr:nth-child(even) td { background: #f9fafb; }
+  .footer { margin-top: 16px; font-size: 10px; color: #9ca3af; text-align: center; }
+</style>
+</head>
+<body>
+  <h1>HomeEQ Spending Report</h1>
+  <p class="subtitle">Generated ${dateStr} &bull; ${dataRows.length} expense${dataRows.length !== 1 ? 's' : ''}</p>
+  <div class="summary">
+    <div class="summary-item"><div class="summary-label">${currentMonthName}</div><div class="summary-value">${spentThisMonth.toLocaleString()}</div></div>
+    <div class="summary-item"><div class="summary-label">${new Date().getFullYear()}</div><div class="summary-value">${spentThisYear.toLocaleString()}</div></div>
+  </div>
+  <table>
+    <thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>
+    <tbody>${dataRows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('')}</tbody>
+  </table>
+  <p class="footer">HomeEQ &mdash; Home Expense Tracker</p>
+</body>
+</html>`;
+  }, [currentMonthName, spentThisMonth, spentThisYear]);
+
+  const handleEmail = useCallback(async () => {
+    mediumImpact();
+    if (budgetItems.length === 0) {
+      Alert.alert('No Data', 'There are no expenses to email yet.');
+      return;
+    }
+
+    try {
+      const csvContent = generateCSV(budgetItems, categoryLabels);
+      const fileName = `HomeEQ_Expenses_${new Date().toISOString().split('T')[0]}.csv`;
+
+      if (Platform.OS === 'web') {
+        const mailtoBody = encodeURIComponent(`HomeEQ Spending Report\n\nPlease find the expense data below:\n\n${csvContent}`);
+        const mailtoSubject = encodeURIComponent(`HomeEQ Spending Report - ${new Date().toLocaleDateString()}`);
+        window.open(`mailto:?subject=${mailtoSubject}&body=${mailtoBody}`, '_blank');
+        successNotification();
+        return;
+      }
+
+      const file = new File(Paths.cache, fileName);
+      file.write(csvContent);
+      console.log('[Email] CSV file written to:', file.uri);
+
+      const isAvailable = await MailComposer.isAvailableAsync();
+      if (!isAvailable) {
+        Alert.alert('Mail Unavailable', 'No email account is configured on this device. Please set up an email account in Settings.');
+        return;
+      }
+
+      await MailComposer.composeAsync({
+        subject: `HomeEQ Spending Report - ${new Date().toLocaleDateString()}`,
+        body: `<p>Please find attached the HomeEQ spending report with ${budgetItems.length} expense${budgetItems.length !== 1 ? 's' : ''}.</p><p>Total this month: <strong>${spentThisMonth.toLocaleString()}</strong><br/>Total this year: <strong>${spentThisYear.toLocaleString()}</strong></p>`,
+        isHtml: true,
+        attachments: [file.uri],
+      });
+      successNotification();
+      console.log('[Email] Mail composer opened successfully');
+    } catch (e: any) {
+      console.error('[Email] Error:', e?.message || e);
+      Alert.alert('Email Error', 'Something went wrong while preparing the email. Please try again.');
+    }
+  }, [budgetItems, spentThisMonth, spentThisYear]);
+
+  const handlePDF = useCallback(async () => {
+    mediumImpact();
     if (budgetItems.length === 0) {
       Alert.alert('No Data', 'There are no expenses to export yet.');
       return;
     }
 
-    const csvContent = generateCSV(budgetItems, categoryLabels);
-    const fileName = `HomeEQ_Expenses_${new Date().toISOString().split('T')[0]}.csv`;
+    try {
+      const html = buildHtmlTable(budgetItems, categoryLabels);
 
-    if (Platform.OS === 'web') {
-      try {
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.setAttribute('href', url);
-        link.setAttribute('download', fileName);
-        link.style.display = 'none';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+      if (Platform.OS === 'web') {
+        const printWindow = window.open('', '_blank');
+        if (printWindow) {
+          printWindow.document.write(html);
+          printWindow.document.close();
+          printWindow.print();
+        }
         successNotification();
-        Alert.alert('Exported', `Your expenses have been downloaded as ${fileName}`);
-      } catch (e) {
-        console.error('[Export] Web export error:', e);
-        Alert.alert('Error', 'Could not export file on this platform.');
+        return;
       }
+
+      const { uri } = await Print.printToFileAsync({ html });
+      console.log('[PDF] File saved to:', uri);
+
+      const canShare = await isAvailableAsync();
+      if (canShare) {
+        await shareAsync(uri, { UTI: '.pdf', mimeType: 'application/pdf' });
+        successNotification();
+        console.log('[PDF] Shared successfully');
+      } else {
+        Alert.alert('PDF Ready', 'PDF has been saved but sharing is not available on this device.');
+      }
+    } catch (e: any) {
+      console.error('[PDF] Error:', e?.message || e);
+      Alert.alert('PDF Error', 'Something went wrong while creating the PDF. Please try again.');
+    }
+  }, [budgetItems, buildHtmlTable]);
+
+  const handlePrint = useCallback(async () => {
+    mediumImpact();
+    if (budgetItems.length === 0) {
+      Alert.alert('No Data', 'There are no expenses to print yet.');
       return;
     }
 
     try {
-      const file = new File(Paths.cache, fileName);
-      console.log('[Export] Writing file to:', file.uri);
-      file.write(csvContent);
-      console.log('[Export] File written successfully');
+      const html = buildHtmlTable(budgetItems, categoryLabels);
 
-      const canShare = await isAvailableAsync();
-      console.log('[Export] Sharing available:', canShare);
-      if (canShare) {
-        await shareAsync(file.uri, {
-          mimeType: 'text/csv',
-          dialogTitle: `Export Expenses – ${format.replace('-', ' ').toUpperCase()}`,
-          UTI: 'public.comma-separated-values-text',
-        });
-        successNotification();
-        console.log('[Export] Shared successfully as', format);
-      } else {
-        Alert.alert('Export Ready', 'File saved to cache. Sharing is not available on this device.');
+      if (Platform.OS === 'web') {
+        const printWindow = window.open('', '_blank');
+        if (printWindow) {
+          printWindow.document.write(html);
+          printWindow.document.close();
+          printWindow.print();
+        }
+        return;
       }
-    } catch (e: any) {
-      console.error('[Export] Error:', e?.message || e);
-      Alert.alert('Export Error', 'Something went wrong while exporting. Please try again.');
-    }
-  }, [budgetItems]);
 
-  const currentMonthName = new Date().toLocaleString('en-US', { month: 'long' });
+      await Print.printAsync({ html });
+      successNotification();
+      console.log('[Print] Print dialog opened successfully');
+    } catch (e: any) {
+      console.error('[Print] Error:', e?.message || e);
+      Alert.alert('Print Error', 'Something went wrong while printing. Please try again.');
+    }
+  }, [budgetItems, buildHtmlTable]);
 
   return (
     <View style={styles.container}>
@@ -381,74 +481,53 @@ export default function BudgetScreen() {
 
           {exportExpanded && (
             <View style={styles.exportGrid}>
-              <View style={styles.exportGridRow}>
-                <TouchableOpacity
-                  style={styles.exportGridItem}
-                  onPress={() => handleExport('csv')}
-                  activeOpacity={0.7}
-                  testID="export-csv"
-                >
-                  <View style={[styles.exportGridIcon, { backgroundColor: c.surfaceAlt }]}>
-                    <View style={[styles.exportAppBadge, { backgroundColor: '#5A8A60' }]}>
-                      <FileText size={18} color="#FFF" strokeWidth={2.5} />
-                    </View>
-                  </View>
-                  <Text style={styles.exportGridLabel}>CSV</Text>
-                </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.exportActionRow}
+                onPress={handleEmail}
+                activeOpacity={0.7}
+                testID="export-email"
+              >
+                <View style={[styles.exportActionIcon, { backgroundColor: '#EEF2FF' }]}>
+                  <Mail size={20} color="#4F46E5" />
+                </View>
+                <View style={styles.exportActionInfo}>
+                  <Text style={styles.exportActionTitle}>Email</Text>
+                  <Text style={styles.exportActionDesc}>Send as CSV attachment</Text>
+                </View>
+                <ChevronRight size={16} color={c.textTertiary} />
+              </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={styles.exportGridItem}
-                  onPress={() => handleExport('excel')}
-                  activeOpacity={0.7}
-                  testID="export-excel"
-                >
-                  <View style={[styles.exportGridIcon, { backgroundColor: c.surfaceAlt }]}>
-                    <View style={[styles.exportAppBadge, { backgroundColor: '#1D6F42' }]}>
-                      <Text style={styles.exportAppLetter}>X</Text>
-                    </View>
-                  </View>
-                  <Text style={styles.exportGridLabel}>Excel</Text>
-                </TouchableOpacity>
-              </View>
+              <TouchableOpacity
+                style={styles.exportActionRow}
+                onPress={handlePDF}
+                activeOpacity={0.7}
+                testID="export-pdf"
+              >
+                <View style={[styles.exportActionIcon, { backgroundColor: '#FEF2F2' }]}>
+                  <FileDown size={20} color="#DC2626" />
+                </View>
+                <View style={styles.exportActionInfo}>
+                  <Text style={styles.exportActionTitle}>PDF</Text>
+                  <Text style={styles.exportActionDesc}>Save or share as PDF</Text>
+                </View>
+                <ChevronRight size={16} color={c.textTertiary} />
+              </TouchableOpacity>
 
-              <View style={styles.exportGridRow}>
-                <TouchableOpacity
-                  style={styles.exportGridItem}
-                  onPress={() => handleExport('google-sheets')}
-                  activeOpacity={0.7}
-                  testID="export-google-sheets"
-                >
-                  <View style={[styles.exportGridIcon, { backgroundColor: c.surfaceAlt }]}>
-                    <View style={[styles.exportAppBadge, { backgroundColor: '#0F9D58' }]}>
-                      <View style={styles.sheetsIconGrid}>
-                        <View style={[styles.sheetsCell, { backgroundColor: 'rgba(255,255,255,0.95)' }]} />
-                        <View style={[styles.sheetsCell, { backgroundColor: 'rgba(255,255,255,0.6)' }]} />
-                        <View style={[styles.sheetsCell, { backgroundColor: 'rgba(255,255,255,0.6)' }]} />
-                        <View style={[styles.sheetsCell, { backgroundColor: 'rgba(255,255,255,0.35)' }]} />
-                      </View>
-                    </View>
-                  </View>
-                  <Text style={styles.exportGridLabel}>Sheets</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.exportGridItem}
-                  onPress={() => handleExport('apple-numbers')}
-                  activeOpacity={0.7}
-                  testID="export-apple-numbers"
-                >
-                  <View style={[styles.exportGridIcon, { backgroundColor: c.surfaceAlt }]}>
-                    <View style={[styles.exportAppBadge, { backgroundColor: '#FF9500' }]}>
-                      <View style={styles.numbersBarGroup}>
-                        <View style={[styles.numbersBar, { height: 7, backgroundColor: 'rgba(255,255,255,0.5)' }]} />
-                        <View style={[styles.numbersBar, { height: 12, backgroundColor: 'rgba(255,255,255,0.75)' }]} />
-                        <View style={[styles.numbersBar, { height: 9, backgroundColor: 'rgba(255,255,255,0.95)' }]} />
-                      </View>
-                    </View>
-                  </View>
-                  <Text style={styles.exportGridLabel}>Numbers</Text>
-                </TouchableOpacity>
-              </View>
+              <TouchableOpacity
+                style={[styles.exportActionRow, { borderBottomWidth: 0 }]}
+                onPress={handlePrint}
+                activeOpacity={0.7}
+                testID="export-print"
+              >
+                <View style={[styles.exportActionIcon, { backgroundColor: '#F0FDF4' }]}>
+                  <Printer size={20} color="#16A34A" />
+                </View>
+                <View style={styles.exportActionInfo}>
+                  <Text style={styles.exportActionTitle}>Print</Text>
+                  <Text style={styles.exportActionDesc}>Send to AirPrint printer</Text>
+                </View>
+                <ChevronRight size={16} color={c.textTertiary} />
+              </TouchableOpacity>
             </View>
           )}
         </View>

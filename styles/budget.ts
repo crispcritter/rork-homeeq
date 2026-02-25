@@ -381,73 +381,45 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   exportGrid: {
     marginTop: 12,
-    gap: 10,
-  },
-  exportGridRow: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  exportGridItem: {
-    flex: 1,
-    alignItems: 'center',
     backgroundColor: c.surface,
     borderRadius: 14,
-    paddingVertical: 16,
-    paddingHorizontal: 8,
+    overflow: 'hidden',
     shadowColor: c.cardShadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 1,
     shadowRadius: 4,
     elevation: 1,
   },
-  exportGridIcon: {
-    width: 52,
-    height: 52,
-    borderRadius: 14,
+  exportActionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: c.borderLight,
+    gap: 14,
+  },
+  exportActionIcon: {
+    width: 42,
+    height: 42,
+    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 8,
   },
-  exportAppBadge: {
-    width: 40,
-    height: 40,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+  exportActionInfo: {
+    flex: 1,
   },
-  exportAppLetter: {
-    fontSize: 20,
-    fontWeight: '800' as const,
-    color: '#FFFFFF',
-    letterSpacing: -0.5,
-  },
-  exportGridLabel: {
-    fontSize: 13,
+  exportActionTitle: {
+    fontSize: 15,
     fontWeight: '600' as const,
     color: c.text,
-    lineHeight: 17,
+    lineHeight: 20,
   },
-  sheetsIconGrid: {
-    width: 18,
-    height: 18,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 2,
-  },
-  sheetsCell: {
-    width: 8,
-    height: 8,
-    borderRadius: 1.5,
-  },
-  numbersBarGroup: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    gap: 3,
-    height: 16,
-  },
-  numbersBar: {
-    width: 5,
-    borderRadius: 1.5,
+  exportActionDesc: {
+    fontSize: 12,
+    color: c.textTertiary,
+    lineHeight: 16,
+    marginTop: 1,
   },
 });
 

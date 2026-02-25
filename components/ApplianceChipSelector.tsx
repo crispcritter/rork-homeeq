@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ScrollView, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import Colors from '@/constants/colors';
+import { useTheme } from '@/contexts/ThemeContext';
+import { ColorScheme } from '@/constants/colors';
 import { Appliance } from '@/types';
 
 interface ApplianceChipSelectorProps {
@@ -10,6 +11,9 @@ interface ApplianceChipSelectorProps {
 }
 
 function ApplianceChipSelector({ appliances, selectedId, onSelect }: ApplianceChipSelectorProps) {
+  const { colors: c } = useTheme();
+  const styles = useMemo(() => createStyles(c), [c]);
+
   if (appliances.length === 0) return null;
 
   return (
@@ -39,7 +43,7 @@ function ApplianceChipSelector({ appliances, selectedId, onSelect }: ApplianceCh
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (c: ColorScheme) => StyleSheet.create({
   row: {
     gap: 8,
   },
@@ -47,22 +51,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 22,
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: c.border,
   },
   chipActive: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
+    backgroundColor: c.primary,
+    borderColor: c.primary,
   },
   chipText: {
     fontSize: 13,
     fontWeight: '600' as const,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     lineHeight: 17,
   },
   chipTextActive: {
-    color: Colors.white,
+    color: c.white,
   },
 });
 

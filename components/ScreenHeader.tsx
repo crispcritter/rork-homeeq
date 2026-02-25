@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import Colors from '@/constants/colors';
 import { useTheme } from '@/contexts/ThemeContext';
 
 interface ScreenHeaderProps {
@@ -28,13 +27,11 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 30,
     fontWeight: '800' as const,
-    color: Colors.text,
     letterSpacing: -0.8,
     lineHeight: 36,
   },
   headerSubtitle: {
     fontSize: 15,
-    color: Colors.textSecondary,
     marginTop: 2,
     lineHeight: 21,
   },

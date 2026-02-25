@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { Check } from 'lucide-react-native';
-import Colors from '@/constants/colors';
 import { useTheme } from '@/contexts/ThemeContext';
 import { lightImpact } from '@/utils/haptics';
 
@@ -64,10 +63,8 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: Colors.overlay,
   },
   sheet: {
-    backgroundColor: Colors.surface,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingBottom: 40,
@@ -77,7 +74,6 @@ const styles = StyleSheet.create({
     width: 36,
     height: 4,
     borderRadius: 2,
-    backgroundColor: Colors.border,
     alignSelf: 'center',
     marginTop: 10,
     marginBottom: 16,
@@ -85,7 +81,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 17,
     fontWeight: '600' as const,
-    color: Colors.text,
     textAlign: 'center',
     marginBottom: 12,
   },
@@ -101,17 +96,9 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 2,
   },
-  optionSelected: {
-    backgroundColor: Colors.primaryLight,
-  },
   optionText: {
     fontSize: 16,
     fontWeight: '500' as const,
-    color: Colors.text,
-  },
-  optionTextSelected: {
-    color: Colors.primary,
-    fontWeight: '600' as const,
   },
 });
 

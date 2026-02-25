@@ -11,7 +11,8 @@ import {
   Platform,
 } from 'react-native';
 import { ExternalLink, Globe, X, ShoppingBag } from 'lucide-react-native';
-import Colors from '@/constants/colors';
+import { LightColors as Colors } from '@/constants/colors';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface LinkMeta {
   title?: string;
@@ -160,6 +161,7 @@ function cleanTitle(title: string, domain: string): string {
 }
 
 const LinkPreview = React.memo(function LinkPreview({ url, onRemove }: LinkPreviewProps) {
+  const { colors: c } = useTheme();
   const [meta, setMeta] = useState<LinkMeta | null>(null);
   const [loading, setLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
@@ -253,7 +255,7 @@ const LinkPreview = React.memo(function LinkPreview({ url, onRemove }: LinkPrevi
     return (
       <View style={styles.loadingContainer}>
         <View style={styles.loadingShimmer}>
-          <ActivityIndicator size="small" color={Colors.textTertiary} />
+          <ActivityIndicator size="small" color={c.textTertiary} />
           <Text style={styles.loadingText}>Loading preview...</Text>
         </View>
       </View>
@@ -295,9 +297,9 @@ const LinkPreview = React.memo(function LinkPreview({ url, onRemove }: LinkPrevi
                 onError={() => setFaviconError(true)}
               />
             ) : isAmazon ? (
-              <ShoppingBag size={16} color={brandColor ?? Colors.textSecondary} />
+              <ShoppingBag size={16} color={brandColor ?? c.textSecondary} />
             ) : (
-              <Globe size={16} color={brandColor ?? Colors.textSecondary} />
+              <Globe size={16} color={brandColor ?? c.textSecondary} />
             )}
           </View>
 
@@ -309,7 +311,7 @@ const LinkPreview = React.memo(function LinkPreview({ url, onRemove }: LinkPrevi
               >
                 {meta.siteName ?? getDisplayName(domain)}
               </Text>
-              <ExternalLink size={11} color={Colors.textTertiary} />
+              <ExternalLink size={11} color={c.textTertiary} />
             </View>
 
             {meta.title && meta.title !== getDisplayName(domain) ? (
@@ -334,7 +336,7 @@ const LinkPreview = React.memo(function LinkPreview({ url, onRemove }: LinkPrevi
           hitSlop={8}
           testID="link-preview-remove"
         >
-          <X size={12} color={Colors.textTertiary} />
+          <X size={12} color={c.textTertiary} />
         </TouchableOpacity>
       )}
     </Animated.View>

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -11,7 +11,7 @@ import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import { Plus, Search, MapPin, Shield, ChevronRight } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
-import Colors from '@/constants/colors';
+import { ColorScheme } from '@/constants/colors';
 import { useTheme } from '@/contexts/ThemeContext';
 import PressableCard from '@/components/PressableCard';
 import FloatingActionButton from '@/components/FloatingActionButton';
@@ -26,6 +26,7 @@ import { Appliance } from '@/types';
 export default function AppliancesScreen() {
   const router = useRouter();
   const { colors: c } = useTheme();
+  const styles = useMemo(() => createStyles(c), [c]);
   const {
     appliances,
     addAppliance,
@@ -71,17 +72,17 @@ export default function AppliancesScreen() {
   }, [router]);
 
   return (
-    <View style={[styles.container, { backgroundColor: c.background }]}>
+    <View style={styles.container}>
       <ScreenHeader
         title="My Items"
         subtitle={`${appliances.length} ${appliances.length === 1 ? 'item' : 'items'} tracked`}
       />
 
       <View style={styles.searchRow}>
-        <View style={[styles.searchContainer, { backgroundColor: c.surfaceAlt }]}>
+        <View style={styles.searchContainer}>
           <Search size={16} color={c.textTertiary} />
           <TextInput
-            style={[styles.searchInput, { color: c.text }]}
+            style={styles.searchInput}
             placeholder="Search by name, brand, or type..."
             placeholderTextColor={c.textTertiary}
             value={search}
@@ -94,17 +95,17 @@ export default function AppliancesScreen() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.list}>
         {filtered.length === 0 ? (
           <View style={styles.emptyState}>
-            <View style={[styles.emptyIconWrap, { backgroundColor: c.primaryLight }]}>
+            <View style={styles.emptyIconWrap}>
               <Search size={28} color={c.primary} />
             </View>
-            <Text style={[styles.emptyTitle, { color: c.text }]}>
+            <Text style={styles.emptyTitle}>
               {search ? 'No matches found' : 'Start tracking your home'}
             </Text>
-            <Text style={[styles.emptySubtitle, { color: c.textSecondary }]}>
+            <Text style={styles.emptySubtitle}>
               {search ? 'Try a different search term' : 'Add your first appliance or system to keep everything organized'}
             </Text>
             {!search && (
-              <TouchableOpacity style={[styles.emptyBtn, { backgroundColor: c.primary }]} onPress={handleAddAppliance}>
+              <TouchableOpacity style={styles.emptyBtn} onPress={handleAddAppliance}>
                 <Plus size={16} color={c.white} />
                 <Text style={styles.emptyBtnText}>Add your first item</Text>
               </TouchableOpacity>
@@ -117,7 +118,7 @@ export default function AppliancesScreen() {
             return (
               <PressableCard
                 key={appliance.id}
-                style={[styles.card, { backgroundColor: c.surface, shadowColor: c.cardShadow }]}
+                style={styles.card}
                 onPress={() => handleAppliancePress(appliance.id)}
                 testID={`appliance-${appliance.id}`}
               >
@@ -130,13 +131,13 @@ export default function AppliancesScreen() {
                     </View>
                   )}
                   <View style={styles.cardInfo}>
-                    <Text style={[styles.cardTitle, { color: c.text }]} numberOfLines={1}>{appliance.name}</Text>
-                    <Text style={[styles.cardBrand, { color: c.textSecondary }]} numberOfLines={1}>{appliance.brand}</Text>
+                    <Text style={styles.cardTitle} numberOfLines={1}>{appliance.name}</Text>
+                    <Text style={styles.cardBrand} numberOfLines={1}>{appliance.brand}</Text>
                     <View style={styles.cardChips}>
                       {appliance.location ? (
-                        <View style={[styles.chip, { backgroundColor: c.surfaceAlt }]}>
+                        <View style={styles.chip}>
                           <MapPin size={10} color={c.textSecondary} />
-                          <Text style={[styles.chipText, { color: c.textSecondary }]}>{appliance.location}</Text>
+                          <Text style={styles.chipText}>{appliance.location}</Text>
                         </View>
                       ) : null}
                       <View style={[styles.warrantyChip, { backgroundColor: warranty.color + '18' }]}>
@@ -173,10 +174,10 @@ export default function AppliancesScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (c: ColorScheme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: c.background,
   },
   searchRow: {
     paddingHorizontal: 20,
@@ -185,7 +186,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surfaceAlt,
+    backgroundColor: c.surfaceAlt,
     borderRadius: 12,
     paddingHorizontal: 14,
     height: 44,
@@ -194,18 +195,18 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 15,
-    color: Colors.text,
+    color: c.text,
     lineHeight: 20,
   },
   list: {
     paddingHorizontal: 20,
   },
   card: {
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderRadius: 16,
     marginBottom: 10,
     padding: 14,
-    shadowColor: Colors.cardShadow,
+    shadowColor: c.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 8,
@@ -235,13 +236,13 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 16,
     fontWeight: '600' as const,
-    color: Colors.text,
+    color: c.text,
     marginBottom: 2,
     lineHeight: 22,
   },
   cardBrand: {
     fontSize: 13,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     marginBottom: 6,
     lineHeight: 17,
   },
@@ -253,7 +254,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: Colors.surfaceAlt,
+    backgroundColor: c.surfaceAlt,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 6,
@@ -269,7 +270,7 @@ const styles = StyleSheet.create({
   chipText: {
     fontSize: 11,
     fontWeight: '500' as const,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     lineHeight: 15,
   },
   emptyState: {
@@ -281,7 +282,7 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: c.primaryLight,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
@@ -289,14 +290,14 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 20,
     fontWeight: '700' as const,
-    color: Colors.text,
+    color: c.text,
     marginBottom: 6,
     textAlign: 'center',
     lineHeight: 26,
   },
   emptySubtitle: {
     fontSize: 15,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     marginBottom: 20,
     textAlign: 'center',
     lineHeight: 21,
@@ -305,7 +306,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    backgroundColor: Colors.primary,
+    backgroundColor: c.primary,
     paddingHorizontal: 22,
     paddingVertical: 13,
     borderRadius: 14,
@@ -313,7 +314,7 @@ const styles = StyleSheet.create({
   emptyBtnText: {
     fontSize: 15,
     fontWeight: '600' as const,
-    color: Colors.white,
+    color: c.white,
     lineHeight: 20,
   },
 });

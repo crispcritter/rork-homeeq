@@ -80,7 +80,7 @@ export default function AddTaskScreen() {
                 <TextInput
                   style={formStyles.textInput}
                   placeholder="e.g. Replace AC filter, clean gutters"
-                  placeholderTextColor={Colors.textTertiary}
+                  placeholderTextColor={c.textTertiary}
                   value={title}
                   onChangeText={setTitle}
                   testID="task-title"
@@ -94,7 +94,7 @@ export default function AddTaskScreen() {
                 <TextInput
                   style={[formStyles.textInput, { minHeight: 60 }]}
                   placeholder="Any helpful notes or instructions..."
-                  placeholderTextColor={Colors.textTertiary}
+                  placeholderTextColor={c.textTertiary}
                   value={description}
                   onChangeText={setDescription}
                   multiline
@@ -110,7 +110,7 @@ export default function AddTaskScreen() {
                 <TextInput
                   style={formStyles.textInput}
                   placeholder="YYYY-MM-DD"
-                  placeholderTextColor={Colors.textTertiary}
+                  placeholderTextColor={c.textTertiary}
                   value={dueDate}
                   onChangeText={setDueDate}
                   testID="task-due-date"
@@ -136,7 +136,7 @@ export default function AddTaskScreen() {
                 <Text
                   style={[
                     formStyles.priorityLabel,
-                    priority === p.key && { color: Colors.white },
+                    priority === p.key && { color: c.white },
                   ]}
                 >
                   {p.label}
@@ -174,7 +174,7 @@ export default function AddTaskScreen() {
                 <TextInput
                   style={formStyles.textInput}
                   placeholder="$0.00 (optional)"
-                  placeholderTextColor={Colors.textTertiary}
+                  placeholderTextColor={c.textTertiary}
                   value={estimatedCost}
                   onChangeText={setEstimatedCost}
                   keyboardType="numeric"
@@ -191,8 +191,8 @@ export default function AddTaskScreen() {
               <Switch
                 value={recurring}
                 onValueChange={setRecurring}
-                trackColor={{ false: Colors.border, true: Colors.primary + '60' }}
-                thumbColor={recurring ? Colors.primary : Colors.textTertiary}
+                trackColor={{ false: c.border, true: c.primary + '60' }}
+                thumbColor={recurring ? c.primary : c.textTertiary}
               />
             </View>
             {recurring && (
@@ -204,7 +204,7 @@ export default function AddTaskScreen() {
                     <TextInput
                       style={formStyles.textInput}
                       placeholder="30"
-                      placeholderTextColor={Colors.textTertiary}
+                      placeholderTextColor={c.textTertiary}
                       value={recurringInterval}
                       onChangeText={setRecurringInterval}
                       keyboardType="numeric"

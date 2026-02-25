@@ -25,8 +25,8 @@ import {
   Layers,
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
-import Colors from '@/constants/colors';
 import { useTheme } from '@/contexts/ThemeContext';
+import { ColorScheme } from '@/constants/colors';
 import PressableCard from '@/components/PressableCard';
 import FloatingActionButton from '@/components/FloatingActionButton';
 import ScreenHeader from '@/components/ScreenHeader';
@@ -67,19 +67,19 @@ function getWeekGroupKey(dateStr: string): { key: string; title: string; sortOrd
   return { key: saturdayKey, title, sortOrder };
 }
 
-function getWeekAccentColor(key: string): string {
-  if (key === 'overdue') return Colors.danger;
+function getWeekAccentColor(key: string, tc: ColorScheme): string {
+  if (key === 'overdue') return tc.danger;
 
   const now = new Date();
   const thisSaturday = getWeekEndingSaturday(now.toISOString());
   const satDate = new Date(key + 'T00:00:00');
   const diffWeeks = Math.round((satDate.getTime() - thisSaturday.getTime()) / (7 * 24 * 60 * 60 * 1000));
 
-  if (diffWeeks <= 0) return Colors.primary;
-  if (diffWeeks === 1) return Colors.accent;
-  if (diffWeeks === 2) return Colors.warning;
-  if (diffWeeks === 3) return Colors.categoryInspection;
-  return Colors.textTertiary;
+  if (diffWeeks <= 0) return tc.primary;
+  if (diffWeeks === 1) return tc.accent;
+  if (diffWeeks === 2) return tc.warning;
+  if (diffWeeks === 3) return tc.categoryInspection;
+  return tc.textTertiary;
 }
 
 function getImportanceAccentColor(priority: TaskPriority): string {
@@ -89,6 +89,7 @@ function getImportanceAccentColor(priority: TaskPriority): string {
 export default function ScheduleScreen() {
   const router = useRouter();
   const { colors: c } = useTheme();
+  const styles = useMemo(() => createStyles(c), [c]);
   const { tasks, appliances, completeTask } = useHome();
   const [filter, setFilter] = useState<FilterType>('all');
   const [sortMode, setSortMode] = useState<SortMode>('item');
@@ -148,7 +149,7 @@ export default function ScheduleScreen() {
         .map(([key, value]) => ({
           key,
           title: value.title,
-          accentColor: getWeekAccentColor(key),
+          accentColor: getWeekAccentColor(key, c),
           data: value.tasks.sort((a, b) => a.dueDate.localeCompare(b.dueDate)),
         }));
     }
@@ -169,10 +170,10 @@ export default function ScheduleScreen() {
       .map(([key, value]) => ({
         key,
         title: value.name,
-        accentColor: key === '__general__' ? Colors.textSecondary : Colors.primary,
+        accentColor: key === '__general__' ? c.textSecondary : c.primary,
         data: value.tasks.sort((a, b) => a.title.localeCompare(b.title)),
       }));
-  }, [filteredTasks, sortMode, appliances]);
+  }, [filteredTasks, sortMode, appliances, c]);
 
   const toggleGroup = useCallback((key: string) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -242,7 +243,7 @@ export default function ScheduleScreen() {
         <View style={styles.taskLeft}>
           {isArchived ? (
             <View style={styles.checkCircleArchived}>
-              <Archive size={12} color={Colors.textTertiary} />
+              <Archive size={12} color={c.textTertiary} />
             </View>
           ) : !isCompleted ? (
             <TouchableOpacity
@@ -250,11 +251,11 @@ export default function ScheduleScreen() {
               onPress={() => handleComplete(task.id, task.title)}
               activeOpacity={0.6}
             >
-              <Check size={14} color={isOverdue ? Colors.danger : Colors.textTertiary} />
+              <Check size={14} color={isOverdue ? c.danger : c.textTertiary} />
             </TouchableOpacity>
           ) : (
             <View style={styles.checkCircleDone}>
-              <Check size={14} color={Colors.white} />
+              <Check size={14} color={c.white} />
             </View>
           )}
         </View>
@@ -267,8 +268,8 @@ export default function ScheduleScreen() {
           ) : null}
           <View style={styles.taskFooter}>
             <View style={styles.taskDateRow}>
-              <Clock size={11} color={isOverdue ? Colors.danger : Colors.textSecondary} />
-              <Text style={[styles.taskDateText, isOverdue && { color: Colors.danger }]}>
+              <Clock size={11} color={isOverdue ? c.danger : c.textSecondary} />
+              <Text style={[styles.taskDateText, isOverdue && { color: c.danger }]}>
                 {isCompleted && task.completedDate
                   ? `Done ${formatShortDate(task.completedDate)}`
                   : isArchived && task.archivedDate
@@ -284,7 +285,7 @@ export default function ScheduleScreen() {
             )}
             {task.recurring && (
               <View style={styles.recurringBadge}>
-                <RefreshCw size={9} color={Colors.primary} />
+                <RefreshCw size={9} color={c.primary} />
                 <Text style={styles.recurringText}>Repeats</Text>
               </View>
             )}
@@ -306,15 +307,15 @@ export default function ScheduleScreen() {
               {task.priority}
             </Text>
           </View>
-          <ChevronRight size={14} color={Colors.textTertiary} style={{ marginTop: 6 }} />
+          <ChevronRight size={14} color={c.textTertiary} style={{ marginTop: 6 }} />
         </View>
       </PressableCard>
     );
-  }, [appliances, handleComplete, handleTaskPress]);
+  }, [appliances, handleComplete, handleTaskPress, styles, c]);
 
   const renderGroupHeader = useCallback((group: TaskGroup) => {
     const isCollapsed = collapsedGroups[group.key] ?? false;
-    const accentColor = group.accentColor ?? Colors.primary;
+    const accentColor = group.accentColor ?? c.primary;
 
     return (
       <TouchableOpacity
@@ -339,15 +340,15 @@ export default function ScheduleScreen() {
         </View>
       </TouchableOpacity>
     );
-  }, [collapsedGroups, toggleGroup]);
+  }, [collapsedGroups, toggleGroup, styles, c]);
 
   const renderEmpty = () => (
     <View style={styles.emptyState}>
       <View style={styles.emptyIconWrap}>
         {filter === 'archived' ? (
-          <Archive size={40} color={Colors.textTertiary} />
+          <Archive size={40} color={c.textTertiary} />
         ) : (
-          <CircleCheck size={40} color={Colors.primary} />
+          <CircleCheck size={40} color={c.primary} />
         )}
       </View>
       <Text style={styles.emptyTitle}>
@@ -370,7 +371,7 @@ export default function ScheduleScreen() {
   );
 
   return (
-    <View style={[styles.container, { backgroundColor: c.background }]}>
+    <View style={styles.container}>
       <ScreenHeader title="To-Do" subtitle="Stay on top of your home care" />
 
       <View style={styles.toolbarRow}>
@@ -459,7 +460,7 @@ export default function ScheduleScreen() {
               >
                 <View style={styles.completedHeaderLeft}>
                   <View style={styles.completedIconWrap}>
-                    <CircleCheck size={16} color={Colors.success} />
+                    <CircleCheck size={16} color={c.success} />
                   </View>
                   <Text style={styles.completedHeaderTitle}>Completed</Text>
                   <View style={styles.completedCountBadge}>
@@ -469,7 +470,7 @@ export default function ScheduleScreen() {
                 <View style={styles.completedChevronWrap}>
                   <ChevronDown
                     size={16}
-                    color={Colors.success}
+                    color={c.success}
                     style={completedCollapsed ? { transform: [{ rotate: '-90deg' }] } : undefined}
                   />
                 </View>
@@ -498,10 +499,10 @@ export default function ScheduleScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (c: ColorScheme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: c.background,
   },
   toolbarRow: {
     flexDirection: 'row',
@@ -523,25 +524,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: c.border,
   },
   filterChipActive: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
+    backgroundColor: c.primary,
+    borderColor: c.primary,
   },
   filterText: {
     fontSize: 13,
     fontWeight: '600' as const,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     lineHeight: 17,
   },
   filterTextActive: {
-    color: Colors.white,
+    color: c.white,
   },
   filterBadge: {
-    backgroundColor: Colors.surfaceAlt,
+    backgroundColor: c.surfaceAlt,
     borderRadius: 10,
     paddingHorizontal: 6,
     paddingVertical: 1,
@@ -554,11 +555,11 @@ const styles = StyleSheet.create({
   filterBadgeText: {
     fontSize: 11,
     fontWeight: '600' as const,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     lineHeight: 15,
   },
   filterBadgeTextActive: {
-    color: Colors.white,
+    color: c.white,
   },
   sortPillRow: {
     flexDirection: 'row',
@@ -570,22 +571,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: c.border,
   },
   sortPillActive: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
+    backgroundColor: c.primary,
+    borderColor: c.primary,
   },
   sortPillText: {
     fontSize: 13,
     fontWeight: '600' as const,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     lineHeight: 17,
   },
   sortPillTextActive: {
-    color: Colors.white,
+    color: c.white,
   },
   list: {
     paddingHorizontal: 20,
@@ -597,12 +598,12 @@ const styles = StyleSheet.create({
   groupHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 14,
     marginBottom: 8,
-    shadowColor: Colors.cardShadow,
+    shadowColor: c.cardShadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 1,
     shadowRadius: 4,
@@ -623,7 +624,7 @@ const styles = StyleSheet.create({
   groupTitle: {
     fontSize: 15,
     fontWeight: '700' as const,
-    color: Colors.text,
+    color: c.text,
     lineHeight: 20,
   },
   groupCountBadge: {
@@ -650,11 +651,11 @@ const styles = StyleSheet.create({
   },
   taskCard: {
     flexDirection: 'row',
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderRadius: 16,
     padding: 16,
     marginBottom: 10,
-    shadowColor: Colors.cardShadow,
+    shadowColor: c.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 8,
@@ -662,13 +663,13 @@ const styles = StyleSheet.create({
   },
   taskCardOverdue: {
     borderLeftWidth: 3,
-    borderLeftColor: Colors.danger,
+    borderLeftColor: c.danger,
   },
   taskCardCompleted: {
-    backgroundColor: Colors.successLight,
+    backgroundColor: c.successLight,
   },
   taskCardArchived: {
-    backgroundColor: Colors.surfaceAlt,
+    backgroundColor: c.surfaceAlt,
     opacity: 0.8,
   },
   taskLeft: {
@@ -680,18 +681,18 @@ const styles = StyleSheet.create({
     height: 28,
     borderRadius: 14,
     borderWidth: 2,
-    borderColor: Colors.border,
+    borderColor: c.border,
     justifyContent: 'center',
     alignItems: 'center',
   },
   checkCircleOverdue: {
-    borderColor: Colors.danger,
+    borderColor: c.danger,
   },
   checkCircleDone: {
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: Colors.success,
+    backgroundColor: c.success,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -699,7 +700,7 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: Colors.border,
+    backgroundColor: c.border,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -709,20 +710,20 @@ const styles = StyleSheet.create({
   taskTitle: {
     fontSize: 15,
     fontWeight: '600' as const,
-    color: Colors.text,
+    color: c.text,
     marginBottom: 3,
     lineHeight: 20,
   },
   taskTitleDone: {
     textDecorationLine: 'line-through',
-    color: Colors.textSecondary,
+    color: c.textSecondary,
   },
   taskTitleArchived: {
-    color: Colors.textTertiary,
+    color: c.textTertiary,
   },
   taskDesc: {
     fontSize: 12,
-    color: Colors.textTertiary,
+    color: c.textTertiary,
     marginBottom: 8,
     lineHeight: 16,
   },
@@ -739,25 +740,25 @@ const styles = StyleSheet.create({
   },
   taskDateText: {
     fontSize: 12,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     lineHeight: 16,
   },
   footerDot: {
     width: 3,
     height: 3,
     borderRadius: 1.5,
-    backgroundColor: Colors.textTertiary,
+    backgroundColor: c.textTertiary,
   },
   taskApplianceName: {
     fontSize: 11,
-    color: Colors.textTertiary,
+    color: c.textTertiary,
     lineHeight: 15,
   },
   recurringBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 3,
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: c.primaryLight,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 6,
@@ -765,7 +766,7 @@ const styles = StyleSheet.create({
   recurringText: {
     fontSize: 10,
     fontWeight: '500' as const,
-    color: Colors.primary,
+    color: c.primary,
     lineHeight: 14,
   },
   taskRight: {
@@ -793,7 +794,7 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: c.primaryLight,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 4,
@@ -801,12 +802,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 20,
     fontWeight: '700' as const,
-    color: Colors.text,
+    color: c.text,
     lineHeight: 26,
   },
   emptySubtitle: {
     fontSize: 15,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     textAlign: 'center',
     lineHeight: 21,
     paddingHorizontal: 20,
@@ -816,14 +817,14 @@ const styles = StyleSheet.create({
   },
   completedDivider: {
     height: 1,
-    backgroundColor: Colors.border,
+    backgroundColor: c.border,
     marginBottom: 14,
     marginHorizontal: 4,
   },
   completedHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.successLight,
+    backgroundColor: c.successLight,
     borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 14,
@@ -839,18 +840,18 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: Colors.success + '18',
+    backgroundColor: c.success + '18',
     justifyContent: 'center',
     alignItems: 'center',
   },
   completedHeaderTitle: {
     fontSize: 15,
     fontWeight: '700' as const,
-    color: Colors.success,
+    color: c.success,
     lineHeight: 20,
   },
   completedCountBadge: {
-    backgroundColor: Colors.success + '18',
+    backgroundColor: c.success + '18',
     borderRadius: 10,
     paddingHorizontal: 8,
     paddingVertical: 2,
@@ -860,14 +861,14 @@ const styles = StyleSheet.create({
   completedCountText: {
     fontSize: 12,
     fontWeight: '700' as const,
-    color: Colors.success,
+    color: c.success,
     lineHeight: 16,
   },
   completedChevronWrap: {
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: Colors.success + '12',
+    backgroundColor: c.success + '12',
     justifyContent: 'center',
     alignItems: 'center',
   },

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import Colors from '@/constants/colors';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface SectionHeaderProps {
   title: string;
@@ -11,16 +11,18 @@ interface SectionHeaderProps {
 }
 
 function SectionHeader({ title, actionLabel, onAction, icon, rightElement }: SectionHeaderProps) {
+  const { colors: c } = useTheme();
+
   return (
     <View style={styles.header}>
       <View style={styles.left}>
         {icon}
-        <Text style={styles.title}>{title}</Text>
+        <Text style={[styles.title, { color: c.text }]}>{title}</Text>
       </View>
       {rightElement}
       {actionLabel && onAction ? (
         <TouchableOpacity onPress={onAction} activeOpacity={0.7}>
-          <Text style={styles.actionText}>{actionLabel}</Text>
+          <Text style={[styles.actionText, { color: c.primary }]}>{actionLabel}</Text>
         </TouchableOpacity>
       ) : null}
     </View>
@@ -43,14 +45,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: '700' as const,
-    color: Colors.text,
     letterSpacing: -0.3,
     lineHeight: 26,
   },
   actionText: {
     fontSize: 14,
     fontWeight: '600' as const,
-    color: Colors.primary,
     lineHeight: 19,
   },
 });

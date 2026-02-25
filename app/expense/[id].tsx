@@ -27,13 +27,15 @@ import {
   ExternalLink,
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
-import Colors from '@/constants/colors';
+import { useTheme } from '@/contexts/ThemeContext';
 import { categoryLabels, BUDGET_CATEGORY_COLORS } from '@/constants/categories';
 import { lightImpact } from '@/utils/haptics';
 
 export default function ExpenseDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { colors: c } = useTheme();
+  const styles = useMemo(() => createStyles(c), [c]);
   const { budgetItems, deleteBudgetItem, getApplianceById, trustedPros } = useHome();
 
   const expense = useMemo(() => budgetItems.find((i) => i.id === id), [budgetItems, id]);
@@ -77,7 +79,7 @@ export default function ExpenseDetailScreen() {
     );
   }
 
-  const catColor = BUDGET_CATEGORY_COLORS[expense.category] || Colors.textTertiary;
+  const catColor = BUDGET_CATEGORY_COLORS[expense.category] || c.textTertiary;
 
   return (
     <View style={styles.container}>
@@ -105,7 +107,7 @@ export default function ExpenseDetailScreen() {
           <Text style={styles.sectionTitle}>Details</Text>
           <View style={styles.card}>
             <View style={styles.detailRow}>
-              <Calendar size={16} color={Colors.textTertiary} />
+              <Calendar size={16} color={c.textTertiary} />
               <Text style={styles.detailLabel}>Date</Text>
               <Text style={styles.detailValue}>
                 {new Date(expense.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
@@ -113,7 +115,7 @@ export default function ExpenseDetailScreen() {
             </View>
             <View style={styles.divider} />
             <View style={styles.detailRow}>
-              <Tag size={16} color={Colors.textTertiary} />
+              <Tag size={16} color={c.textTertiary} />
               <Text style={styles.detailLabel}>Category</Text>
               <View style={[styles.detailCatDot, { backgroundColor: catColor }]} />
               <Text style={styles.detailValue}>
@@ -124,7 +126,7 @@ export default function ExpenseDetailScreen() {
               <>
                 <View style={styles.divider} />
                 <View style={styles.detailRow}>
-                  <CreditCard size={16} color={Colors.textTertiary} />
+                  <CreditCard size={16} color={c.textTertiary} />
                   <Text style={styles.detailLabel}>Payment</Text>
                   <Text style={styles.detailValue}>{expense.paymentMethod}</Text>
                 </View>
@@ -134,7 +136,7 @@ export default function ExpenseDetailScreen() {
               <>
                 <View style={styles.divider} />
                 <View style={styles.detailRow}>
-                  <Hash size={16} color={Colors.textTertiary} />
+                  <Hash size={16} color={c.textTertiary} />
                   <Text style={styles.detailLabel}>Invoice #</Text>
                   <Text style={styles.detailValue}>{expense.invoiceNumber}</Text>
                 </View>
@@ -144,7 +146,7 @@ export default function ExpenseDetailScreen() {
               <>
                 <View style={styles.divider} />
                 <View style={styles.detailRow}>
-                  <Receipt size={16} color={Colors.textTertiary} />
+                  <Receipt size={16} color={c.textTertiary} />
                   <Text style={styles.detailLabel}>Related item</Text>
                   <Text style={styles.detailValue}>{appliance.name}</Text>
                 </View>
@@ -154,7 +156,7 @@ export default function ExpenseDetailScreen() {
               <>
                 <View style={styles.divider} />
                 <View style={styles.detailRow}>
-                  <StickyNote size={16} color={Colors.textTertiary} />
+                  <StickyNote size={16} color={c.textTertiary} />
                   <Text style={styles.detailLabel}>Notes</Text>
                   <Text style={[styles.detailValue, { flex: 1 }]}>{expense.notes}</Text>
                 </View>
@@ -177,7 +179,7 @@ export default function ExpenseDetailScreen() {
                 <View key={`receipt-${idx}`} style={styles.receiptCard}>
                   <Image source={{ uri }} style={styles.receiptImage} />
                   <View style={styles.receiptOverlay}>
-                    <Camera size={14} color={Colors.white} />
+                    <Camera size={14} color={c.white} />
                     <Text style={styles.receiptLabel}>Receipt {idx + 1}</Text>
                   </View>
                 </View>
@@ -231,7 +233,7 @@ export default function ExpenseDetailScreen() {
                   >
                     <Phone size={13} color="#4A7FBF" />
                     <Text style={styles.providerDetailText}>{expense.provider.phone}</Text>
-                    <ExternalLink size={12} color={Colors.textTertiary} />
+                    <ExternalLink size={12} color={c.textTertiary} />
                   </TouchableOpacity>
                 )}
                 {expense.provider.email && (
@@ -244,7 +246,7 @@ export default function ExpenseDetailScreen() {
                   >
                     <Mail size={13} color="#4A7FBF" />
                     <Text style={styles.providerDetailText}>{expense.provider.email}</Text>
-                    <ExternalLink size={12} color={Colors.textTertiary} />
+                    <ExternalLink size={12} color={c.textTertiary} />
                   </TouchableOpacity>
                 )}
                 {expense.provider.website && (
@@ -260,18 +262,18 @@ export default function ExpenseDetailScreen() {
                   >
                     <Globe size={13} color="#4A7FBF" />
                     <Text style={styles.providerDetailText}>{expense.provider.website}</Text>
-                    <ExternalLink size={12} color={Colors.textTertiary} />
+                    <ExternalLink size={12} color={c.textTertiary} />
                   </TouchableOpacity>
                 )}
                 {expense.provider.address && (
                   <View style={styles.providerDetailRow}>
-                    <MapPin size={13} color={Colors.textTertiary} />
+                    <MapPin size={13} color={c.textTertiary} />
                     <Text style={styles.providerDetailText}>{expense.provider.address}</Text>
                   </View>
                 )}
                 {expense.provider.notes && (
                   <View style={styles.providerDetailRow}>
-                    <StickyNote size={13} color={Colors.textTertiary} />
+                    <StickyNote size={13} color={c.textTertiary} />
                     <Text style={styles.providerDetailText}>{expense.provider.notes}</Text>
                   </View>
                 )}
@@ -281,7 +283,7 @@ export default function ExpenseDetailScreen() {
         )}
 
         <TouchableOpacity style={styles.deleteBtn} onPress={handleDelete} activeOpacity={0.7}>
-          <Trash2 size={18} color={Colors.danger} />
+          <Trash2 size={18} color={c.danger} />
           <Text style={styles.deleteBtnText}>Delete Expense</Text>
         </TouchableOpacity>
 
@@ -291,10 +293,12 @@ export default function ExpenseDetailScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (c: { background: string; surface: string; surfaceAlt: string; text: string; textSecondary: string; textTertiary: string; cardShadow: string; borderLight: string; danger: string; dangerLight: string; white: string; primary: string; primaryLight: string }) => {
+  const Colors = c;
+  return StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: c.background,
   },
   content: {
     paddingHorizontal: 20,
@@ -521,3 +525,4 @@ const styles = StyleSheet.create({
     color: Colors.danger,
   },
 });
+};

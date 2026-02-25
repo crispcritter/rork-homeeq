@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -18,7 +18,6 @@ import {
   Pencil,
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
-import Colors from '@/constants/colors';
 import { useTheme } from '@/contexts/ThemeContext';
 import { categoryLabels, BUDGET_CATEGORY_COLORS } from '@/constants/categories';
 import FloatingActionButton from '@/components/FloatingActionButton';
@@ -26,11 +25,12 @@ import ScreenHeader from '@/components/ScreenHeader';
 import BudgetEditModal from '@/components/BudgetEditModal';
 import { useBudgetSummary } from '@/hooks/useBudgetSummary';
 import { mediumImpact, lightImpact } from '@/utils/haptics';
-import styles from '@/styles/budget';
+import createStyles from '@/styles/budget';
 
 export default function BudgetScreen() {
   const router = useRouter();
   const { colors: c } = useTheme();
+  const styles = useMemo(() => createStyles(c), [c]);
   const { trustedPros, setMonthlyBudget } = useHome();
   const {
     budgetItems,
@@ -66,7 +66,7 @@ export default function BudgetScreen() {
   }, [setMonthlyBudget]);
 
   return (
-    <View style={[styles.container, { backgroundColor: c.background }]}>
+    <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <ScreenHeader title="Spending" subtitle="Track your home expenses" />
 
@@ -106,31 +106,31 @@ export default function BudgetScreen() {
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               >
                 <Text style={styles.progressTotal}>${monthlyBudget.toLocaleString()} budget</Text>
-                <Pencil size={10} color={Colors.textTertiary} />
+                <Pencil size={10} color={c.textTertiary} />
               </TouchableOpacity>
             </View>
           </View>
 
           <View style={styles.heroStats}>
             <View style={styles.heroStat}>
-              <View style={[styles.heroStatIcon, { backgroundColor: Colors.dangerLight }]}>
-                <TrendingDown size={14} color={Colors.danger} />
+              <View style={[styles.heroStatIcon, { backgroundColor: c.dangerLight }]}>
+                <TrendingDown size={14} color={c.danger} />
               </View>
               <Text style={styles.heroStatLabel}>Spent</Text>
               <Text style={styles.heroStatValue}>${totalSpent.toLocaleString()}</Text>
             </View>
             <View style={styles.heroDivider} />
             <View style={styles.heroStat}>
-              <View style={[styles.heroStatIcon, { backgroundColor: Colors.successLight }]}>
-                <TrendingUp size={14} color={Colors.success} />
+              <View style={[styles.heroStatIcon, { backgroundColor: c.successLight }]}>
+                <TrendingUp size={14} color={c.success} />
               </View>
               <Text style={styles.heroStatLabel}>Left</Text>
               <Text style={styles.heroStatValue}>${remaining.toLocaleString()}</Text>
             </View>
             <View style={styles.heroDivider} />
             <View style={styles.heroStat}>
-              <View style={[styles.heroStatIcon, { backgroundColor: Colors.primaryLight }]}>
-                <Receipt size={14} color={Colors.primary} />
+              <View style={[styles.heroStatIcon, { backgroundColor: c.primaryLight }]}>
+                <Receipt size={14} color={c.primary} />
               </View>
               <Text style={styles.heroStatLabel}>Expenses</Text>
               <Text style={styles.heroStatValue}>{budgetItems.length}</Text>
@@ -151,7 +151,7 @@ export default function BudgetScreen() {
                 style={styles.seeAllBtn}
               >
                 <Text style={styles.seeAllText}>See all</Text>
-                <ChevronRight size={14} color={Colors.primary} />
+                <ChevronRight size={14} color={c.primary} />
               </TouchableOpacity>
             </View>
             <ScrollView
@@ -178,12 +178,12 @@ export default function BudgetScreen() {
                   <Text style={styles.proSpecialty} numberOfLines={1}>{pro.specialty}</Text>
                   {pro.phone && (
                     <View style={styles.proPhoneRow}>
-                      <Phone size={10} color={Colors.textTertiary} />
+                      <Phone size={10} color={c.textTertiary} />
                       <Text style={styles.proPhone} numberOfLines={1}>{pro.phone}</Text>
                     </View>
                   )}
                   <View style={styles.proExpenseBadge}>
-                    <Receipt size={10} color={Colors.primary} />
+                    <Receipt size={10} color={c.primary} />
                     <Text style={styles.proExpenseCount}>
                       {pro.expenseIds.length} {pro.expenseIds.length === 1 ? 'job' : 'jobs'}
                     </Text>
@@ -226,7 +226,7 @@ export default function BudgetScreen() {
           {recentItems.length === 0 ? (
             <View style={styles.emptyState}>
               <View style={styles.emptyIconWrap}>
-                <Receipt size={24} color={Colors.primary} />
+                <Receipt size={24} color={c.primary} />
               </View>
               <Text style={styles.emptyText}>No expenses logged yet</Text>
               <Text style={styles.emptySubtext}>Tap + to record your first expense</Text>
@@ -242,7 +242,7 @@ export default function BudgetScreen() {
                 }}
                 activeOpacity={0.7}
               >
-                <View style={[styles.expenseDot, { backgroundColor: BUDGET_CATEGORY_COLORS[item.category] || Colors.textTertiary }]} />
+                <View style={[styles.expenseDot, { backgroundColor: BUDGET_CATEGORY_COLORS[item.category] || c.textTertiary }]} />
                 <View style={styles.expenseInfo}>
                   <Text style={styles.expenseDesc}>{item.description}</Text>
                   <View style={styles.expenseMeta}>
@@ -252,12 +252,12 @@ export default function BudgetScreen() {
                     <View style={styles.expenseBadges}>
                       {item.receiptImages && item.receiptImages.length > 0 && (
                         <View style={styles.expenseBadge}>
-                          <Camera size={10} color={Colors.primary} />
+                          <Camera size={10} color={c.primary} />
                         </View>
                       )}
                       {item.provider && (
-                        <View style={[styles.expenseBadge, { backgroundColor: '#E8F0FE' }]}>
-                          <UserCheck size={10} color="#4A7FBF" />
+                        <View style={[styles.expenseBadge, { backgroundColor: c.primaryLight }]}>
+                          <UserCheck size={10} color={c.primary} />
                         </View>
                       )}
                     </View>

@@ -1,20 +1,20 @@
 import { StyleSheet } from 'react-native';
-import Colors from '@/constants/colors';
+import { ColorScheme } from '@/constants/colors';
 
-export default StyleSheet.create({
+const createStyles = (c: ColorScheme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: c.background,
   },
   content: {
     paddingHorizontal: 20,
     paddingTop: 16,
   },
   findCard: {
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderRadius: 20,
     marginBottom: 20,
-    shadowColor: 'rgba(42, 74, 107, 0.12)',
+    shadowColor: c.cardShadow,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 1,
     shadowRadius: 16,
@@ -36,32 +36,32 @@ export default StyleSheet.create({
     width: 42,
     height: 42,
     borderRadius: 14,
-    backgroundColor: '#4A7FBF',
+    backgroundColor: c.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   findCardTitle: {
     fontSize: 17,
     fontWeight: '700' as const,
-    color: Colors.text,
+    color: c.text,
     letterSpacing: -0.2,
   },
   findCardSubtitle: {
     fontSize: 12,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     marginTop: 1,
   },
   findBody: {
     paddingHorizontal: 16,
     paddingBottom: 18,
     borderTopWidth: 1,
-    borderTopColor: Colors.borderLight,
+    borderTopColor: c.borderLight,
     paddingTop: 14,
   },
   findInputLabel: {
     fontSize: 12,
     fontWeight: '600' as const,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     textTransform: 'uppercase' as const,
     letterSpacing: 0.5,
     marginBottom: 8,
@@ -72,7 +72,7 @@ export default StyleSheet.create({
   findInputWrap: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surfaceAlt,
+    backgroundColor: c.surfaceAlt,
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 10,
@@ -81,14 +81,14 @@ export default StyleSheet.create({
   findInput: {
     flex: 1,
     fontSize: 14,
-    color: Colors.text,
+    color: c.text,
     padding: 0,
   },
   selectedApplianceChip: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#E8F0FE',
+    backgroundColor: c.primaryLight,
     borderRadius: 8,
     paddingHorizontal: 10,
     paddingVertical: 5,
@@ -98,7 +98,7 @@ export default StyleSheet.create({
     flex: 1,
     fontSize: 13,
     fontWeight: '600' as const,
-    color: '#2A4A6B',
+    color: c.primary,
   },
   orApplianceBtn: {
     flexDirection: 'row',
@@ -111,7 +111,7 @@ export default StyleSheet.create({
   orApplianceText: {
     fontSize: 13,
     fontWeight: '600' as const,
-    color: '#4A7FBF',
+    color: c.primary,
   },
   findRadiusRow: {
     gap: 8,
@@ -120,21 +120,21 @@ export default StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 10,
-    backgroundColor: Colors.surfaceAlt,
+    backgroundColor: c.surfaceAlt,
     borderWidth: 1.5,
     borderColor: 'transparent',
   },
   findRadiusChipActive: {
-    backgroundColor: '#E8F0FE',
-    borderColor: '#4A7FBF',
+    backgroundColor: c.primaryLight,
+    borderColor: c.primary,
   },
   findRadiusChipText: {
     fontSize: 13,
     fontWeight: '600' as const,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
   },
   findRadiusChipTextActive: {
-    color: '#2A4A6B',
+    color: c.primary,
   },
   searchButton: {
     flexDirection: 'row',
@@ -142,21 +142,21 @@ export default StyleSheet.create({
     justifyContent: 'center',
     gap: 10,
     marginTop: 18,
-    backgroundColor: '#4A7FBF',
+    backgroundColor: c.primary,
     borderRadius: 14,
     paddingVertical: 14,
   },
   searchButtonDisabled: {
-    backgroundColor: Colors.surfaceAlt,
+    backgroundColor: c.surfaceAlt,
   },
   searchButtonText: {
     fontSize: 15,
     fontWeight: '700' as const,
-    color: '#fff',
+    color: c.white,
   },
   findHint: {
     fontSize: 12,
-    color: Colors.textTertiary,
+    color: c.textTertiary,
     textAlign: 'center' as const,
     marginTop: 10,
   },
@@ -167,7 +167,7 @@ export default StyleSheet.create({
   },
   loadingText: {
     fontSize: 14,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
   },
   noResultsWrap: {
     alignItems: 'center',
@@ -177,11 +177,11 @@ export default StyleSheet.create({
   noResultsTitle: {
     fontSize: 16,
     fontWeight: '700' as const,
-    color: Colors.text,
+    color: c.text,
   },
   noResultsText: {
     fontSize: 13,
-    color: Colors.textTertiary,
+    color: c.textTertiary,
     textAlign: 'center' as const,
   },
   resultsSection: {
@@ -199,20 +199,20 @@ export default StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 10,
-    backgroundColor: Colors.surfaceAlt,
+    backgroundColor: c.surfaceAlt,
     justifyContent: 'center',
     alignItems: 'center',
   },
   paginationBtnActive: {
-    backgroundColor: '#4A7FBF',
+    backgroundColor: c.primary,
   },
   paginationText: {
     fontSize: 13,
     fontWeight: '600' as const,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
   },
   paginationTextActive: {
-    color: '#fff',
+    color: c.white,
   },
   resultsHeader: {
     flexDirection: 'row',
@@ -223,15 +223,15 @@ export default StyleSheet.create({
   resultsTitle: {
     fontSize: 14,
     fontWeight: '700' as const,
-    color: Colors.text,
+    color: c.text,
   },
   clearResultsText: {
     fontSize: 13,
     fontWeight: '600' as const,
-    color: '#4A7FBF',
+    color: c.primary,
   },
   resultCard: {
-    backgroundColor: Colors.surfaceAlt,
+    backgroundColor: c.surfaceAlt,
     borderRadius: 14,
     padding: 14,
     marginBottom: 10,
@@ -245,7 +245,7 @@ export default StyleSheet.create({
     width: 42,
     height: 42,
     borderRadius: 21,
-    backgroundColor: '#4A7FBF',
+    backgroundColor: c.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 10,
@@ -253,7 +253,7 @@ export default StyleSheet.create({
   resultAvatarText: {
     fontSize: 17,
     fontWeight: '700' as const,
-    color: '#fff',
+    color: c.white,
   },
   resultInfo: {
     flex: 1,
@@ -261,7 +261,7 @@ export default StyleSheet.create({
   resultName: {
     fontSize: 15,
     fontWeight: '700' as const,
-    color: Colors.text,
+    color: c.text,
     lineHeight: 20,
   },
   resultRatingRow: {
@@ -277,23 +277,23 @@ export default StyleSheet.create({
   resultRatingText: {
     fontSize: 13,
     fontWeight: '700' as const,
-    color: '#F5A623',
+    color: c.warning,
   },
   resultReviewCount: {
     fontSize: 12,
-    color: Colors.textTertiary,
+    color: c.textTertiary,
   },
   saveBtn: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: Colors.primary,
+    backgroundColor: c.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 8,
   },
   saveBtnSaved: {
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: c.primaryLight,
   },
   resultDetails: {
     gap: 6,
@@ -306,12 +306,12 @@ export default StyleSheet.create({
   },
   resultDetailText: {
     fontSize: 13,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     flex: 1,
     lineHeight: 17,
   },
   resultDetailLink: {
-    color: '#4A7FBF',
+    color: c.primary,
   },
   savedBadge: {
     flexDirection: 'row',
@@ -323,7 +323,7 @@ export default StyleSheet.create({
   savedBadgeText: {
     fontSize: 12,
     fontWeight: '600' as const,
-    color: Colors.primary,
+    color: c.primary,
   },
   savedHeader: {
     flexDirection: 'row',
@@ -339,11 +339,11 @@ export default StyleSheet.create({
   savedHeaderTitle: {
     fontSize: 18,
     fontWeight: '700' as const,
-    color: Colors.text,
+    color: c.text,
     letterSpacing: -0.3,
   },
   savedCountBadge: {
-    backgroundColor: '#E8F0FE',
+    backgroundColor: c.primaryLight,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 10,
@@ -351,7 +351,7 @@ export default StyleSheet.create({
   savedCountText: {
     fontSize: 13,
     fontWeight: '700' as const,
-    color: '#4A7FBF',
+    color: c.primary,
   },
   searchRow: {
     flexDirection: 'row',
@@ -362,12 +362,12 @@ export default StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderRadius: 14,
     paddingHorizontal: 14,
     paddingVertical: 10,
     gap: 10,
-    shadowColor: Colors.cardShadow,
+    shadowColor: c.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 6,
@@ -376,19 +376,19 @@ export default StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 14,
-    color: Colors.text,
+    color: c.text,
     padding: 0,
   },
   filterToggleBtn: {
     width: 46,
     height: 46,
     borderRadius: 14,
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: c.primaryLight,
     justifyContent: 'center',
     alignItems: 'center',
   },
   filterToggleBtnActive: {
-    backgroundColor: Colors.primary,
+    backgroundColor: c.primary,
   },
   filterBadge: {
     position: 'absolute',
@@ -397,14 +397,14 @@ export default StyleSheet.create({
     width: 16,
     height: 16,
     borderRadius: 8,
-    backgroundColor: '#F5A623',
+    backgroundColor: c.warning,
     justifyContent: 'center',
     alignItems: 'center',
   },
   filterBadgeText: {
     fontSize: 9,
     fontWeight: '700' as const,
-    color: Colors.white,
+    color: c.white,
   },
   filtersWrap: {
     overflow: 'hidden',
@@ -427,14 +427,14 @@ export default StyleSheet.create({
   filterLabel: {
     fontSize: 12,
     fontWeight: '600' as const,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     textTransform: 'uppercase' as const,
     letterSpacing: 0.5,
   },
   filterClearText: {
     fontSize: 12,
     fontWeight: '600' as const,
-    color: Colors.primary,
+    color: c.primary,
   },
   filterChipsRow: {
     gap: 6,
@@ -444,21 +444,21 @@ export default StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 7,
     borderRadius: 10,
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderWidth: 1,
-    borderColor: Colors.borderLight,
+    borderColor: c.borderLight,
   },
   filterChipActive: {
-    backgroundColor: Colors.primaryLight,
-    borderColor: Colors.primary,
+    backgroundColor: c.primaryLight,
+    borderColor: c.primary,
   },
   filterChipText: {
     fontSize: 12,
     fontWeight: '600' as const,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
   },
   filterChipTextActive: {
-    color: Colors.primaryDark,
+    color: c.primaryDark,
   },
   radiusRow: {
     flexDirection: 'row',
@@ -469,21 +469,21 @@ export default StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 7,
     borderRadius: 10,
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderWidth: 1,
-    borderColor: Colors.borderLight,
+    borderColor: c.borderLight,
   },
   radiusChipActive: {
-    backgroundColor: '#E8F0FE',
-    borderColor: '#4A7FBF',
+    backgroundColor: c.primaryLight,
+    borderColor: c.primary,
   },
   radiusChipText: {
     fontSize: 12,
     fontWeight: '600' as const,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
   },
   radiusChipTextActive: {
-    color: '#4A7FBF',
+    color: c.primary,
   },
   activeFilterSummary: {
     flexDirection: 'row',
@@ -495,16 +495,16 @@ export default StyleSheet.create({
   },
   activeFilterText: {
     fontSize: 13,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     fontWeight: '500' as const,
   },
   clearAllText: {
     fontSize: 13,
     fontWeight: '600' as const,
-    color: Colors.primary,
+    color: c.primary,
   },
   emptyState: {
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderRadius: 20,
     padding: 36,
     alignItems: 'center',
@@ -513,7 +513,7 @@ export default StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: Colors.surfaceAlt,
+    backgroundColor: c.surfaceAlt,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 14,
@@ -521,12 +521,12 @@ export default StyleSheet.create({
   emptyTitle: {
     fontSize: 17,
     fontWeight: '700' as const,
-    color: Colors.text,
+    color: c.text,
     marginBottom: 6,
   },
   emptySubtext: {
     fontSize: 14,
-    color: Colors.textTertiary,
+    color: c.textTertiary,
     textAlign: 'center' as const,
     lineHeight: 20,
     marginBottom: 12,
@@ -535,19 +535,19 @@ export default StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 10,
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: c.primaryLight,
   },
   emptyResetText: {
     fontSize: 14,
     fontWeight: '600' as const,
-    color: Colors.primary,
+    color: c.primary,
   },
   proCard: {
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderRadius: 16,
     padding: 16,
     marginBottom: 12,
-    shadowColor: Colors.cardShadow,
+    shadowColor: c.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 8,
@@ -562,7 +562,7 @@ export default StyleSheet.create({
     width: 46,
     height: 46,
     borderRadius: 23,
-    backgroundColor: '#4A7FBF',
+    backgroundColor: c.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -570,7 +570,7 @@ export default StyleSheet.create({
   proAvatarText: {
     fontSize: 18,
     fontWeight: '700' as const,
-    color: Colors.white,
+    color: c.white,
   },
   proMainInfo: {
     flex: 1,
@@ -578,13 +578,13 @@ export default StyleSheet.create({
   proName: {
     fontSize: 16,
     fontWeight: '700' as const,
-    color: Colors.text,
+    color: c.text,
     marginBottom: 1,
     lineHeight: 21,
   },
   proSpecialty: {
     fontSize: 13,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     lineHeight: 17,
   },
   proRatingRow: {
@@ -596,17 +596,17 @@ export default StyleSheet.create({
   proRatingText: {
     fontSize: 12,
     fontWeight: '700' as const,
-    color: '#F5A623',
+    color: c.warning,
   },
   proRatingCount: {
     fontSize: 11,
-    color: Colors.textTertiary,
+    color: c.textTertiary,
   },
   deleteBtn: {
     width: 36,
     height: 36,
     borderRadius: 12,
-    backgroundColor: Colors.dangerLight,
+    backgroundColor: c.dangerLight,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -622,7 +622,7 @@ export default StyleSheet.create({
   },
   proDetailText: {
     fontSize: 13,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     flex: 1,
     lineHeight: 17,
   },
@@ -635,7 +635,7 @@ export default StyleSheet.create({
     alignItems: 'center',
   },
   proTag: {
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: c.primaryLight,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 6,
@@ -643,18 +643,18 @@ export default StyleSheet.create({
   proTagText: {
     fontSize: 11,
     fontWeight: '600' as const,
-    color: Colors.primaryDark,
+    color: c.primaryDark,
   },
   proTagMore: {
     fontSize: 11,
     fontWeight: '600' as const,
-    color: Colors.textTertiary,
+    color: c.textTertiary,
   },
   proRadiusBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 3,
-    backgroundColor: '#E8F0FE',
+    backgroundColor: c.primaryLight,
     paddingHorizontal: 7,
     paddingVertical: 3,
     borderRadius: 6,
@@ -662,14 +662,14 @@ export default StyleSheet.create({
   proRadiusText: {
     fontSize: 11,
     fontWeight: '600' as const,
-    color: '#4A7FBF',
+    color: c.primary,
   },
   proFooter: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     borderTopWidth: 1,
-    borderTopColor: Colors.borderLight,
+    borderTopColor: c.borderLight,
     paddingTop: 12,
   },
   proFooterLeft: {
@@ -683,13 +683,13 @@ export default StyleSheet.create({
     gap: 5,
     paddingHorizontal: 9,
     paddingVertical: 4,
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: c.primaryLight,
     borderRadius: 8,
   },
   proExpenseText: {
     fontSize: 11,
     fontWeight: '600' as const,
-    color: Colors.primary,
+    color: c.primary,
     lineHeight: 15,
   },
   proLinkedBadge: {
@@ -698,22 +698,22 @@ export default StyleSheet.create({
     gap: 5,
     paddingHorizontal: 9,
     paddingVertical: 4,
-    backgroundColor: '#E8F0FE',
+    backgroundColor: c.primaryLight,
     borderRadius: 8,
   },
   proLinkedText: {
     fontSize: 11,
     fontWeight: '600' as const,
-    color: '#4A7FBF',
+    color: c.primary,
     lineHeight: 15,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: Colors.overlay,
+    backgroundColor: c.overlay,
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     maxHeight: '70%',
@@ -729,11 +729,11 @@ export default StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: '700' as const,
-    color: Colors.text,
+    color: c.text,
   },
   modalSubtitle: {
     fontSize: 13,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     marginBottom: 16,
     lineHeight: 18,
   },
@@ -744,7 +744,7 @@ export default StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 4,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.borderLight,
+    borderBottomColor: c.borderLight,
   },
   appliancePickerLeft: {
     flexDirection: 'row',
@@ -756,7 +756,7 @@ export default StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: '#E8F0FE',
+    backgroundColor: c.primaryLight,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -766,16 +766,16 @@ export default StyleSheet.create({
   appliancePickerName: {
     fontSize: 15,
     fontWeight: '600' as const,
-    color: Colors.text,
+    color: c.text,
     marginBottom: 2,
   },
   appliancePickerMeta: {
     fontSize: 12,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
   },
   appliancePickerService: {
     fontSize: 11,
-    color: '#4A7FBF',
+    color: c.primary,
     fontWeight: '500' as const,
     marginTop: 2,
   },
@@ -785,6 +785,8 @@ export default StyleSheet.create({
   },
   emptyModalText: {
     fontSize: 14,
-    color: Colors.textTertiary,
+    color: c.textTertiary,
   },
 });
+
+export default createStyles;

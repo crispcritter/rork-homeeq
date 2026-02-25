@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { TouchableOpacity, Animated, StyleSheet } from 'react-native';
 import { Plus } from 'lucide-react-native';
-import Colors from '@/constants/colors';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface FloatingActionButtonProps {
   onPress: () => void;
@@ -9,8 +9,10 @@ interface FloatingActionButtonProps {
   testID?: string;
 }
 
-function FloatingActionButton({ onPress, color = Colors.primary, testID }: FloatingActionButtonProps) {
+function FloatingActionButton({ onPress, color, testID }: FloatingActionButtonProps) {
+  const { colors: c } = useTheme();
   const fabAnim = useRef(new Animated.Value(0)).current;
+  const btnColor = color ?? c.primary;
 
   useEffect(() => {
     Animated.spring(fabAnim, {
@@ -28,12 +30,12 @@ function FloatingActionButton({ onPress, color = Colors.primary, testID }: Float
       opacity: fabAnim,
     }]}>
       <TouchableOpacity
-        style={[styles.fab, { backgroundColor: color, shadowColor: color }]}
+        style={[styles.fab, { backgroundColor: btnColor, shadowColor: btnColor }]}
         onPress={onPress}
         activeOpacity={0.85}
         testID={testID}
       >
-        <Plus size={22} color={Colors.white} />
+        <Plus size={22} color="#FFFFFF" />
       </TouchableOpacity>
     </Animated.View>
   );

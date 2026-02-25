@@ -1,20 +1,20 @@
 import { StyleSheet } from 'react-native';
-import Colors from '@/constants/colors';
+import { ColorScheme } from '@/constants/colors';
 
-export default StyleSheet.create({
+const createStyles = (c: ColorScheme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: c.background,
   },
   content: {
     paddingHorizontal: 20,
   },
   heroCard: {
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderRadius: 20,
     padding: 22,
     marginBottom: 24,
-    shadowColor: Colors.cardShadow,
+    shadowColor: c.cardShadow,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 1,
     shadowRadius: 16,
@@ -28,7 +28,7 @@ export default StyleSheet.create({
   },
   heroLabel: {
     fontSize: 14,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     marginBottom: 4,
     lineHeight: 19,
   },
@@ -40,7 +40,7 @@ export default StyleSheet.create({
   },
   heroPercentBadge: {
     alignItems: 'center',
-    backgroundColor: Colors.surfaceAlt,
+    backgroundColor: c.surfaceAlt,
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 8,
@@ -52,7 +52,7 @@ export default StyleSheet.create({
   },
   heroPercentSub: {
     fontSize: 10,
-    color: Colors.textTertiary,
+    color: c.textTertiary,
     lineHeight: 14,
   },
   progressContainer: {
@@ -60,7 +60,7 @@ export default StyleSheet.create({
   },
   progressBg: {
     height: 6,
-    backgroundColor: Colors.surfaceAlt,
+    backgroundColor: c.surfaceAlt,
     borderRadius: 3,
     overflow: 'hidden',
   },
@@ -75,12 +75,12 @@ export default StyleSheet.create({
   },
   progressSpent: {
     fontSize: 12,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     lineHeight: 16,
   },
   progressTotal: {
     fontSize: 12,
-    color: Colors.textTertiary,
+    color: c.textTertiary,
     lineHeight: 16,
   },
   budgetEditBtn: {
@@ -92,7 +92,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderTopWidth: 1,
-    borderTopColor: Colors.borderLight,
+    borderTopColor: c.borderLight,
     paddingTop: 18,
   },
   heroStat: {
@@ -110,19 +110,19 @@ export default StyleSheet.create({
   },
   heroStatLabel: {
     fontSize: 11,
-    color: Colors.textTertiary,
+    color: c.textTertiary,
     lineHeight: 15,
   },
   heroStatValue: {
     fontSize: 15,
     fontWeight: '700' as const,
-    color: Colors.text,
+    color: c.text,
     lineHeight: 20,
   },
   heroDivider: {
     width: 1,
     height: 40,
-    backgroundColor: Colors.borderLight,
+    backgroundColor: c.borderLight,
   },
   section: {
     marginBottom: 24,
@@ -136,7 +136,7 @@ export default StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: '700' as const,
-    color: Colors.text,
+    color: c.text,
     marginBottom: 12,
     letterSpacing: -0.3,
     lineHeight: 26,
@@ -150,7 +150,7 @@ export default StyleSheet.create({
   seeAllText: {
     fontSize: 14,
     fontWeight: '600' as const,
-    color: Colors.primary,
+    color: c.primary,
   },
   prosRow: {
     gap: 12,
@@ -158,11 +158,11 @@ export default StyleSheet.create({
   },
   proCard: {
     width: 140,
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderRadius: 16,
     padding: 14,
     alignItems: 'center',
-    shadowColor: Colors.cardShadow,
+    shadowColor: c.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 8,
@@ -180,19 +180,19 @@ export default StyleSheet.create({
   proAvatarText: {
     fontSize: 18,
     fontWeight: '700' as const,
-    color: Colors.white,
+    color: '#FFFFFF',
   },
   proName: {
     fontSize: 13,
     fontWeight: '700' as const,
-    color: Colors.text,
+    color: c.text,
     textAlign: 'center',
     marginBottom: 2,
     lineHeight: 17,
   },
   proSpecialty: {
     fontSize: 11,
-    color: Colors.textTertiary,
+    color: c.textTertiary,
     textAlign: 'center',
     marginBottom: 6,
     lineHeight: 15,
@@ -205,7 +205,7 @@ export default StyleSheet.create({
   },
   proPhone: {
     fontSize: 10,
-    color: Colors.textTertiary,
+    color: c.textTertiary,
     lineHeight: 14,
   },
   proExpenseBadge: {
@@ -214,20 +214,20 @@ export default StyleSheet.create({
     gap: 4,
     paddingHorizontal: 8,
     paddingVertical: 3,
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: c.primaryLight,
     borderRadius: 8,
   },
   proExpenseCount: {
     fontSize: 10,
     fontWeight: '600' as const,
-    color: Colors.primary,
+    color: c.primary,
     lineHeight: 14,
   },
   categoryCard: {
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderRadius: 16,
     padding: 16,
-    shadowColor: Colors.cardShadow,
+    shadowColor: c.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 8,
@@ -241,7 +241,7 @@ export default StyleSheet.create({
   },
   categoryRowBorder: {
     borderBottomWidth: 1,
-    borderBottomColor: Colors.borderLight,
+    borderBottomColor: c.borderLight,
   },
   categoryDot: {
     width: 10,
@@ -254,13 +254,13 @@ export default StyleSheet.create({
   categoryLabel: {
     fontSize: 13,
     fontWeight: '600' as const,
-    color: Colors.text,
+    color: c.text,
     marginBottom: 4,
     lineHeight: 17,
   },
   categoryBarContainer: {
     height: 5,
-    backgroundColor: Colors.surfaceAlt,
+    backgroundColor: c.surfaceAlt,
     borderRadius: 2.5,
     overflow: 'hidden',
   },
@@ -271,18 +271,18 @@ export default StyleSheet.create({
   categoryAmount: {
     fontSize: 14,
     fontWeight: '700' as const,
-    color: Colors.text,
+    color: c.text,
     minWidth: 56,
     textAlign: 'right',
   },
   expenseRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderRadius: 14,
     padding: 14,
     marginBottom: 8,
-    shadowColor: Colors.cardShadow,
+    shadowColor: c.cardShadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 1,
     shadowRadius: 4,
@@ -300,7 +300,7 @@ export default StyleSheet.create({
   expenseDesc: {
     fontSize: 15,
     fontWeight: '600' as const,
-    color: Colors.text,
+    color: c.text,
     marginBottom: 2,
     lineHeight: 20,
   },
@@ -311,7 +311,7 @@ export default StyleSheet.create({
   },
   expenseCategory: {
     fontSize: 12,
-    color: Colors.textTertiary,
+    color: c.textTertiary,
     lineHeight: 16,
   },
   expenseBadges: {
@@ -322,14 +322,14 @@ export default StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 6,
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: c.primaryLight,
     justifyContent: 'center',
     alignItems: 'center',
   },
   expenseProvider: {
     fontSize: 11,
     fontWeight: '500' as const,
-    color: '#4A7FBF',
+    color: c.primary,
     marginTop: 2,
     lineHeight: 15,
   },
@@ -340,16 +340,16 @@ export default StyleSheet.create({
   expenseAmount: {
     fontSize: 15,
     fontWeight: '700' as const,
-    color: Colors.danger,
+    color: c.danger,
   },
   expensePayment: {
     fontSize: 10,
-    color: Colors.textTertiary,
+    color: c.textTertiary,
     marginTop: 2,
     lineHeight: 14,
   },
   emptyState: {
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderRadius: 16,
     padding: 28,
     alignItems: 'center',
@@ -358,7 +358,7 @@ export default StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: 26,
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: c.primaryLight,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
@@ -366,13 +366,15 @@ export default StyleSheet.create({
   emptyText: {
     fontSize: 16,
     fontWeight: '600' as const,
-    color: Colors.text,
+    color: c.text,
     marginBottom: 4,
     lineHeight: 22,
   },
   emptySubtext: {
     fontSize: 14,
-    color: Colors.textTertiary,
+    color: c.textTertiary,
     lineHeight: 19,
   },
 });
+
+export default createStyles;

@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useEffect } from 'react';
+import React, { useCallback, useRef, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -9,7 +9,6 @@ import {
 import { useRouter } from 'expo-router';
 import { AlertTriangle, ChevronRight, Plus, Clock, Star, CirclePlus, Wrench, DollarSign, Search } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
-import Colors from '@/constants/colors';
 import { useTheme } from '@/contexts/ThemeContext';
 import PressableCard from '@/components/PressableCard';
 import AnimatedCard from '@/components/AnimatedCard';
@@ -18,7 +17,7 @@ import { getBudgetColor } from '@/utils/budget';
 import { getAverageRating, formatRating } from '@/utils/ratings';
 import { getPriorityColor } from '@/constants/priorities';
 import { lightImpact } from '@/utils/haptics';
-import styles from '@/styles/dashboard';
+import createStyles from '@/styles/dashboard';
 
 const PROVIDER_COLORS = ['#C4826D', '#5A8A60', '#B08D57', '#A08670'];
 
@@ -32,6 +31,7 @@ function getGreeting(): string {
 export default function DashboardScreen() {
   const router = useRouter();
   const { colors: c } = useTheme();
+  const styles = useMemo(() => createStyles(c), [c]);
   const {
     appliances,
     upcomingTasks,
@@ -96,7 +96,7 @@ export default function DashboardScreen() {
               onPress={() => handlePress('/(tabs)/schedule')}
             >
               <View style={styles.alertIconWrap}>
-                <AlertTriangle size={18} color={Colors.danger} />
+                <AlertTriangle size={18} color={c.danger} />
               </View>
               <View style={styles.alertContent}>
                 <Text style={styles.alertTitle}>
@@ -104,7 +104,7 @@ export default function DashboardScreen() {
                 </Text>
                 <Text style={styles.alertSubtitle}>Tap to review overdue items</Text>
               </View>
-              <ChevronRight size={16} color={Colors.danger} />
+              <ChevronRight size={16} color={c.danger} />
             </PressableCard>
           </AnimatedCard>
         )}
@@ -273,18 +273,18 @@ export default function DashboardScreen() {
                 return (
                   <PressableCard
                     key={pro.id}
-                    style={[styles.providerCard, { backgroundColor: c.surface, shadowColor: c.cardShadow }]}
+                    style={styles.providerCard}
                     onPress={() => handlePress(`/provider/${pro.id}`)}
                   >
                     <View style={[styles.providerAvatar, { backgroundColor: (PROVIDER_COLORS[idx % PROVIDER_COLORS.length]) + '20' }]}>
                       <Text style={[styles.providerInitial, { color: PROVIDER_COLORS[idx % PROVIDER_COLORS.length] }]}>{pro.name[0]}</Text>
                     </View>
-                    <Text style={[styles.providerName, { color: c.text }]} numberOfLines={1}>{pro.name}</Text>
-                    <Text style={[styles.providerSpecialty, { color: c.textSecondary }]} numberOfLines={1}>{pro.specialty}</Text>
+                    <Text style={styles.providerName} numberOfLines={1}>{pro.name}</Text>
+                    <Text style={styles.providerSpecialty} numberOfLines={1}>{pro.specialty}</Text>
                     {avgRating !== null && (
                       <View style={styles.ratingRow}>
                         <Star size={11} color={c.warning} fill={c.warning} />
-                        <Text style={[styles.ratingText, { color: c.text }]}>{formatRating(avgRating)}</Text>
+                        <Text style={styles.ratingText}>{formatRating(avgRating)}</Text>
                       </View>
                     )}
                   </PressableCard>

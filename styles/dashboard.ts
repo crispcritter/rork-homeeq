@@ -1,10 +1,10 @@
 import { StyleSheet } from 'react-native';
-import Colors from '@/constants/colors';
+import { ColorScheme } from '@/constants/colors';
 
-export default StyleSheet.create({
+const createStyles = (c: ColorScheme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: c.background,
   },
   content: {
     paddingHorizontal: 20,
@@ -14,12 +14,12 @@ export default StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background,
+    backgroundColor: c.background,
   },
   loadingText: {
     fontSize: 16,
     lineHeight: 22,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
   },
   greetingSection: {
     marginBottom: 20,
@@ -27,20 +27,20 @@ export default StyleSheet.create({
   greeting: {
     fontSize: 30,
     fontWeight: '800' as const,
-    color: Colors.text,
+    color: c.text,
     letterSpacing: -0.8,
     lineHeight: 36,
   },
   greetingSubtitle: {
     fontSize: 15,
     lineHeight: 21,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     marginTop: 4,
   },
   alertBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.dangerLight,
+    backgroundColor: c.dangerLight,
     borderRadius: 14,
     padding: 14,
     marginBottom: 16,
@@ -50,7 +50,7 @@ export default StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: Colors.white,
+    backgroundColor: c.surface,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -60,12 +60,12 @@ export default StyleSheet.create({
   alertTitle: {
     fontSize: 14,
     fontWeight: '600' as const,
-    color: Colors.danger,
+    color: c.danger,
     lineHeight: 19,
   },
   alertSubtitle: {
     fontSize: 12,
-    color: Colors.danger,
+    color: c.danger,
     opacity: 0.7,
     marginTop: 1,
     lineHeight: 16,
@@ -84,12 +84,12 @@ export default StyleSheet.create({
   quickActionInner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderRadius: 14,
     paddingVertical: 14,
     paddingHorizontal: 14,
     gap: 10,
-    shadowColor: Colors.cardShadow,
+    shadowColor: c.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 8,
@@ -106,15 +106,15 @@ export default StyleSheet.create({
   quickActionLabel: {
     fontSize: 13,
     fontWeight: '600' as const,
-    color: Colors.text,
+    color: c.text,
     lineHeight: 17,
   },
   budgetCard: {
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderRadius: 18,
     padding: 18,
     marginBottom: 24,
-    shadowColor: Colors.cardShadow,
+    shadowColor: c.cardShadow,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 1,
     shadowRadius: 12,
@@ -129,7 +129,7 @@ export default StyleSheet.create({
   budgetLabel: {
     fontSize: 14,
     fontWeight: '500' as const,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     lineHeight: 19,
   },
   budgetRightCol: {
@@ -143,13 +143,13 @@ export default StyleSheet.create({
   },
   budgetRightSub: {
     fontSize: 11,
-    color: Colors.textTertiary,
+    color: c.textTertiary,
     lineHeight: 15,
     marginTop: 1,
   },
   budgetBarBg: {
     height: 6,
-    backgroundColor: Colors.surfaceAlt,
+    backgroundColor: c.surfaceAlt,
     borderRadius: 3,
     overflow: 'hidden',
   },
@@ -164,12 +164,12 @@ export default StyleSheet.create({
   },
   budgetSpent: {
     fontSize: 12,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     lineHeight: 16,
   },
   budgetTotal: {
     fontSize: 12,
-    color: Colors.textTertiary,
+    color: c.textTertiary,
     lineHeight: 16,
   },
   section: {
@@ -184,24 +184,24 @@ export default StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: '700' as const,
-    color: Colors.text,
+    color: c.text,
     letterSpacing: -0.3,
     lineHeight: 26,
   },
   seeAllText: {
     fontSize: 14,
     fontWeight: '600' as const,
-    color: Colors.primary,
+    color: c.primary,
     lineHeight: 19,
   },
   taskCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderRadius: 14,
     padding: 16,
     marginBottom: 8,
-    shadowColor: Colors.cardShadow,
+    shadowColor: c.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 8,
@@ -219,7 +219,7 @@ export default StyleSheet.create({
   taskTitle: {
     fontSize: 15,
     fontWeight: '600' as const,
-    color: Colors.text,
+    color: c.text,
     marginBottom: 4,
     lineHeight: 20,
   },
@@ -232,30 +232,30 @@ export default StyleSheet.create({
     width: 3,
     height: 3,
     borderRadius: 1.5,
-    backgroundColor: Colors.textTertiary,
+    backgroundColor: c.textTertiary,
   },
   taskDate: {
     fontSize: 12,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     lineHeight: 16,
   },
   taskAppliance: {
     fontSize: 12,
-    color: Colors.textTertiary,
+    color: c.textTertiary,
     lineHeight: 16,
   },
   taskCost: {
     fontSize: 14,
     fontWeight: '700' as const,
-    color: Colors.text,
+    color: c.text,
     marginLeft: 8,
   },
   emptyCard: {
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderRadius: 16,
     padding: 28,
     alignItems: 'center',
-    shadowColor: Colors.cardShadow,
+    shadowColor: c.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 8,
@@ -264,13 +264,13 @@ export default StyleSheet.create({
   emptyTitle: {
     fontSize: 16,
     fontWeight: '600' as const,
-    color: Colors.text,
+    color: c.text,
     marginBottom: 4,
     lineHeight: 22,
   },
   emptySubtitle: {
     fontSize: 14,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     marginBottom: 16,
     lineHeight: 19,
   },
@@ -281,12 +281,12 @@ export default StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 10,
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: c.primaryLight,
   },
   emptyActionText: {
     fontSize: 14,
     fontWeight: '600' as const,
-    color: Colors.primary,
+    color: c.primary,
     lineHeight: 19,
   },
   providersRow: {
@@ -295,11 +295,11 @@ export default StyleSheet.create({
   },
   providerCard: {
     width: 148,
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderRadius: 16,
     padding: 16,
     alignItems: 'center',
-    shadowColor: Colors.cardShadow,
+    shadowColor: c.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 8,
@@ -319,11 +319,11 @@ export default StyleSheet.create({
     fontWeight: '700' as const,
   },
   emptyProviderCard: {
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderRadius: 16,
     padding: 24,
     alignItems: 'center',
-    shadowColor: Colors.cardShadow,
+    shadowColor: c.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 8,
@@ -333,7 +333,7 @@ export default StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 14,
-    backgroundColor: '#EDE8F5',
+    backgroundColor: c.surfaceAlt,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 10,
@@ -341,27 +341,27 @@ export default StyleSheet.create({
   emptyProviderTitle: {
     fontSize: 15,
     fontWeight: '600' as const,
-    color: Colors.text,
+    color: c.text,
     marginBottom: 4,
     lineHeight: 20,
   },
   emptyProviderSub: {
     fontSize: 13,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     textAlign: 'center' as const,
     lineHeight: 18,
   },
   providerName: {
     fontSize: 13,
     fontWeight: '600' as const,
-    color: Colors.text,
+    color: c.text,
     textAlign: 'center',
     marginBottom: 2,
     lineHeight: 17,
   },
   providerSpecialty: {
     fontSize: 11,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     textAlign: 'center',
     marginBottom: 8,
     lineHeight: 15,
@@ -374,7 +374,9 @@ export default StyleSheet.create({
   ratingText: {
     fontSize: 12,
     fontWeight: '600' as const,
-    color: Colors.text,
+    color: c.text,
     lineHeight: 16,
   },
 });
+
+export default createStyles;

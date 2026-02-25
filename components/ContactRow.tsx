@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 import { ExternalLink } from 'lucide-react-native';
-import Colors from '@/constants/colors';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface ContactRowProps {
   icon: React.ReactNode;
@@ -12,6 +12,8 @@ interface ContactRowProps {
 }
 
 function ContactRow({ icon, text, url, onPress, numberOfLines }: ContactRowProps) {
+  const { colors: c } = useTheme();
+
   const handlePress = () => {
     if (onPress) {
       onPress();
@@ -28,10 +30,10 @@ function ContactRow({ icon, text, url, onPress, numberOfLines }: ContactRowProps
     return (
       <TouchableOpacity style={styles.row} onPress={handlePress} activeOpacity={0.7}>
         {icon}
-        <Text style={[styles.text, styles.linkText]} numberOfLines={numberOfLines}>
+        <Text style={[styles.text, { color: c.textSecondary }, styles.linkText]} numberOfLines={numberOfLines}>
           {text}
         </Text>
-        <ExternalLink size={14} color={Colors.textTertiary} />
+        <ExternalLink size={14} color={c.textTertiary} />
       </TouchableOpacity>
     );
   }
@@ -39,7 +41,7 @@ function ContactRow({ icon, text, url, onPress, numberOfLines }: ContactRowProps
   return (
     <View style={styles.row}>
       {icon}
-      <Text style={styles.text} numberOfLines={numberOfLines}>
+      <Text style={[styles.text, { color: c.textSecondary }]} numberOfLines={numberOfLines}>
         {text}
       </Text>
     </View>
@@ -56,7 +58,6 @@ const styles = StyleSheet.create({
   text: {
     flex: 1,
     fontSize: 13,
-    color: Colors.textSecondary,
     lineHeight: 17,
   },
   linkText: {

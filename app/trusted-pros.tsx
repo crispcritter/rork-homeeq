@@ -35,17 +35,19 @@ import {
   Check,
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
-import Colors from '@/constants/colors';
+import { useTheme } from '@/contexts/ThemeContext';
 import { lightImpact, mediumImpact, successNotification } from '@/utils/haptics';
 import { ProServiceCategory } from '@/types';
 import { SERVICE_FILTER_OPTIONS, RADIUS_FILTER_OPTIONS, SEARCH_RADIUS_OPTIONS, APPLIANCE_TO_SERVICE } from '@/constants/serviceCategories';
 import StarRating from '@/components/StarRating';
 import { searchPlaces, PlaceResult } from '@/utils/googlePlaces';
 import { useMutation } from '@tanstack/react-query';
-import styles from '@/styles/trustedPros';
+import createStyles from '@/styles/trustedPros';
 
 export default function TrustedProsScreen() {
   const router = useRouter();
+  const { colors: c } = useTheme();
+  const styles = useMemo(() => createStyles(c), [c]);
   const { trustedPros, deleteTrustedPro, addTrustedPro, appliances, homeProfile } = useHome();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -324,7 +326,7 @@ export default function TrustedProsScreen() {
               <Text style={styles.findInputLabel}>What do you need?</Text>
               <View style={styles.findInputRow}>
                 <View style={styles.findInputWrap}>
-                  <Wrench size={15} color={Colors.textTertiary} />
+                  <Wrench size={15} color={c.textTertiary} />
                   <TextInput
                     style={styles.findInput}
                     value={selectedAppliance ? '' : findQuery}
@@ -333,7 +335,7 @@ export default function TrustedProsScreen() {
                       if (selectedApplianceId) setSelectedApplianceId(null);
                     }}
                     placeholder={selectedAppliance ? '' : 'e.g. plumber, electrician, HVAC...'}
-                    placeholderTextColor={Colors.textTertiary}
+                    placeholderTextColor={c.textTertiary}
                     editable={!selectedAppliance}
                     returnKeyType="search"
                     onSubmitEditing={handleSearch}
@@ -350,7 +352,7 @@ export default function TrustedProsScreen() {
                   )}
                   {!selectedAppliance && findQuery.length > 0 && (
                     <TouchableOpacity onPress={() => setFindQuery('')} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-                      <X size={15} color={Colors.textTertiary} />
+                      <X size={15} color={c.textTertiary} />
                     </TouchableOpacity>
                   )}
                 </View>
@@ -369,13 +371,13 @@ export default function TrustedProsScreen() {
 
               <Text style={[styles.findInputLabel, { marginTop: 14 }]}>Your location</Text>
               <View style={styles.findInputWrap}>
-                <MapPin size={15} color={Colors.textTertiary} />
+                <MapPin size={15} color={c.textTertiary} />
                 <TextInput
                   style={styles.findInput}
                   value={findLocation}
                   onChangeText={setFindLocation}
                   placeholder="Zip code or city"
-                  placeholderTextColor={Colors.textTertiary}
+                  placeholderTextColor={c.textTertiary}
                   keyboardType="default"
                   returnKeyType="search"
                   onSubmitEditing={handleSearch}
@@ -430,14 +432,14 @@ export default function TrustedProsScreen() {
               {/* Search Results */}
               {placesSearchMutation.isPending && (
                 <View style={styles.loadingWrap}>
-                  <ActivityIndicator size="large" color={Colors.primary} />
+                  <ActivityIndicator size="large" color={c.primary} />
                   <Text style={styles.loadingText}>Searching nearby professionals...</Text>
                 </View>
               )}
 
               {hasSearched && !placesSearchMutation.isPending && searchResults.length === 0 && (
                 <View style={styles.noResultsWrap}>
-                  <Search size={24} color={Colors.textTertiary} />
+                  <Search size={24} color={c.textTertiary} />
                   <Text style={styles.noResultsTitle}>No results found</Text>
                   <Text style={styles.noResultsText}>
                     Try broadening your search or increasing the radius
@@ -497,7 +499,7 @@ export default function TrustedProsScreen() {
                               disabled={saved}
                             >
                               {saved ? (
-                                <Check size={16} color={Colors.primary} />
+                                <Check size={16} color={c.primary} />
                               ) : (
                                 <Plus size={16} color="#fff" />
                               )}
@@ -507,7 +509,7 @@ export default function TrustedProsScreen() {
                           <View style={styles.resultDetails}>
                             {place.address ? (
                               <View style={styles.resultDetailRow}>
-                                <MapPin size={13} color={Colors.textTertiary} />
+                                <MapPin size={13} color={c.textTertiary} />
                                 <Text style={styles.resultDetailText} numberOfLines={2}>{place.address}</Text>
                               </View>
                             ) : null}
@@ -547,7 +549,7 @@ export default function TrustedProsScreen() {
 
                           {saved && (
                             <View style={styles.savedBadge}>
-                              <Check size={11} color={Colors.primary} />
+                              <Check size={11} color={c.primary} />
                               <Text style={styles.savedBadgeText}>Saved to Trusted Pros</Text>
                             </View>
                           )}
@@ -592,18 +594,18 @@ export default function TrustedProsScreen() {
         {/* Search Bar */}
         <View style={styles.searchRow}>
           <View style={styles.searchInputWrap}>
-            <Search size={16} color={Colors.textTertiary} />
+            <Search size={16} color={c.textTertiary} />
             <TextInput
               style={styles.searchInput}
               value={searchQuery}
               onChangeText={setSearchQuery}
               placeholder="Search by name, specialty, or item..."
-              placeholderTextColor={Colors.textTertiary}
+              placeholderTextColor={c.textTertiary}
               returnKeyType="search"
             />
             {searchQuery.length > 0 && (
               <TouchableOpacity onPress={() => setSearchQuery('')} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-                <X size={16} color={Colors.textTertiary} />
+                <X size={16} color={c.textTertiary} />
               </TouchableOpacity>
             )}
           </View>
@@ -612,7 +614,7 @@ export default function TrustedProsScreen() {
             onPress={toggleFilters}
             activeOpacity={0.7}
           >
-            <SlidersHorizontal size={18} color={activeFilterCount > 0 ? Colors.white : Colors.primary} />
+            <SlidersHorizontal size={18} color={activeFilterCount > 0 ? c.white : c.primary} />
             {activeFilterCount > 0 && (
               <View style={styles.filterBadge}>
                 <Text style={styles.filterBadgeText}>{activeFilterCount}</Text>
@@ -652,7 +654,7 @@ export default function TrustedProsScreen() {
           <View style={styles.filterSection}>
             <View style={styles.filterLabelRow}>
               <View style={styles.filterLabelIconRow}>
-                <MapPinned size={13} color={Colors.textSecondary} />
+                <MapPinned size={13} color={c.textSecondary} />
                 <Text style={styles.filterLabel}>Max Radius</Text>
               </View>
               {maxRadius > 0 && (
@@ -698,9 +700,9 @@ export default function TrustedProsScreen() {
           <View style={styles.emptyState}>
             <View style={styles.emptyIconWrap}>
               {trustedPros.length === 0 ? (
-                <UserCheck size={28} color={Colors.textTertiary} />
+                <UserCheck size={28} color={c.textTertiary} />
               ) : (
-                <Search size={28} color={Colors.textTertiary} />
+                <Search size={28} color={c.textTertiary} />
               )}
             </View>
             <Text style={styles.emptyTitle}>
@@ -762,32 +764,32 @@ export default function TrustedProsScreen() {
                     activeOpacity={0.7}
                     hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                   >
-                    <Trash2 size={16} color={Colors.danger} />
+                    <Trash2 size={16} color={c.danger} />
                   </TouchableOpacity>
                 </View>
 
                 <View style={styles.proDetails}>
                   {pro.phone && (
                     <View style={styles.proDetailRow}>
-                      <Phone size={13} color={Colors.textTertiary} />
+                      <Phone size={13} color={c.textTertiary} />
                       <Text style={styles.proDetailText}>{pro.phone}</Text>
                     </View>
                   )}
                   {pro.email && (
                     <View style={styles.proDetailRow}>
-                      <Mail size={13} color={Colors.textTertiary} />
+                      <Mail size={13} color={c.textTertiary} />
                       <Text style={styles.proDetailText}>{pro.email}</Text>
                     </View>
                   )}
                   {pro.address && (
                     <View style={styles.proDetailRow}>
-                      <MapPin size={13} color={Colors.textTertiary} />
+                      <MapPin size={13} color={c.textTertiary} />
                       <Text style={styles.proDetailText} numberOfLines={1}>{pro.address}</Text>
                     </View>
                   )}
                   {pro.website && (
                     <View style={styles.proDetailRow}>
-                      <Globe size={13} color={Colors.textTertiary} />
+                      <Globe size={13} color={c.textTertiary} />
                       <Text style={styles.proDetailText} numberOfLines={1}>{pro.website}</Text>
                     </View>
                   )}
@@ -817,7 +819,7 @@ export default function TrustedProsScreen() {
                 <View style={styles.proFooter}>
                   <View style={styles.proFooterLeft}>
                     <View style={styles.proExpenseBadge}>
-                      <Receipt size={12} color={Colors.primary} />
+                      <Receipt size={12} color={c.primary} />
                       <Text style={styles.proExpenseText}>
                         {pro.expenseIds.length} {pro.expenseIds.length === 1 ? 'expense' : 'expenses'}
                       </Text>
@@ -831,7 +833,7 @@ export default function TrustedProsScreen() {
                       </View>
                     )}
                   </View>
-                  <ChevronRight size={16} color={Colors.textTertiary} />
+                  <ChevronRight size={16} color={c.textTertiary} />
                 </View>
               </TouchableOpacity>
             );
@@ -856,7 +858,7 @@ export default function TrustedProsScreen() {
                 onPress={() => setShowAppliancePicker(false)}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
-                <X size={22} color={Colors.textSecondary} />
+                <X size={22} color={c.textSecondary} />
               </TouchableOpacity>
             </View>
             <Text style={styles.modalSubtitle}>
@@ -889,7 +891,7 @@ export default function TrustedProsScreen() {
                         </Text>
                       </View>
                     </View>
-                    <ChevronRight size={16} color={Colors.textTertiary} />
+                    <ChevronRight size={16} color={c.textTertiary} />
                   </TouchableOpacity>
                 );
               }}

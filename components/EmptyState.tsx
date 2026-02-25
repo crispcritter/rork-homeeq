@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import Colors from '@/constants/colors';
 import { useTheme } from '@/contexts/ThemeContext';
 
 interface EmptyStateProps {
@@ -31,11 +30,9 @@ function EmptyState({ icon, title, subtitle, actionLabel, onAction, compact }: E
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.surface,
     borderRadius: 16,
     padding: 28,
     alignItems: 'center',
-    shadowColor: Colors.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 8,
@@ -48,7 +45,6 @@ const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: 26,
-    backgroundColor: Colors.primaryLight,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
@@ -62,14 +58,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: '600' as const,
-    color: Colors.text,
     marginBottom: 4,
     lineHeight: 22,
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 14,
-    color: Colors.textSecondary,
     lineHeight: 19,
     textAlign: 'center',
   },
@@ -78,12 +72,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 10,
-    backgroundColor: Colors.primaryLight,
   },
   actionText: {
     fontSize: 14,
     fontWeight: '600' as const,
-    color: Colors.primary,
     lineHeight: 19,
   },
 });

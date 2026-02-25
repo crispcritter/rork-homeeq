@@ -44,7 +44,6 @@ import {
   CalendarCheck,
   BellRing,
 } from 'lucide-react-native';
-import Colors from '@/constants/colors';
 import { useTheme } from '@/contexts/ThemeContext';
 import { TaskPriority } from '@/types';
 import { PRIORITIES } from '@/constants/priorities';
@@ -56,12 +55,13 @@ import { Linking, ActivityIndicator } from 'react-native';
 import LinkPreview from '@/components/LinkPreview';
 import ApplianceChipSelector from '@/components/ApplianceChipSelector';
 import { useTaskDetail } from '@/hooks/useTaskDetail';
-import styles from '@/styles/taskDetail';
+import createStyles from '@/styles/taskDetail';
 
 export default function TaskDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { colors: c } = useTheme();
+  const styles = useMemo(() => createStyles(c), [c]);
   const {
     task,
     appliance,
@@ -262,16 +262,16 @@ export default function TaskDetailScreen() {
   const isOverdue = task.status === 'overdue';
 
   const priorityConfig = {
-    low: { color: Colors.textTertiary, bg: Colors.surfaceAlt, label: 'Low Priority' },
-    medium: { color: Colors.warning, bg: Colors.warningLight, label: 'Medium Priority' },
-    high: { color: Colors.danger, bg: Colors.dangerLight, label: 'High Priority' },
+    low: { color: c.textTertiary, bg: c.surfaceAlt, label: 'Low Priority' },
+    medium: { color: c.warning, bg: c.warningLight, label: 'Medium Priority' },
+    high: { color: c.danger, bg: c.dangerLight, label: 'High Priority' },
   };
 
   const statusConfig = {
-    upcoming: { color: Colors.primary, bg: Colors.primaryLight, label: 'Upcoming', icon: Clock },
-    overdue: { color: Colors.danger, bg: Colors.dangerLight, label: 'Overdue', icon: AlertTriangle },
-    completed: { color: Colors.success, bg: Colors.successLight, label: 'Completed', icon: CircleCheck },
-    archived: { color: Colors.textTertiary, bg: Colors.surfaceAlt, label: 'Archived', icon: Archive },
+    upcoming: { color: c.primary, bg: c.primaryLight, label: 'Upcoming', icon: Clock },
+    overdue: { color: c.danger, bg: c.dangerLight, label: 'Overdue', icon: AlertTriangle },
+    completed: { color: c.success, bg: c.successLight, label: 'Completed', icon: CircleCheck },
+    archived: { color: c.textTertiary, bg: c.surfaceAlt, label: 'Archived', icon: Archive },
   };
 
   const prio = priorityConfig[task.priority];
@@ -294,12 +294,12 @@ export default function TaskDetailScreen() {
             title: 'Edit Task',
             headerLeft: () => (
               <TouchableOpacity onPress={cancelEditing} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.headerBtn}>
-                <X size={22} color={Colors.textSecondary} />
+                <X size={22} color={c.textSecondary} />
               </TouchableOpacity>
             ),
             headerRight: () => (
               <TouchableOpacity onPress={onSaveEdit} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.headerBtn}>
-                <Save size={20} color={Colors.primary} />
+                <Save size={20} color={c.primary} />
               </TouchableOpacity>
             ),
           }}
@@ -314,7 +314,7 @@ export default function TaskDetailScreen() {
                   <TextInput
                     style={formStyles.textInput}
                     placeholder="Task name"
-                    placeholderTextColor={Colors.textTertiary}
+                    placeholderTextColor={c.textTertiary}
                     value={editTitle}
                     onChangeText={setEditTitle}
                     testID="edit-task-title"
@@ -328,7 +328,7 @@ export default function TaskDetailScreen() {
                   <TextInput
                     style={[formStyles.textInput, { minHeight: 60 }]}
                     placeholder="Any helpful notes or instructions..."
-                    placeholderTextColor={Colors.textTertiary}
+                    placeholderTextColor={c.textTertiary}
                     value={editDescription}
                     onChangeText={setEditDescription}
                     multiline
@@ -344,7 +344,7 @@ export default function TaskDetailScreen() {
                   <TextInput
                     style={formStyles.textInput}
                     placeholder="YYYY-MM-DD"
-                    placeholderTextColor={Colors.textTertiary}
+                    placeholderTextColor={c.textTertiary}
                     value={editDueDate}
                     onChangeText={setEditDueDate}
                     testID="edit-task-due-date"
@@ -370,7 +370,7 @@ export default function TaskDetailScreen() {
                   <Text
                     style={[
                       formStyles.priorityLabel,
-                      editPriority === p.key && { color: Colors.white },
+                      editPriority === p.key && { color: c.white },
                     ]}
                   >
                     {p.label}
@@ -408,7 +408,7 @@ export default function TaskDetailScreen() {
                   <TextInput
                     style={formStyles.textInput}
                     placeholder="$0.00"
-                    placeholderTextColor={Colors.textTertiary}
+                    placeholderTextColor={c.textTertiary}
                     value={editEstimatedCost}
                     onChangeText={setEditEstimatedCost}
                     keyboardType="numeric"
@@ -425,8 +425,8 @@ export default function TaskDetailScreen() {
                 <Switch
                   value={editRecurring}
                   onValueChange={setEditRecurring}
-                  trackColor={{ false: Colors.border, true: Colors.primary + '60' }}
-                  thumbColor={editRecurring ? Colors.primary : Colors.textTertiary}
+                  trackColor={{ false: c.border, true: c.primary + '60' }}
+                  thumbColor={editRecurring ? c.primary : c.textTertiary}
                 />
               </View>
               {editRecurring && (
@@ -438,7 +438,7 @@ export default function TaskDetailScreen() {
                       <TextInput
                         style={formStyles.textInput}
                         placeholder="30"
-                        placeholderTextColor={Colors.textTertiary}
+                        placeholderTextColor={c.textTertiary}
                         value={editRecurringInterval}
                         onChangeText={setEditRecurringInterval}
                         keyboardType="numeric"
@@ -457,7 +457,7 @@ export default function TaskDetailScreen() {
             activeOpacity={0.85}
             testID="save-edit-task"
           >
-            <Check size={18} color={Colors.white} />
+            <Check size={18} color={c.white} />
             <Text style={styles.editSaveBtnText}>Save Changes</Text>
           </TouchableOpacity>
 
@@ -485,19 +485,19 @@ export default function TaskDetailScreen() {
           title: '',
           headerLeft: () => (
             <TouchableOpacity onPress={() => router.back()} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.headerBtn}>
-              <X size={22} color={Colors.textSecondary} />
+              <X size={22} color={c.textSecondary} />
             </TouchableOpacity>
           ),
           headerRight: () => (
             <View style={styles.headerActions}>
               {!isArchived && (
                 <TouchableOpacity onPress={startEditing} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.headerBtn}>
-                  <Pencil size={18} color={Colors.primary} />
+                  <Pencil size={18} color={c.primary} />
                 </TouchableOpacity>
               )}
               {!isArchived && (
                 <TouchableOpacity onPress={() => handleArchive(() => router.back())} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={styles.headerBtn}>
-                  <Archive size={20} color={Colors.textSecondary} />
+                  <Archive size={20} color={c.textSecondary} />
                 </TouchableOpacity>
               )}
             </View>
@@ -531,7 +531,7 @@ export default function TaskDetailScreen() {
         <View style={styles.infoGrid}>
           <View style={styles.infoCard}>
             <View style={styles.infoIconWrap}>
-              <CalendarDays size={16} color={Colors.primary} />
+              <CalendarDays size={16} color={c.primary} />
             </View>
             <Text style={styles.infoLabel}>
               {isCompleted ? 'Completed' : 'Due Date'}
@@ -545,7 +545,7 @@ export default function TaskDetailScreen() {
               <Text
                 style={[
                   styles.infoSub,
-                  isOverdue && { color: Colors.danger },
+                  isOverdue && { color: c.danger },
                 ]}
               >
                 {formatRelativeDate(task.dueDate)}
@@ -559,8 +559,8 @@ export default function TaskDetailScreen() {
           </View>
 
           <View style={styles.infoCard}>
-            <View style={[styles.infoIconWrap, { backgroundColor: Colors.warningLight }]}>
-              <DollarSign size={16} color={Colors.warning} />
+            <View style={[styles.infoIconWrap, { backgroundColor: c.warningLight }]}>
+              <DollarSign size={16} color={c.warning} />
             </View>
             <Text style={styles.infoLabel}>Cost</Text>
             <Text style={styles.infoValue}>
@@ -572,8 +572,8 @@ export default function TaskDetailScreen() {
 
           {task.recurring && (
             <View style={styles.infoCard}>
-              <View style={[styles.infoIconWrap, { backgroundColor: Colors.primaryLight }]}>
-                <RefreshCw size={16} color={Colors.primary} />
+              <View style={[styles.infoIconWrap, { backgroundColor: c.primaryLight }]}>
+                <RefreshCw size={16} color={c.primary} />
               </View>
               <Text style={styles.infoLabel}>Repeats</Text>
               <Text style={styles.infoValue}>
@@ -586,17 +586,17 @@ export default function TaskDetailScreen() {
         <View style={styles.linkSection}>
           <View style={styles.linkSectionHeader}>
             <View style={styles.linkTitleRow}>
-              <Link size={16} color={Colors.textSecondary} />
+              <Link size={16} color={c.textSecondary} />
               <Text style={styles.linkSectionTitle}>Product Link</Text>
             </View>
             {!showLinkInput && (
               <TouchableOpacity style={styles.addLinkBtn} onPress={toggleLinkInput} activeOpacity={0.7}>
-                {task.productLink ? <Pencil size={14} color={Colors.primary} /> : <Plus size={16} color={Colors.primary} />}
+                {task.productLink ? <Pencil size={14} color={c.primary} /> : <Plus size={16} color={c.primary} />}
               </TouchableOpacity>
             )}
             {showLinkInput && (
               <TouchableOpacity style={styles.addLinkBtn} onPress={toggleLinkInput} activeOpacity={0.7}>
-                <X size={16} color={Colors.textSecondary} />
+                <X size={16} color={c.textSecondary} />
               </TouchableOpacity>
             )}
           </View>
@@ -607,7 +607,7 @@ export default function TaskDetailScreen() {
                 <TextInput
                   style={styles.linkInput}
                   placeholder="https://www.example.com/product"
-                  placeholderTextColor={Colors.textTertiary}
+                  placeholderTextColor={c.textTertiary}
                   value={linkValue}
                   onChangeText={setLinkValue}
                   autoCapitalize="none"
@@ -622,7 +622,7 @@ export default function TaskDetailScreen() {
                   onPress={onSaveLink}
                   activeOpacity={0.7}
                 >
-                  <Check size={16} color={(linkValue.trim() || isEditingLink) ? Colors.white : Colors.textTertiary} />
+                  <Check size={16} color={(linkValue.trim() || isEditingLink) ? c.white : c.textTertiary} />
                 </TouchableOpacity>
               </View>
             </Animated.View>
@@ -644,14 +644,14 @@ export default function TaskDetailScreen() {
           >
             <ShoppingCart size={15} color="#FF9900" />
             <Text style={styles.amazonSearchText}>Search on Amazon</Text>
-            <ExternalLink size={12} color={Colors.textTertiary} style={{ marginLeft: 'auto' }} />
+            <ExternalLink size={12} color={c.textTertiary} style={{ marginLeft: 'auto' }} />
           </TouchableOpacity>
         </View>
 
         {appliance && (
           <TouchableOpacity style={styles.applianceCard} onPress={handleNavigateToAppliance} activeOpacity={0.7}>
-            <View style={[styles.applianceIconWrap, { backgroundColor: Colors.accentLight }]}>
-              <Wrench size={18} color={Colors.accent} />
+            <View style={[styles.applianceIconWrap, { backgroundColor: c.accentLight }]}>
+              <Wrench size={18} color={c.accent} />
             </View>
             <View style={styles.applianceInfo}>
               <Text style={styles.applianceLabel}>Related Item</Text>
@@ -660,19 +660,19 @@ export default function TaskDetailScreen() {
                 {appliance.brand} {appliance.model ? `· ${appliance.model}` : ''}
               </Text>
             </View>
-            <ChevronRight size={18} color={Colors.textTertiary} />
+            <ChevronRight size={18} color={c.textTertiary} />
           </TouchableOpacity>
         )}
 
         <View style={styles.proSection}>
           <View style={styles.proSectionHeader}>
             <View style={styles.proTitleRow}>
-              <UserCheck size={16} color={Colors.textSecondary} />
+              <UserCheck size={16} color={c.textSecondary} />
               <Text style={styles.proSectionTitle}>Trusted Pro</Text>
             </View>
             {linkedPro && (
               <TouchableOpacity style={styles.proRemoveBtn} onPress={handleRemovePro} activeOpacity={0.7} hitSlop={8}>
-                <XCircle size={16} color={Colors.textTertiary} />
+                <XCircle size={16} color={c.textTertiary} />
               </TouchableOpacity>
             )}
           </View>
@@ -680,14 +680,14 @@ export default function TaskDetailScreen() {
           {linkedPro ? (
             <TouchableOpacity style={styles.proCard} onPress={handleNavigateToPro} activeOpacity={0.7} testID="task-linked-pro">
               <View style={styles.proAvatarWrap}>
-                <UserCheck size={20} color={Colors.primary} />
+                <UserCheck size={20} color={c.primary} />
               </View>
               <View style={styles.proCardInfo}>
                 <Text style={styles.proCardName}>{linkedPro.name}</Text>
                 <Text style={styles.proCardSpecialty}>{linkedPro.specialty}</Text>
                 {linkedPro.phone ? (
                   <View style={styles.proCardPhoneRow}>
-                    <Phone size={11} color={Colors.textTertiary} />
+                    <Phone size={11} color={c.textTertiary} />
                     <Text style={styles.proCardPhone}>{linkedPro.phone}</Text>
                   </View>
                 ) : null}
@@ -698,7 +698,7 @@ export default function TaskDetailScreen() {
                   <Text style={styles.proRatingText}>{linkedPro.ratings[0].rating.toFixed(1)}</Text>
                 </View>
               )}
-              <ChevronRight size={16} color={Colors.textTertiary} />
+              <ChevronRight size={16} color={c.textTertiary} />
             </TouchableOpacity>
           ) : showProPicker ? (
             <View style={styles.proPickerWrap}>
@@ -709,13 +709,13 @@ export default function TaskDetailScreen() {
                     {trustedPros.map((pro) => (
                       <TouchableOpacity key={pro.id} style={styles.proPickerItem} onPress={() => onAssignPro(pro)} activeOpacity={0.7}>
                         <View style={styles.proPickerAvatar}>
-                          <UserCheck size={16} color={Colors.primary} />
+                          <UserCheck size={16} color={c.primary} />
                         </View>
                         <View style={styles.proPickerInfo}>
                           <Text style={styles.proPickerName}>{pro.name}</Text>
                           <Text style={styles.proPickerSpecialty}>{pro.specialty}</Text>
                         </View>
-                        <Plus size={16} color={Colors.primary} />
+                        <Plus size={16} color={c.primary} />
                       </TouchableOpacity>
                     ))}
                   </ScrollView>
@@ -727,7 +727,7 @@ export default function TaskDetailScreen() {
                 <View style={styles.proPickerEmpty}>
                   <Text style={styles.proPickerEmptyText}>No trusted pros saved yet</Text>
                   <TouchableOpacity style={styles.findProBtn} onPress={handleFindAPro} activeOpacity={0.7} testID="task-find-pro-btn">
-                    <Search size={15} color={Colors.white} />
+                    <Search size={15} color={c.white} />
                     <Text style={styles.findProBtnText}>Find a Pro</Text>
                   </TouchableOpacity>
                 </View>
@@ -739,12 +739,12 @@ export default function TaskDetailScreen() {
               <View style={styles.proEmptyActions}>
                 {trustedPros.length > 0 && (
                   <TouchableOpacity style={styles.proSelectBtn} onPress={() => setShowProPicker(true)} activeOpacity={0.7} testID="task-select-pro-btn">
-                    <UserCheck size={15} color={Colors.primary} />
+                    <UserCheck size={15} color={c.primary} />
                     <Text style={styles.proSelectBtnText}>Assign a Pro</Text>
                   </TouchableOpacity>
                 )}
                 <TouchableOpacity style={styles.findProBtn} onPress={handleFindAPro} activeOpacity={0.7} testID="task-find-pro-btn">
-                  <Search size={15} color={Colors.white} />
+                  <Search size={15} color={c.white} />
                   <Text style={styles.findProBtnText}>Find a Pro</Text>
                 </TouchableOpacity>
               </View>
@@ -755,7 +755,7 @@ export default function TaskDetailScreen() {
         {!isArchived && (
           <View style={styles.calendarSection}>
             <View style={styles.calendarSectionHeader}>
-              <CalendarPlus size={16} color={Colors.textSecondary} />
+              <CalendarPlus size={16} color={c.textSecondary} />
               <Text style={styles.calendarSectionTitle}>Calendar & Reminders</Text>
             </View>
 
@@ -785,9 +785,9 @@ export default function TaskDetailScreen() {
                     testID="task-add-calendar-btn"
                   >
                     {calendarLoading ? (
-                      <ActivityIndicator size="small" color={Colors.textSecondary} />
+                      <ActivityIndicator size="small" color={c.textSecondary} />
                     ) : (
-                      <CalendarPlus size={17} color={Colors.text} />
+                      <CalendarPlus size={17} color={c.text} />
                     )}
                     <Text style={styles.calendarAddBtnText}>Add to Calendar</Text>
                   </TouchableOpacity>
@@ -821,9 +821,9 @@ export default function TaskDetailScreen() {
                     testID="task-add-reminder-btn"
                   >
                     {reminderLoading ? (
-                      <ActivityIndicator size="small" color={Colors.textSecondary} />
+                      <ActivityIndicator size="small" color={c.textSecondary} />
                     ) : (
-                      <Bell size={17} color={Colors.text} />
+                      <Bell size={17} color={c.text} />
                     )}
                     <Text style={styles.calendarAddBtnText}>Add to Reminders</Text>
                   </TouchableOpacity>
@@ -842,11 +842,11 @@ export default function TaskDetailScreen() {
         <View style={styles.notesSection}>
           <View style={styles.notesSectionHeader}>
             <View style={styles.notesTitleRow}>
-              <StickyNote size={16} color={Colors.textSecondary} />
+              <StickyNote size={16} color={c.textSecondary} />
               <Text style={styles.notesSectionTitle}>Notes ({task.notes?.length ?? 0})</Text>
             </View>
             <TouchableOpacity style={styles.addNoteBtn} onPress={toggleNoteInput} activeOpacity={0.7}>
-              {showNoteInput ? <X size={16} color={Colors.textSecondary} /> : <Pencil size={14} color={Colors.primary} />}
+              {showNoteInput ? <X size={16} color={c.textSecondary} /> : <Pencil size={14} color={c.primary} />}
             </TouchableOpacity>
           </View>
 
@@ -856,7 +856,7 @@ export default function TaskDetailScreen() {
                 <TextInput
                   style={styles.noteInput}
                   placeholder="Add a note..."
-                  placeholderTextColor={Colors.textTertiary}
+                  placeholderTextColor={c.textTertiary}
                   value={newNote}
                   onChangeText={setNewNote}
                   multiline
@@ -869,7 +869,7 @@ export default function TaskDetailScreen() {
                   disabled={!newNote.trim()}
                   activeOpacity={0.7}
                 >
-                  <Send size={16} color={newNote.trim() ? Colors.white : Colors.textTertiary} />
+                  <Send size={16} color={newNote.trim() ? c.white : c.textTertiary} />
                 </TouchableOpacity>
               </View>
             </Animated.View>
@@ -885,7 +885,7 @@ export default function TaskDetailScreen() {
                 <View style={styles.noteDot} />
                 <Text style={styles.noteText}>{note}</Text>
                 <TouchableOpacity style={styles.noteDeleteBtn} onPress={() => handleRemoveNote(idx)} hitSlop={8}>
-                  <X size={12} color={Colors.textTertiary} />
+                  <X size={12} color={c.textTertiary} />
                 </TouchableOpacity>
               </View>
             ))
@@ -895,27 +895,27 @@ export default function TaskDetailScreen() {
         <View style={styles.actionsSection}>
           {!isCompleted && !isArchived && (
             <TouchableOpacity style={styles.completeBtn} onPress={handleComplete} activeOpacity={0.85} testID="task-complete-btn">
-              <Check size={18} color={Colors.white} />
+              <Check size={18} color={c.white} />
               <Text style={styles.completeBtnText}>Mark as Done</Text>
             </TouchableOpacity>
           )}
 
           {isArchived && (
             <TouchableOpacity style={styles.restoreBtn} onPress={handleUnarchive} activeOpacity={0.85} testID="task-unarchive-btn">
-              <ArchiveRestore size={18} color={Colors.white} />
+              <ArchiveRestore size={18} color={c.white} />
               <Text style={styles.restoreBtnText}>Restore Task</Text>
             </TouchableOpacity>
           )}
 
           {!isArchived && (isCompleted || task.status === 'upcoming') && (
             <TouchableOpacity style={styles.archiveBtn} onPress={() => handleArchive(() => router.back())} activeOpacity={0.85} testID="task-archive-btn">
-              <Archive size={16} color={Colors.textSecondary} />
+              <Archive size={16} color={c.textSecondary} />
               <Text style={styles.archiveBtnText}>Archive</Text>
             </TouchableOpacity>
           )}
 
           <TouchableOpacity style={styles.deleteBtn} onPress={() => handleDelete(() => router.back())} activeOpacity={0.85} testID="task-delete-btn">
-            <Trash2 size={16} color={Colors.danger} />
+            <Trash2 size={16} color={c.danger} />
             <Text style={styles.deleteBtnText}>Delete Task</Text>
           </TouchableOpacity>
         </View>

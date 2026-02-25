@@ -43,7 +43,6 @@ import {
   Phone,
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
-import Colors from '@/constants/colors';
 import { useTheme } from '@/contexts/ThemeContext';
 import { categoryLabels } from '@/constants/categories';
 import { getWarrantyStatus, formatMonthDay, formatMonthYear, formatLongDate } from '@/utils/dates';
@@ -55,6 +54,7 @@ export default function ApplianceDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { colors: c } = useTheme();
+  const styles = useMemo(() => createApplianceStyles(c), [c]);
   const { getApplianceById, tasks, deleteAppliance, budgetItems, updateAppliance, addTask, trustedPros, linkApplianceToPro, unlinkApplianceFromPro } = useHome();
 
   const appliance = getApplianceById(id ?? '');
@@ -228,7 +228,7 @@ export default function ApplianceDetailScreen() {
                   <Image source={{ uri: item.uri }} style={styles.heroImage} contentFit="cover" />
                   {item.isPrimary && (
                     <View style={styles.heroPrimaryBadge}>
-                      <Star size={10} color={Colors.white} fill={Colors.white} />
+                      <Star size={10} color={c.white} fill={c.white} />
                       <Text style={styles.heroPrimaryText}>Primary</Text>
                     </View>
                   )}
@@ -279,8 +279,8 @@ export default function ApplianceDetailScreen() {
 
           <View style={styles.detailsCard}>
             <View style={styles.detailItem}>
-              <View style={[styles.detailIcon, { backgroundColor: Colors.primaryLight }]}>
-                <MapPin size={16} color={Colors.primary} />
+              <View style={[styles.detailIcon, { backgroundColor: c.primaryLight }]}>
+                <MapPin size={16} color={c.primary} />
               </View>
               <View style={styles.detailTextWrap}>
                 <Text style={styles.detailLabel}>Location</Text>
@@ -289,8 +289,8 @@ export default function ApplianceDetailScreen() {
             </View>
             <View style={styles.detailDivider} />
             <View style={styles.detailItem}>
-              <View style={[styles.detailIcon, { backgroundColor: Colors.accentLight }]}>
-                <Calendar size={16} color={Colors.accent} />
+              <View style={[styles.detailIcon, { backgroundColor: c.accentLight }]}>
+                <Calendar size={16} color={c.accent} />
               </View>
               <View style={styles.detailTextWrap}>
                 <Text style={styles.detailLabel}>Purchased</Text>
@@ -312,7 +312,7 @@ export default function ApplianceDetailScreen() {
                 <View style={styles.detailDivider} />
                 <View style={styles.detailItem}>
                   <View style={[styles.detailIcon, { backgroundColor: '#FEF3C7' }]}>
-                    <Calendar size={16} color={Colors.warning} />
+                    <Calendar size={16} color={c.warning} />
                   </View>
                   <View style={styles.detailTextWrap}>
                     <Text style={styles.detailLabel}>Warranty Expires</Text>
@@ -346,14 +346,14 @@ export default function ApplianceDetailScreen() {
           {(appliance.purchaseData && (appliance.purchaseData.price || appliance.purchaseData.retailer || appliance.purchaseData.paymentMethod || appliance.purchaseData.orderNumber)) ? (
             <View style={styles.purchaseCard}>
               <View style={styles.purchaseHeader}>
-                <Receipt size={18} color={Colors.warning} />
+                <Receipt size={18} color={c.warning} />
                 <Text style={styles.cardTitle}>Purchase Details</Text>
               </View>
               {appliance.purchaseData.price ? (
                 <>
                   <View style={styles.purchaseItem}>
                     <View style={[styles.detailIcon, { backgroundColor: '#FEF3C7' }]}>
-                      <DollarSign size={16} color={Colors.warning} />
+                      <DollarSign size={16} color={c.warning} />
                     </View>
                     <View style={styles.detailTextWrap}>
                       <Text style={styles.detailLabel}>Price Paid</Text>
@@ -366,8 +366,8 @@ export default function ApplianceDetailScreen() {
               {appliance.purchaseData.retailer ? (
                 <>
                   <View style={styles.purchaseItem}>
-                    <View style={[styles.detailIcon, { backgroundColor: Colors.accentLight }]}>
-                      <Store size={16} color={Colors.accent} />
+                    <View style={[styles.detailIcon, { backgroundColor: c.accentLight }]}>
+                      <Store size={16} color={c.accent} />
                     </View>
                     <View style={styles.detailTextWrap}>
                       <Text style={styles.detailLabel}>Purchased From</Text>
@@ -443,38 +443,38 @@ export default function ApplianceDetailScreen() {
                         </View>
                       )}
                     </View>
-                    <ChevronRight size={16} color={Colors.textTertiary} />
+                    <ChevronRight size={16} color={c.textTertiary} />
                   </TouchableOpacity>
                 ) : (
                   <View style={styles.manualUploadedRow}>
                     <View style={styles.manualUploadedIcon}>
-                      <FileText size={18} color={Colors.primary} />
+                      <FileText size={18} color={c.primary} />
                     </View>
                     <View style={styles.manualLinkInfo}>
                       <Text style={styles.manualLinkTitle} numberOfLines={1}>{appliance.manual.title || 'Uploaded Manual'}</Text>
                       <View style={styles.manualFoundBadge}>
-                        <Upload size={9} color={Colors.primary} />
-                        <Text style={[styles.manualFoundText, { color: Colors.primary }]}>Uploaded by you</Text>
+                        <Upload size={9} color={c.primary} />
+                        <Text style={[styles.manualFoundText, { color: c.primary }]}>Uploaded by you</Text>
                       </View>
                     </View>
                   </View>
                 )}
                 <TouchableOpacity style={styles.manualRemoveBtn} onPress={handleRemoveManual} activeOpacity={0.7} testID="remove-manual">
-                  <X size={14} color={Colors.danger} />
+                  <X size={14} color={c.danger} />
                   <Text style={styles.manualRemoveText}>Remove</Text>
                 </TouchableOpacity>
               </View>
             ) : (
               <View style={styles.manualActions}>
                 <TouchableOpacity style={styles.manualActionBtn} onPress={handleUploadManualAction} activeOpacity={0.7} testID="upload-manual">
-                  <View style={[styles.manualActionIcon, { backgroundColor: Colors.primaryLight }]}>
-                    <Upload size={18} color={Colors.primary} />
+                  <View style={[styles.manualActionIcon, { backgroundColor: c.primaryLight }]}>
+                    <Upload size={18} color={c.primary} />
                   </View>
                   <View style={styles.manualActionTextWrap}>
                     <Text style={styles.manualActionTitle}>Upload Manual</Text>
                     <Text style={styles.manualActionSub}>Add a photo or document</Text>
                   </View>
-                  <ChevronRight size={16} color={Colors.textTertiary} />
+                  <ChevronRight size={16} color={c.textTertiary} />
                 </TouchableOpacity>
                 <View style={styles.manualDivider} />
                 <TouchableOpacity style={styles.manualActionBtn} onPress={handleFindManualAction} activeOpacity={0.7} disabled={isSearchingManual} testID="find-manual">
@@ -485,7 +485,7 @@ export default function ApplianceDetailScreen() {
                     <Text style={[styles.manualActionTitle, { color: '#5B8CB8' }]}>{isSearchingManual ? 'Searching...' : 'Find Manual'}</Text>
                     <Text style={styles.manualActionSub}>Search using brand & model info</Text>
                   </View>
-                  {!isSearchingManual && <ChevronRight size={16} color={Colors.textTertiary} />}
+                  {!isSearchingManual && <ChevronRight size={16} color={c.textTertiary} />}
                 </TouchableOpacity>
               </View>
             )}
@@ -494,12 +494,12 @@ export default function ApplianceDetailScreen() {
           <View style={styles.proSection}>
             <View style={styles.proSectionHeader}>
               <View style={styles.proTitleRow}>
-                <UserCheck size={16} color={Colors.textSecondary} />
+                <UserCheck size={16} color={c.textSecondary} />
                 <Text style={styles.proSectionTitle}>Trusted Pro</Text>
               </View>
               {linkedPro && (
                 <TouchableOpacity style={styles.proRemoveBtn} onPress={handleRemovePro} activeOpacity={0.7} hitSlop={8}>
-                  <XCircle size={16} color={Colors.textTertiary} />
+                  <XCircle size={16} color={c.textTertiary} />
                 </TouchableOpacity>
               )}
             </View>
@@ -507,14 +507,14 @@ export default function ApplianceDetailScreen() {
             {linkedPro ? (
               <TouchableOpacity style={styles.proCard} onPress={handleNavigateToPro} activeOpacity={0.7} testID="appliance-linked-pro">
                 <View style={styles.proAvatarWrap}>
-                  <UserCheck size={20} color={Colors.primary} />
+                  <UserCheck size={20} color={c.primary} />
                 </View>
                 <View style={styles.proCardInfo}>
                   <Text style={styles.proCardName}>{linkedPro.name}</Text>
                   <Text style={styles.proCardSpecialty}>{linkedPro.specialty}</Text>
                   {linkedPro.phone ? (
                     <View style={styles.proCardPhoneRow}>
-                      <Phone size={11} color={Colors.textTertiary} />
+                      <Phone size={11} color={c.textTertiary} />
                       <Text style={styles.proCardPhone}>{linkedPro.phone}</Text>
                     </View>
                   ) : null}
@@ -525,7 +525,7 @@ export default function ApplianceDetailScreen() {
                     <Text style={styles.proRatingText}>{linkedPro.ratings[0].rating.toFixed(1)}</Text>
                   </View>
                 )}
-                <ChevronRight size={16} color={Colors.textTertiary} />
+                <ChevronRight size={16} color={c.textTertiary} />
               </TouchableOpacity>
             ) : showProPicker ? (
               <View style={styles.proPickerWrap}>
@@ -536,13 +536,13 @@ export default function ApplianceDetailScreen() {
                       {trustedPros.map((pro) => (
                         <TouchableOpacity key={pro.id} style={styles.proPickerItem} onPress={() => handleAssignPro(pro)} activeOpacity={0.7}>
                           <View style={styles.proPickerAvatar}>
-                            <UserCheck size={16} color={Colors.primary} />
+                            <UserCheck size={16} color={c.primary} />
                           </View>
                           <View style={styles.proPickerInfo}>
                             <Text style={styles.proPickerName}>{pro.name}</Text>
                             <Text style={styles.proPickerSpecialty}>{pro.specialty}</Text>
                           </View>
-                          <Plus size={16} color={Colors.primary} />
+                          <Plus size={16} color={c.primary} />
                         </TouchableOpacity>
                       ))}
                     </ScrollView>
@@ -554,7 +554,7 @@ export default function ApplianceDetailScreen() {
                   <View style={styles.proPickerEmpty}>
                     <Text style={styles.proPickerEmptyText}>No trusted pros saved yet</Text>
                     <TouchableOpacity style={styles.findProBtn} onPress={handleFindAPro} activeOpacity={0.7} testID="appliance-find-pro-btn">
-                      <Search size={15} color={Colors.white} />
+                      <Search size={15} color={c.white} />
                       <Text style={styles.findProBtnText}>Find a Pro</Text>
                     </TouchableOpacity>
                   </View>
@@ -566,12 +566,12 @@ export default function ApplianceDetailScreen() {
                 <View style={styles.proEmptyActions}>
                   {trustedPros.length > 0 && (
                     <TouchableOpacity style={styles.proSelectBtn} onPress={() => setShowProPicker(true)} activeOpacity={0.7} testID="appliance-select-pro-btn">
-                      <UserCheck size={15} color={Colors.primary} />
+                      <UserCheck size={15} color={c.primary} />
                       <Text style={styles.proSelectBtnText}>Assign a Pro</Text>
                     </TouchableOpacity>
                   )}
                   <TouchableOpacity style={styles.findProBtn} onPress={handleFindAPro} activeOpacity={0.7} testID="appliance-find-pro-btn">
-                    <Search size={15} color={Colors.white} />
+                    <Search size={15} color={c.white} />
                     <Text style={styles.findProBtnText}>Find a Pro</Text>
                   </TouchableOpacity>
                 </View>
@@ -593,11 +593,11 @@ export default function ApplianceDetailScreen() {
             ) : (
               relatedTasks.map((task) => (
                 <View key={task.id} style={[styles.taskRow, task.status === 'overdue' && styles.taskRowOverdue]}>
-                  <View style={[styles.taskStatusDot, { backgroundColor: task.status === 'completed' ? Colors.success : task.status === 'overdue' ? Colors.danger : Colors.warning }]} />
+                  <View style={[styles.taskStatusDot, { backgroundColor: task.status === 'completed' ? c.success : task.status === 'overdue' ? c.danger : c.warning }]} />
                   <View style={styles.taskInfo}>
                     <Text style={[styles.taskTitle, task.status === 'completed' && styles.taskTitleDone]}>{task.title}</Text>
                     <View style={styles.taskMetaRow}>
-                      <Clock size={11} color={Colors.textTertiary} />
+                      <Clock size={11} color={c.textTertiary} />
                       <Text style={styles.taskMeta}>
                         {task.status === 'completed' && task.completedDate
                           ? `Done ${formatMonthDay(task.completedDate)}`
@@ -605,8 +605,8 @@ export default function ApplianceDetailScreen() {
                       </Text>
                     </View>
                   </View>
-                  <View style={[styles.statusChip, { backgroundColor: task.status === 'completed' ? Colors.successLight : task.status === 'overdue' ? Colors.dangerLight : Colors.warningLight }]}>
-                    <Text style={[styles.statusChipText, { color: task.status === 'completed' ? Colors.success : task.status === 'overdue' ? Colors.danger : Colors.warning }]}>{task.status}</Text>
+                  <View style={[styles.statusChip, { backgroundColor: task.status === 'completed' ? c.successLight : task.status === 'overdue' ? c.dangerLight : c.warningLight }]}>
+                    <Text style={[styles.statusChipText, { color: task.status === 'completed' ? c.success : task.status === 'overdue' ? c.danger : c.warning }]}>{task.status}</Text>
                   </View>
                 </View>
               ))
@@ -615,12 +615,12 @@ export default function ApplianceDetailScreen() {
             <View style={styles.maintenanceActions}>
               <TouchableOpacity style={styles.generateRecsBtn} onPress={handleGenerateRecommendations} activeOpacity={0.7} disabled={isGeneratingRecs} testID="generate-recommendations">
                 <View style={styles.generateRecsBtnInner}>
-                  {isGeneratingRecs ? <ActivityIndicator size="small" color={Colors.white} /> : <Sparkles size={16} color={Colors.white} />}
+                  {isGeneratingRecs ? <ActivityIndicator size="small" color={c.white} /> : <Sparkles size={16} color={c.white} />}
                   <Text style={styles.generateRecsBtnText}>{isGeneratingRecs ? 'Generating...' : 'Generate Recommendations'}</Text>
                 </View>
               </TouchableOpacity>
               <TouchableOpacity style={styles.addCustomTaskBtn} onPress={() => router.push({ pathname: '/add-task' as any, params: { applianceId: appliance.id } })} activeOpacity={0.7} testID="add-custom-task">
-                <Plus size={16} color={Colors.primary} />
+                <Plus size={16} color={c.primary} />
                 <Text style={styles.addCustomTaskBtnText}>Add Custom Task</Text>
               </TouchableOpacity>
             </View>
@@ -645,28 +645,28 @@ export default function ApplianceDetailScreen() {
                       <View style={styles.recItemContent}>
                         <View style={styles.recTitleRow}>
                           <Text style={styles.recItemTitle} numberOfLines={1}>{rec.title}</Text>
-                          <View style={[styles.recPriorityBadge, { backgroundColor: rec.priority === 'high' ? Colors.dangerLight : rec.priority === 'medium' ? Colors.warningLight : Colors.surfaceAlt }]}>
-                            <Text style={[styles.recPriorityText, { color: rec.priority === 'high' ? Colors.danger : rec.priority === 'medium' ? Colors.warning : Colors.textTertiary }]}>{rec.priority}</Text>
+                          <View style={[styles.recPriorityBadge, { backgroundColor: rec.priority === 'high' ? c.dangerLight : rec.priority === 'medium' ? c.warningLight : c.surfaceAlt }]}>
+                            <Text style={[styles.recPriorityText, { color: rec.priority === 'high' ? c.danger : rec.priority === 'medium' ? c.warning : c.textTertiary }]}>{rec.priority}</Text>
                           </View>
                         </View>
                         <Text style={styles.recItemDesc} numberOfLines={2}>{rec.description}</Text>
                         <View style={styles.recMetaRow}>
                           <View style={styles.recMetaItem}>
-                            <RotateCcw size={10} color={Colors.textTertiary} />
+                            <RotateCcw size={10} color={c.textTertiary} />
                             <Text style={styles.recMetaText}>
                               Every {rec.frequencyDays < 30 ? `${rec.frequencyDays}d` : rec.frequencyDays < 365 ? `${Math.round(rec.frequencyDays / 30)}mo` : `${Math.round(rec.frequencyDays / 365)}yr`}
                             </Text>
                           </View>
                           {rec.estimatedCost != null && (
                             <View style={styles.recMetaItem}>
-                              <DollarSign size={10} color={Colors.textTertiary} />
+                              <DollarSign size={10} color={c.textTertiary} />
                               <Text style={styles.recMetaText}>~${rec.estimatedCost}</Text>
                             </View>
                           )}
                         </View>
                       </View>
                       <TouchableOpacity style={[styles.recAddBtn, isAdded && styles.recAddBtnDone]} onPress={() => !isAdded && handleAddRecommendationAsTask(rec, index)} activeOpacity={isAdded ? 1 : 0.7} testID={`add-rec-${index}`}>
-                        {isAdded ? <Check size={14} color={Colors.success} /> : <Plus size={14} color={Colors.primary} />}
+                        {isAdded ? <Check size={14} color={c.success} /> : <Plus size={14} color={c.primary} />}
                       </TouchableOpacity>
                     </View>
                   );
@@ -697,11 +697,11 @@ export default function ApplianceDetailScreen() {
 
           <View style={styles.actionRow}>
             <TouchableOpacity style={styles.editBtn} onPress={() => router.push({ pathname: '/edit-appliance' as any, params: { id: appliance.id } })} activeOpacity={0.7} testID="edit-appliance">
-              <Pencil size={16} color={Colors.primary} />
+              <Pencil size={16} color={c.primary} />
               <Text style={styles.editBtnText}>Edit Item</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.deleteBtn} onPress={handleDelete} activeOpacity={0.7} testID="delete-appliance">
-              <Trash2 size={16} color={Colors.danger} />
+              <Trash2 size={16} color={c.danger} />
               <Text style={styles.deleteBtnText}>Remove Item</Text>
             </TouchableOpacity>
           </View>
@@ -713,149 +713,149 @@ export default function ApplianceDetailScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
+const createApplianceStyles = (c: any) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.background },
   heroImage: { width: '100%', height: 220 },
-  heroPlaceholder: { backgroundColor: Colors.primaryLight, justifyContent: 'center', alignItems: 'center' },
-  heroPrimaryBadge: { position: 'absolute', bottom: 10, left: 12, flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Colors.primary, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },
-  heroPrimaryText: { fontSize: 11, fontWeight: '600' as const, color: Colors.white },
+  heroPlaceholder: { backgroundColor: c.primaryLight, justifyContent: 'center', alignItems: 'center' },
+  heroPrimaryBadge: { position: 'absolute', bottom: 10, left: 12, flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: c.primary, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },
+  heroPrimaryText: { fontSize: 11, fontWeight: '600' as const, color: c.white },
   photoDots: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 6, paddingVertical: 8, position: 'absolute', bottom: 0, left: 0, right: 0 },
   photoDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.4)' },
-  photoDotActive: { backgroundColor: Colors.white, width: 8, height: 8, borderRadius: 4 },
-  heroInitial: { fontSize: 56, fontWeight: '700' as const, color: Colors.primary, opacity: 0.35 },
-  content: { paddingHorizontal: 20, marginTop: -20, borderTopLeftRadius: 24, borderTopRightRadius: 24, backgroundColor: Colors.background, paddingTop: 24 },
+  photoDotActive: { backgroundColor: c.white, width: 8, height: 8, borderRadius: 4 },
+  heroInitial: { fontSize: 56, fontWeight: '700' as const, color: c.primary, opacity: 0.35 },
+  content: { paddingHorizontal: 20, marginTop: -20, borderTopLeftRadius: 24, borderTopRightRadius: 24, backgroundColor: c.background, paddingTop: 24 },
   titleSection: { marginBottom: 18 },
-  title: { fontSize: 24, fontWeight: '700' as const, color: Colors.text, marginBottom: 4, letterSpacing: -0.3 },
-  subtitle: { fontSize: 15, color: Colors.textSecondary },
-  warrantyCard: { backgroundColor: Colors.surface, borderRadius: 18, padding: 18, marginBottom: 16, shadowColor: Colors.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2 },
+  title: { fontSize: 24, fontWeight: '700' as const, color: c.text, marginBottom: 4, letterSpacing: -0.3 },
+  subtitle: { fontSize: 15, color: c.textSecondary },
+  warrantyCard: { backgroundColor: c.surface, borderRadius: 18, padding: 18, marginBottom: 16, shadowColor: c.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2 },
   warrantyHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
   warrantyStatus: { fontSize: 16, fontWeight: '600' as const },
-  warrantyExpiry: { fontSize: 14, color: Colors.text, fontWeight: '500' as const, marginBottom: 4 },
-  warrantyDate: { fontSize: 13, color: Colors.textTertiary },
-  detailsCard: { backgroundColor: Colors.surface, borderRadius: 18, padding: 6, marginBottom: 16, shadowColor: Colors.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2 },
+  warrantyExpiry: { fontSize: 14, color: c.text, fontWeight: '500' as const, marginBottom: 4 },
+  warrantyDate: { fontSize: 13, color: c.textTertiary },
+  detailsCard: { backgroundColor: c.surface, borderRadius: 18, padding: 6, marginBottom: 16, shadowColor: c.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2 },
   detailItem: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 14 },
-  detailDivider: { height: 1, backgroundColor: Colors.borderLight, marginHorizontal: 14 },
+  detailDivider: { height: 1, backgroundColor: c.borderLight, marginHorizontal: 14 },
   detailIcon: { width: 38, height: 38, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
   detailTextWrap: { flex: 1 },
-  detailLabel: { fontSize: 11, color: Colors.textTertiary, marginBottom: 2 },
-  detailValue: { fontSize: 14, fontWeight: '600' as const, color: Colors.text },
-  notesCard: { backgroundColor: Colors.surface, borderRadius: 18, padding: 18, marginBottom: 16, shadowColor: Colors.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2 },
-  cardTitle: { fontSize: 17, fontWeight: '600' as const, color: Colors.text, marginBottom: 8 },
-  notesText: { fontSize: 14, color: Colors.textSecondary, lineHeight: 21 },
+  detailLabel: { fontSize: 11, color: c.textTertiary, marginBottom: 2 },
+  detailValue: { fontSize: 14, fontWeight: '600' as const, color: c.text },
+  notesCard: { backgroundColor: c.surface, borderRadius: 18, padding: 18, marginBottom: 16, shadowColor: c.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2 },
+  cardTitle: { fontSize: 17, fontWeight: '600' as const, color: c.text, marginBottom: 8 },
+  notesText: { fontSize: 14, color: c.textSecondary, lineHeight: 21 },
   section: { marginBottom: 18 },
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
-  countBadge: { backgroundColor: Colors.surfaceAlt, paddingHorizontal: 10, paddingVertical: 3, borderRadius: 10 },
-  countText: { fontSize: 12, fontWeight: '600' as const, color: Colors.textSecondary },
-  emptyCard: { backgroundColor: Colors.surface, borderRadius: 14, padding: 22, alignItems: 'center' },
-  emptyText: { fontSize: 14, color: Colors.textTertiary },
-  taskRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.surface, borderRadius: 14, padding: 14, marginBottom: 8, shadowColor: Colors.black, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.02, shadowRadius: 4, elevation: 1 },
-  taskRowOverdue: { borderLeftWidth: 3, borderLeftColor: Colors.danger },
+  countBadge: { backgroundColor: c.surfaceAlt, paddingHorizontal: 10, paddingVertical: 3, borderRadius: 10 },
+  countText: { fontSize: 12, fontWeight: '600' as const, color: c.textSecondary },
+  emptyCard: { backgroundColor: c.surface, borderRadius: 14, padding: 22, alignItems: 'center' },
+  emptyText: { fontSize: 14, color: c.textTertiary },
+  taskRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.surface, borderRadius: 14, padding: 14, marginBottom: 8, shadowColor: c.black, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.02, shadowRadius: 4, elevation: 1 },
+  taskRowOverdue: { borderLeftWidth: 3, borderLeftColor: c.danger },
   taskStatusDot: { width: 8, height: 8, borderRadius: 4, marginRight: 12 },
   taskInfo: { flex: 1 },
-  taskTitle: { fontSize: 14, fontWeight: '600' as const, color: Colors.text, marginBottom: 3 },
-  taskTitleDone: { textDecorationLine: 'line-through', color: Colors.textTertiary },
+  taskTitle: { fontSize: 14, fontWeight: '600' as const, color: c.text, marginBottom: 3 },
+  taskTitleDone: { textDecorationLine: 'line-through', color: c.textTertiary },
   taskMetaRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  taskMeta: { fontSize: 12, color: Colors.textTertiary },
+  taskMeta: { fontSize: 12, color: c.textTertiary },
   statusChip: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8, marginLeft: 8 },
   statusChipText: { fontSize: 10, fontWeight: '600' as const, textTransform: 'capitalize' },
-  totalExpense: { fontSize: 15, fontWeight: '600' as const, color: Colors.accent },
-  expenseRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.surface, borderRadius: 14, padding: 14, marginBottom: 8, shadowColor: Colors.black, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.02, shadowRadius: 4, elevation: 1 },
+  totalExpense: { fontSize: 15, fontWeight: '600' as const, color: c.accent },
+  expenseRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.surface, borderRadius: 14, padding: 14, marginBottom: 8, shadowColor: c.black, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.02, shadowRadius: 4, elevation: 1 },
   expenseInfo: { flex: 1 },
-  expenseDesc: { fontSize: 14, fontWeight: '600' as const, color: Colors.text, marginBottom: 2 },
-  expenseMeta: { fontSize: 12, color: Colors.textTertiary },
-  expenseAmount: { fontSize: 15, fontWeight: '600' as const, color: Colors.text },
-  purchaseCard: { backgroundColor: Colors.surface, borderRadius: 18, padding: 6, marginBottom: 16, shadowColor: Colors.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2 },
+  expenseDesc: { fontSize: 14, fontWeight: '600' as const, color: c.text, marginBottom: 2 },
+  expenseMeta: { fontSize: 12, color: c.textTertiary },
+  expenseAmount: { fontSize: 15, fontWeight: '600' as const, color: c.text },
+  purchaseCard: { backgroundColor: c.surface, borderRadius: 18, padding: 6, marginBottom: 16, shadowColor: c.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2 },
   purchaseHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 14, paddingTop: 14, paddingBottom: 6 },
   purchaseItem: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 14 },
-  purchaseDivider: { height: 1, backgroundColor: Colors.borderLight, marginHorizontal: 14 },
+  purchaseDivider: { height: 1, backgroundColor: c.borderLight, marginHorizontal: 14 },
   receiptImageWrap: { padding: 14, alignItems: 'center', gap: 8 },
   receiptImage: { width: '100%', height: 160, borderRadius: 12 },
-  receiptImageLabel: { fontSize: 12, color: Colors.textTertiary, fontWeight: '500' as const },
-  proSection: { backgroundColor: Colors.surface, borderRadius: 18, padding: 16, marginBottom: 16, shadowColor: Colors.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2 },
+  receiptImageLabel: { fontSize: 12, color: c.textTertiary, fontWeight: '500' as const },
+  proSection: { backgroundColor: c.surface, borderRadius: 18, padding: 16, marginBottom: 16, shadowColor: c.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2 },
   proSectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
   proTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  proSectionTitle: { fontSize: 15, fontWeight: '600' as const, color: Colors.text },
+  proSectionTitle: { fontSize: 15, fontWeight: '600' as const, color: c.text },
   proRemoveBtn: { padding: 4 },
-  proCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.primaryLight, borderRadius: 12, padding: 12, gap: 10 },
-  proAvatarWrap: { width: 40, height: 40, borderRadius: 12, backgroundColor: Colors.surface, justifyContent: 'center', alignItems: 'center' },
+  proCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.primaryLight, borderRadius: 12, padding: 12, gap: 10 },
+  proAvatarWrap: { width: 40, height: 40, borderRadius: 12, backgroundColor: c.surface, justifyContent: 'center', alignItems: 'center' },
   proCardInfo: { flex: 1 },
-  proCardName: { fontSize: 15, fontWeight: '600' as const, color: Colors.text },
-  proCardSpecialty: { fontSize: 12, color: Colors.textSecondary, marginTop: 1 },
+  proCardName: { fontSize: 15, fontWeight: '600' as const, color: c.text },
+  proCardSpecialty: { fontSize: 12, color: c.textSecondary, marginTop: 1 },
   proCardPhoneRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 3 },
-  proCardPhone: { fontSize: 12, color: Colors.textTertiary },
-  proRatingBadge: { flexDirection: 'row', alignItems: 'center', gap: 3, backgroundColor: Colors.surface, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8 },
-  proRatingText: { fontSize: 12, fontWeight: '600' as const, color: Colors.text },
+  proCardPhone: { fontSize: 12, color: c.textTertiary },
+  proRatingBadge: { flexDirection: 'row', alignItems: 'center', gap: 3, backgroundColor: c.surface, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8 },
+  proRatingText: { fontSize: 12, fontWeight: '600' as const, color: c.text },
   proEmptyState: { alignItems: 'center', paddingVertical: 8, gap: 12 },
-  proEmptyText: { fontSize: 13, color: Colors.textTertiary },
+  proEmptyText: { fontSize: 13, color: c.textTertiary },
   proEmptyActions: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  proSelectBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: Colors.primaryLight, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 10 },
-  proSelectBtnText: { fontSize: 14, fontWeight: '600' as const, color: Colors.primary },
-  findProBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: Colors.primary, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 10 },
-  findProBtnText: { fontSize: 14, fontWeight: '600' as const, color: Colors.white },
+  proSelectBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: c.primaryLight, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 10 },
+  proSelectBtnText: { fontSize: 14, fontWeight: '600' as const, color: c.primary },
+  findProBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: c.primary, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 10 },
+  findProBtnText: { fontSize: 14, fontWeight: '600' as const, color: c.white },
   proPickerWrap: { gap: 8 },
-  proPickerLabel: { fontSize: 12, fontWeight: '500' as const, color: Colors.textTertiary, textTransform: 'uppercase' as const, letterSpacing: 0.5, marginBottom: 4 },
+  proPickerLabel: { fontSize: 12, fontWeight: '500' as const, color: c.textTertiary, textTransform: 'uppercase' as const, letterSpacing: 0.5, marginBottom: 4 },
   proPickerList: { maxHeight: 200 },
-  proPickerItem: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 10, paddingHorizontal: 8, borderBottomWidth: 1, borderBottomColor: Colors.borderLight },
-  proPickerAvatar: { width: 34, height: 34, borderRadius: 10, backgroundColor: Colors.primaryLight, justifyContent: 'center', alignItems: 'center' },
+  proPickerItem: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 10, paddingHorizontal: 8, borderBottomWidth: 1, borderBottomColor: c.borderLight },
+  proPickerAvatar: { width: 34, height: 34, borderRadius: 10, backgroundColor: c.primaryLight, justifyContent: 'center', alignItems: 'center' },
   proPickerInfo: { flex: 1 },
-  proPickerName: { fontSize: 14, fontWeight: '600' as const, color: Colors.text },
-  proPickerSpecialty: { fontSize: 12, color: Colors.textSecondary },
+  proPickerName: { fontSize: 14, fontWeight: '600' as const, color: c.text },
+  proPickerSpecialty: { fontSize: 12, color: c.textSecondary },
   proPickerCancelBtn: { alignItems: 'center', paddingVertical: 10, marginTop: 4 },
-  proPickerCancelText: { fontSize: 14, fontWeight: '500' as const, color: Colors.textSecondary },
+  proPickerCancelText: { fontSize: 14, fontWeight: '500' as const, color: c.textSecondary },
   proPickerEmpty: { alignItems: 'center', gap: 12, paddingVertical: 8 },
-  proPickerEmptyText: { fontSize: 13, color: Colors.textTertiary },
+  proPickerEmptyText: { fontSize: 13, color: c.textTertiary },
   actionRow: { gap: 10, marginTop: 8 },
-  editBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, borderRadius: 14, borderWidth: 1, borderColor: Colors.primary + '30', backgroundColor: Colors.primaryLight },
-  editBtnText: { fontSize: 14, fontWeight: '600' as const, color: Colors.primary },
-  deleteBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, borderRadius: 14, borderWidth: 1, borderColor: Colors.danger + '30', backgroundColor: Colors.dangerLight },
-  deleteBtnText: { fontSize: 14, fontWeight: '600' as const, color: Colors.danger },
-  notFound: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.background },
-  notFoundText: { fontSize: 18, fontWeight: '600' as const, color: Colors.textSecondary, marginBottom: 16 },
-  backBtn: { paddingHorizontal: 20, paddingVertical: 12, borderRadius: 12, backgroundColor: Colors.primary },
-  backBtnText: { fontSize: 14, fontWeight: '600' as const, color: Colors.white },
-  manualCard: { backgroundColor: Colors.surface, borderRadius: 18, padding: 6, marginBottom: 16, shadowColor: Colors.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2 },
+  editBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, borderRadius: 14, borderWidth: 1, borderColor: c.primary + '30', backgroundColor: c.primaryLight },
+  editBtnText: { fontSize: 14, fontWeight: '600' as const, color: c.primary },
+  deleteBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, borderRadius: 14, borderWidth: 1, borderColor: c.danger + '30', backgroundColor: c.dangerLight },
+  deleteBtnText: { fontSize: 14, fontWeight: '600' as const, color: c.danger },
+  notFound: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: c.background },
+  notFoundText: { fontSize: 18, fontWeight: '600' as const, color: c.textSecondary, marginBottom: 16 },
+  backBtn: { paddingHorizontal: 20, paddingVertical: 12, borderRadius: 12, backgroundColor: c.primary },
+  backBtnText: { fontSize: 14, fontWeight: '600' as const, color: c.white },
+  manualCard: { backgroundColor: c.surface, borderRadius: 18, padding: 6, marginBottom: 16, shadowColor: c.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2 },
   manualHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 14, paddingTop: 14, paddingBottom: 6 },
   manualContent: { padding: 8 },
   manualLinkRow: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: '#F0F7FF', borderRadius: 14, padding: 14 },
   manualLinkIcon: { width: 40, height: 40, borderRadius: 12, backgroundColor: '#DBEAFE', justifyContent: 'center', alignItems: 'center' },
   manualLinkInfo: { flex: 1 },
-  manualLinkTitle: { fontSize: 14, fontWeight: '600' as const, color: Colors.text, marginBottom: 2 },
-  manualLinkUrl: { fontSize: 11, color: Colors.textTertiary, marginBottom: 4 },
+  manualLinkTitle: { fontSize: 14, fontWeight: '600' as const, color: c.text, marginBottom: 2 },
+  manualLinkUrl: { fontSize: 11, color: c.textTertiary, marginBottom: 4 },
   manualFoundBadge: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   manualFoundText: { fontSize: 10, fontWeight: '500' as const, color: '#5B8CB8' },
-  manualUploadedRow: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: Colors.primaryLight, borderRadius: 14, padding: 14 },
-  manualUploadedIcon: { width: 40, height: 40, borderRadius: 12, backgroundColor: Colors.primaryLight, borderWidth: 1, borderColor: Colors.primary + '30', justifyContent: 'center', alignItems: 'center' },
+  manualUploadedRow: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: c.primaryLight, borderRadius: 14, padding: 14 },
+  manualUploadedIcon: { width: 40, height: 40, borderRadius: 12, backgroundColor: c.primaryLight, borderWidth: 1, borderColor: c.primary + '30', justifyContent: 'center', alignItems: 'center' },
   manualRemoveBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 10, paddingVertical: 8 },
-  manualRemoveText: { fontSize: 13, fontWeight: '500' as const, color: Colors.danger },
+  manualRemoveText: { fontSize: 13, fontWeight: '500' as const, color: c.danger },
   manualActions: { padding: 4 },
   manualActionBtn: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 12 },
   manualActionIcon: { width: 42, height: 42, borderRadius: 13, justifyContent: 'center', alignItems: 'center' },
   manualActionTextWrap: { flex: 1 },
-  manualActionTitle: { fontSize: 14, fontWeight: '600' as const, color: Colors.primary, marginBottom: 2 },
-  manualActionSub: { fontSize: 12, color: Colors.textTertiary },
-  manualDivider: { height: 1, backgroundColor: Colors.borderLight, marginHorizontal: 12 },
+  manualActionTitle: { fontSize: 14, fontWeight: '600' as const, color: c.primary, marginBottom: 2 },
+  manualActionSub: { fontSize: 12, color: c.textTertiary },
+  manualDivider: { height: 1, backgroundColor: c.borderLight, marginHorizontal: 12 },
   maintenanceActions: { flexDirection: 'row', gap: 10, marginTop: 10 },
   generateRecsBtn: { flex: 1, backgroundColor: '#C9943A', borderRadius: 14, overflow: 'hidden' },
   generateRecsBtnInner: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 13, paddingHorizontal: 14 },
-  generateRecsBtnText: { fontSize: 13, fontWeight: '600' as const, color: Colors.white },
-  addCustomTaskBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 13, paddingHorizontal: 14, borderRadius: 14, borderWidth: 1, borderColor: Colors.primary + '30', backgroundColor: Colors.primaryLight },
-  addCustomTaskBtnText: { fontSize: 13, fontWeight: '600' as const, color: Colors.primary },
-  recsCard: { backgroundColor: Colors.surface, borderRadius: 16, marginTop: 14, overflow: 'hidden', borderWidth: 1, borderColor: '#C9943A' + '25' },
+  generateRecsBtnText: { fontSize: 13, fontWeight: '600' as const, color: c.white },
+  addCustomTaskBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 13, paddingHorizontal: 14, borderRadius: 14, borderWidth: 1, borderColor: c.primary + '30', backgroundColor: c.primaryLight },
+  addCustomTaskBtnText: { fontSize: 13, fontWeight: '600' as const, color: c.primary },
+  recsCard: { backgroundColor: c.surface, borderRadius: 16, marginTop: 14, overflow: 'hidden', borderWidth: 1, borderColor: '#C9943A' + '25' },
   recsHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 14, paddingBottom: 10, backgroundColor: '#FBF4E4' },
   recsHeaderLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   recsTitle: { fontSize: 14, fontWeight: '600' as const, color: '#8B6914' },
   addAllBtn: { backgroundColor: '#C9943A', paddingHorizontal: 12, paddingVertical: 5, borderRadius: 10 },
-  addAllBtnText: { fontSize: 11, fontWeight: '600' as const, color: Colors.white },
-  recItem: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingVertical: 12, borderTopWidth: 1, borderTopColor: Colors.borderLight },
+  addAllBtnText: { fontSize: 11, fontWeight: '600' as const, color: c.white },
+  recItem: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingVertical: 12, borderTopWidth: 1, borderTopColor: c.borderLight },
   recItemContent: { flex: 1, marginRight: 10 },
   recTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 },
-  recItemTitle: { fontSize: 14, fontWeight: '600' as const, color: Colors.text, flex: 1 },
+  recItemTitle: { fontSize: 14, fontWeight: '600' as const, color: c.text, flex: 1 },
   recPriorityBadge: { paddingHorizontal: 7, paddingVertical: 2, borderRadius: 6 },
   recPriorityText: { fontSize: 9, fontWeight: '600' as const, textTransform: 'uppercase' as const },
-  recItemDesc: { fontSize: 12, color: Colors.textSecondary, lineHeight: 17, marginBottom: 6 },
+  recItemDesc: { fontSize: 12, color: c.textSecondary, lineHeight: 17, marginBottom: 6 },
   recMetaRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   recMetaItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  recMetaText: { fontSize: 11, color: Colors.textTertiary, fontWeight: '500' as const },
-  recAddBtn: { width: 36, height: 36, borderRadius: 12, backgroundColor: Colors.primaryLight, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: Colors.primary + '25' },
-  recAddBtnDone: { backgroundColor: Colors.successLight, borderColor: Colors.success + '25' },
+  recMetaText: { fontSize: 11, color: c.textTertiary, fontWeight: '500' as const },
+  recAddBtn: { width: 36, height: 36, borderRadius: 12, backgroundColor: c.primaryLight, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: c.primary + '25' },
+  recAddBtnDone: { backgroundColor: c.successLight, borderColor: c.success + '25' },
 });

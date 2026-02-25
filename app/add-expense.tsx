@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -32,24 +32,26 @@ import {
   StickyNote,
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
-import Colors from '@/constants/colors';
+import { LightColors } from '@/constants/colors';
 import { BudgetCategory, ExpenseProvider, TrustedPro } from '@/types';
 import formStyles from '@/constants/formStyles';
 import ApplianceChipSelector from '@/components/ApplianceChipSelector';
 import { successNotification, lightImpact } from '@/utils/haptics';
 
-const CATEGORIES: { key: BudgetCategory; label: string; color: string }[] = [
-  { key: 'maintenance', label: 'Maintenance', color: Colors.categoryMaintenance },
-  { key: 'repair', label: 'Repair', color: Colors.categoryRepair },
-  { key: 'upgrade', label: 'Upgrade', color: Colors.categoryUpgrade },
-  { key: 'emergency', label: 'Emergency', color: Colors.categoryEmergency },
-  { key: 'inspection', label: 'Inspection', color: Colors.categoryInspection },
+const CATEGORY_KEYS: { key: BudgetCategory; label: string }[] = [
+  { key: 'maintenance', label: 'Maintenance' },
+  { key: 'repair', label: 'Repair' },
+  { key: 'upgrade', label: 'Upgrade' },
+  { key: 'emergency', label: 'Emergency' },
+  { key: 'inspection', label: 'Inspection' },
 ];
 
 const PAYMENT_METHODS = ['Cash', 'Credit Card', 'Debit Card', 'Check', 'Venmo', 'Zelle', 'PayPal', 'Other'];
 
 export default function AddExpenseScreen() {
   const router = useRouter();
+  const { colors: c } = useTheme();
+  const styles = useMemo(() => createExpenseStyles(c), [c]);
   const { addBudgetItem, appliances, trustedPros, addTrustedPro } = useHome();
 
   const [description, setDescription] = useState('');
@@ -224,7 +226,7 @@ export default function AddExpenseScreen() {
             <TextInput
               style={styles.amountInput}
               placeholder="0.00"
-              placeholderTextColor={Colors.textTertiary}
+              placeholderTextColor={c.textTertiary}
               value={amount}
               onChangeText={setAmount}
               keyboardType="numeric"
@@ -242,7 +244,7 @@ export default function AddExpenseScreen() {
                 <TextInput
                   style={formStyles.textInput}
                   placeholder="e.g. AC filter replacement"
-                  placeholderTextColor={Colors.textTertiary}
+                  placeholderTextColor={c.textTertiary}
                   value={description}
                   onChangeText={setDescription}
                   testID="expense-description"
@@ -256,7 +258,7 @@ export default function AddExpenseScreen() {
                 <TextInput
                   style={formStyles.textInput}
                   placeholder="YYYY-MM-DD"
-                  placeholderTextColor={Colors.textTertiary}
+                  placeholderTextColor={c.textTertiary}
                   value={date}
                   onChangeText={setDate}
                   testID="expense-date"
@@ -270,12 +272,12 @@ export default function AddExpenseScreen() {
                 <TextInput
                   style={formStyles.textInput}
                   placeholder="Optional"
-                  placeholderTextColor={Colors.textTertiary}
+                  placeholderTextColor={c.textTertiary}
                   value={invoiceNumber}
                   onChangeText={setInvoiceNumber}
                 />
               </View>
-              <Hash size={16} color={Colors.textTertiary} />
+              <Hash size={16} color={c.textTertiary} />
             </View>
             <View style={formStyles.divider} />
             <TouchableOpacity
@@ -285,11 +287,11 @@ export default function AddExpenseScreen() {
             >
               <View style={formStyles.inputContent}>
                 <Text style={formStyles.inputLabel}>Payment method</Text>
-                <Text style={[formStyles.textInput, !paymentMethod && { color: Colors.textTertiary }]}>
+                <Text style={[formStyles.textInput, !paymentMethod && { color: c.textTertiary }]}>
                   {paymentMethod || 'Select'}
                 </Text>
               </View>
-              <CreditCard size={16} color={Colors.textTertiary} />
+              <CreditCard size={16} color={c.textTertiary} />
             </TouchableOpacity>
             {showPaymentPicker && (
               <View style={styles.paymentGrid}>
@@ -326,13 +328,13 @@ export default function AddExpenseScreen() {
                 <TextInput
                   style={[formStyles.textInput, { minHeight: 40 }]}
                   placeholder="Any additional details"
-                  placeholderTextColor={Colors.textTertiary}
+                  placeholderTextColor={c.textTertiary}
                   value={expenseNotes}
                   onChangeText={setExpenseNotes}
                   multiline
                 />
               </View>
-              <StickyNote size={16} color={Colors.textTertiary} />
+              <StickyNote size={16} color={c.textTertiary} />
             </View>
           </View>
         </View>
@@ -340,12 +342,12 @@ export default function AddExpenseScreen() {
         <View style={formStyles.section}>
           <Text style={formStyles.sectionLabel}>Category</Text>
           <View style={styles.categoryGrid}>
-            {CATEGORIES.map((cat) => (
+            {CATEGORY_KEYS.map((cat) => (
               <TouchableOpacity
                 key={cat.key}
                 style={[
                   styles.categoryChip,
-                  category === cat.key && { backgroundColor: cat.color, borderColor: cat.color },
+                  category === cat.key && { backgroundColor: c[('category' + cat.key.charAt(0).toUpperCase() + cat.key.slice(1)) as keyof typeof c], borderColor: c[('category' + cat.key.charAt(0).toUpperCase() + cat.key.slice(1)) as keyof typeof c] },
                 ]}
                 onPress={() => setCategory(cat.key)}
                 activeOpacity={0.7}
@@ -353,7 +355,7 @@ export default function AddExpenseScreen() {
                 <Text
                   style={[
                     styles.categoryChipText,
-                    category === cat.key && { color: Colors.white },
+                    category === cat.key && { color: c.white },
                   ]}
                 >
                   {cat.label}
@@ -368,14 +370,14 @@ export default function AddExpenseScreen() {
           <View style={styles.receiptSection}>
             <View style={styles.receiptActions}>
               <TouchableOpacity style={styles.receiptBtn} onPress={takePhoto} activeOpacity={0.7}>
-                <View style={[styles.receiptBtnIcon, { backgroundColor: Colors.primaryLight }]}>
-                  <Camera size={20} color={Colors.primary} />
+                <View style={[styles.receiptBtnIcon, { backgroundColor: c.primaryLight }]}>
+                  <Camera size={20} color={c.primary} />
                 </View>
                 <Text style={styles.receiptBtnText}>Take Photo</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.receiptBtn} onPress={pickImage} activeOpacity={0.7}>
-                <View style={[styles.receiptBtnIcon, { backgroundColor: Colors.accentLight }]}>
-                  <ImageIcon size={20} color={Colors.accent} />
+                <View style={[styles.receiptBtnIcon, { backgroundColor: c.accentLight }]}>
+                  <ImageIcon size={20} color={c.accent} />
                 </View>
                 <Text style={styles.receiptBtnText}>From Library</Text>
               </TouchableOpacity>
@@ -395,10 +397,10 @@ export default function AddExpenseScreen() {
                       onPress={() => removeImage(idx)}
                       activeOpacity={0.7}
                     >
-                      <X size={12} color={Colors.white} />
+                      <X size={12} color={c.white} />
                     </TouchableOpacity>
                     <View style={styles.receiptBadge}>
-                      <Receipt size={10} color={Colors.white} />
+                      <Receipt size={10} color={c.white} />
                     </View>
                   </View>
                 ))}
@@ -428,9 +430,9 @@ export default function AddExpenseScreen() {
               </View>
             </View>
             {providerExpanded ? (
-              <ChevronUp size={20} color={Colors.textTertiary} />
+              <ChevronUp size={20} color={c.textTertiary} />
             ) : (
-              <ChevronDown size={20} color={Colors.textTertiary} />
+              <ChevronDown size={20} color={c.textTertiary} />
             )}
           </TouchableOpacity>
 
@@ -491,12 +493,12 @@ export default function AddExpenseScreen() {
                     <TextInput
                       style={formStyles.textInput}
                       placeholder="e.g. ProAir HVAC Services"
-                      placeholderTextColor={Colors.textTertiary}
+                      placeholderTextColor={c.textTertiary}
                       value={providerName}
                       onChangeText={setProviderName}
                     />
                   </View>
-                  <UserCheck size={16} color={Colors.textTertiary} />
+                  <UserCheck size={16} color={c.textTertiary} />
                 </View>
                 <View style={formStyles.divider} />
                 <View style={formStyles.inputRow}>
@@ -505,12 +507,12 @@ export default function AddExpenseScreen() {
                     <TextInput
                       style={formStyles.textInput}
                       placeholder="e.g. Plumbing, HVAC, Electrical"
-                      placeholderTextColor={Colors.textTertiary}
+                      placeholderTextColor={c.textTertiary}
                       value={providerSpecialty}
                       onChangeText={setProviderSpecialty}
                     />
                   </View>
-                  <FileText size={16} color={Colors.textTertiary} />
+                  <FileText size={16} color={c.textTertiary} />
                 </View>
                 <View style={formStyles.divider} />
                 <View style={formStyles.inputRow}>
@@ -519,13 +521,13 @@ export default function AddExpenseScreen() {
                     <TextInput
                       style={formStyles.textInput}
                       placeholder="(555) 123-4567"
-                      placeholderTextColor={Colors.textTertiary}
+                      placeholderTextColor={c.textTertiary}
                       value={providerPhone}
                       onChangeText={setProviderPhone}
                       keyboardType="phone-pad"
                     />
                   </View>
-                  <Phone size={16} color={Colors.textTertiary} />
+                  <Phone size={16} color={c.textTertiary} />
                 </View>
                 <View style={formStyles.divider} />
                 <View style={formStyles.inputRow}>
@@ -534,14 +536,14 @@ export default function AddExpenseScreen() {
                     <TextInput
                       style={formStyles.textInput}
                       placeholder="contact@provider.com"
-                      placeholderTextColor={Colors.textTertiary}
+                      placeholderTextColor={c.textTertiary}
                       value={providerEmail}
                       onChangeText={setProviderEmail}
                       keyboardType="email-address"
                       autoCapitalize="none"
                     />
                   </View>
-                  <Mail size={16} color={Colors.textTertiary} />
+                  <Mail size={16} color={c.textTertiary} />
                 </View>
                 <View style={formStyles.divider} />
                 <View style={formStyles.inputRow}>
@@ -550,13 +552,13 @@ export default function AddExpenseScreen() {
                     <TextInput
                       style={formStyles.textInput}
                       placeholder="www.provider.com"
-                      placeholderTextColor={Colors.textTertiary}
+                      placeholderTextColor={c.textTertiary}
                       value={providerWebsite}
                       onChangeText={setProviderWebsite}
                       autoCapitalize="none"
                     />
                   </View>
-                  <Globe size={16} color={Colors.textTertiary} />
+                  <Globe size={16} color={c.textTertiary} />
                 </View>
                 <View style={formStyles.divider} />
                 <View style={formStyles.inputRow}>
@@ -565,12 +567,12 @@ export default function AddExpenseScreen() {
                     <TextInput
                       style={formStyles.textInput}
                       placeholder="123 Main St, City, State"
-                      placeholderTextColor={Colors.textTertiary}
+                      placeholderTextColor={c.textTertiary}
                       value={providerAddress}
                       onChangeText={setProviderAddress}
                     />
                   </View>
-                  <MapPin size={16} color={Colors.textTertiary} />
+                  <MapPin size={16} color={c.textTertiary} />
                 </View>
                 <View style={formStyles.divider} />
                 <View style={formStyles.inputRow}>
@@ -579,13 +581,13 @@ export default function AddExpenseScreen() {
                     <TextInput
                       style={[formStyles.textInput, { minHeight: 40 }]}
                       placeholder="Any notes about this provider"
-                      placeholderTextColor={Colors.textTertiary}
+                      placeholderTextColor={c.textTertiary}
                       value={providerNotes}
                       onChangeText={setProviderNotes}
                       multiline
                     />
                   </View>
-                  <StickyNote size={16} color={Colors.textTertiary} />
+                  <StickyNote size={16} color={c.textTertiary} />
                 </View>
               </View>
             </View>
@@ -613,18 +615,18 @@ export default function AddExpenseScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createExpenseStyles = (c: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: c.background,
   },
   amountSection: {
     alignItems: 'center',
     paddingVertical: 28,
     marginBottom: 20,
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderRadius: 20,
-    shadowColor: Colors.cardShadow,
+    shadowColor: c.cardShadow,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 1,
     shadowRadius: 12,
@@ -633,7 +635,7 @@ const styles = StyleSheet.create({
   amountLabel: {
     fontSize: 14,
     fontWeight: '500' as const,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     marginBottom: 10,
     lineHeight: 19,
   },
@@ -644,13 +646,13 @@ const styles = StyleSheet.create({
   amountSign: {
     fontSize: 28,
     fontWeight: '300' as const,
-    color: Colors.textTertiary,
+    color: c.textTertiary,
     marginRight: 4,
   },
   amountInput: {
     fontSize: 38,
     fontWeight: '800' as const,
-    color: Colors.text,
+    color: c.text,
     minWidth: 120,
     textAlign: 'center',
   },
@@ -663,14 +665,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 22,
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: c.border,
   },
   categoryChipText: {
     fontSize: 13,
     fontWeight: '600' as const,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     lineHeight: 17,
   },
   paymentGrid: {
@@ -684,27 +686,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 18,
-    backgroundColor: Colors.surfaceAlt,
+    backgroundColor: c.surfaceAlt,
     borderWidth: 1,
-    borderColor: Colors.borderLight,
+    borderColor: c.borderLight,
   },
   paymentChipActive: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
+    backgroundColor: c.primary,
+    borderColor: c.primary,
   },
   paymentChipText: {
     fontSize: 13,
     fontWeight: '500' as const,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
   },
   paymentChipTextActive: {
-    color: Colors.white,
+    color: c.white,
   },
   receiptSection: {
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderRadius: 16,
     padding: 16,
-    shadowColor: Colors.cardShadow,
+    shadowColor: c.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 8,
@@ -722,9 +724,9 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 16,
     borderRadius: 12,
-    backgroundColor: Colors.surfaceAlt,
+    backgroundColor: c.surfaceAlt,
     borderWidth: 1,
-    borderColor: Colors.borderLight,
+    borderColor: c.borderLight,
   },
   receiptBtnIcon: {
     width: 36,
@@ -736,7 +738,7 @@ const styles = StyleSheet.create({
   receiptBtnText: {
     fontSize: 13,
     fontWeight: '600' as const,
-    color: Colors.text,
+    color: c.text,
     lineHeight: 17,
   },
   receiptImagesRow: {
@@ -748,7 +750,7 @@ const styles = StyleSheet.create({
     height: 110,
     borderRadius: 10,
     overflow: 'hidden',
-    backgroundColor: Colors.surfaceAlt,
+    backgroundColor: c.surfaceAlt,
   },
   receiptImage: {
     width: '100%',
@@ -773,7 +775,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 6,
-    backgroundColor: Colors.primary,
+    backgroundColor: c.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -781,11 +783,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderRadius: 14,
     padding: 14,
     marginBottom: 12,
-    shadowColor: Colors.cardShadow,
+    shadowColor: c.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 8,
@@ -806,7 +808,7 @@ const styles = StyleSheet.create({
   },
   providerSubtext: {
     fontSize: 12,
-    color: Colors.textTertiary,
+    color: c.textTertiary,
     marginTop: 1,
     lineHeight: 16,
   },
@@ -816,7 +818,7 @@ const styles = StyleSheet.create({
   trustedProPickerLabel: {
     fontSize: 12,
     fontWeight: '500' as const,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     marginBottom: 8,
     marginLeft: 4,
   },
@@ -829,10 +831,10 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingVertical: 8,
     paddingHorizontal: 12,
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: Colors.borderLight,
+    borderColor: c.borderLight,
   },
   trustedProAvatar: {
     width: 30,
@@ -845,12 +847,12 @@ const styles = StyleSheet.create({
   trustedProAvatarText: {
     fontSize: 13,
     fontWeight: '700' as const,
-    color: Colors.white,
+    color: c.white,
   },
   trustedProChipName: {
     fontSize: 13,
     fontWeight: '600' as const,
-    color: Colors.text,
+    color: c.text,
     maxWidth: 120,
   },
   clearProBtn: {
@@ -858,16 +860,16 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    backgroundColor: Colors.dangerLight,
+    backgroundColor: c.dangerLight,
     borderRadius: 8,
   },
   clearProBtnText: {
     fontSize: 12,
     fontWeight: '600' as const,
-    color: Colors.danger,
+    color: c.danger,
   },
   saveBtn: {
-    backgroundColor: Colors.accent,
+    backgroundColor: c.accent,
     borderRadius: 14,
     paddingVertical: 16,
     alignItems: 'center',
@@ -876,7 +878,7 @@ const styles = StyleSheet.create({
   saveBtnText: {
     fontSize: 16,
     fontWeight: '700' as const,
-    color: Colors.white,
+    color: c.white,
     lineHeight: 22,
   },
 });

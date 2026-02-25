@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useMemo } from 'react';
 import {
   View,
   Text,
@@ -12,7 +12,7 @@ import {
   Animated,
 } from 'react-native';
 import { X, Check } from 'lucide-react-native';
-import Colors from '@/constants/colors';
+import { ColorScheme } from '@/constants/colors';
 import { useTheme } from '@/contexts/ThemeContext';
 import { mediumImpact, lightImpact } from '@/utils/haptics';
 
@@ -27,6 +27,7 @@ interface BudgetEditModalProps {
 
 function BudgetEditModal({ visible, currentBudget, onSave, onClose }: BudgetEditModalProps) {
   const { colors: c } = useTheme();
+  const styles = useMemo(() => createStyles(c), [c]);
   const [editValue, setEditValue] = React.useState('');
   const modalAnim = useRef(new Animated.Value(0)).current;
 
@@ -77,7 +78,6 @@ function BudgetEditModal({ visible, currentBudget, onSave, onClose }: BudgetEdit
           style={[
             styles.modalContent,
             {
-              backgroundColor: c.surface,
               opacity: modalAnim,
               transform: [
                 {
@@ -91,16 +91,16 @@ function BudgetEditModal({ visible, currentBudget, onSave, onClose }: BudgetEdit
           ]}
         >
           <View style={styles.modalHeader}>
-            <Text style={[styles.modalTitle, { color: c.text }]}>Monthly Budget</Text>
+            <Text style={styles.modalTitle}>Monthly Budget</Text>
             <TouchableOpacity onPress={handleClose} activeOpacity={0.7}>
               <X size={20} color={c.textTertiary} />
             </TouchableOpacity>
           </View>
 
-          <View style={[styles.modalInputRow, { backgroundColor: c.surfaceAlt }]}>
-            <Text style={[styles.modalCurrency, { color: c.textSecondary }]}>$</Text>
+          <View style={styles.modalInputRow}>
+            <Text style={styles.modalCurrency}>$</Text>
             <TextInput
-              style={[styles.modalInput, { color: c.text }]}
+              style={styles.modalInput}
               value={editValue}
               onChangeText={setEditValue}
               keyboardType="numeric"
@@ -139,7 +139,7 @@ function BudgetEditModal({ visible, currentBudget, onSave, onClose }: BudgetEdit
           </View>
 
           <TouchableOpacity
-            style={[styles.modalSaveBtn, { backgroundColor: c.primary }]}
+            style={styles.modalSaveBtn}
             onPress={handleSave}
             activeOpacity={0.8}
             testID="budget-save-btn"
@@ -153,17 +153,17 @@ function BudgetEditModal({ visible, currentBudget, onSave, onClose }: BudgetEdit
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (c: ColorScheme) => StyleSheet.create({
   modalOverlay: {
     flex: 1,
     justifyContent: 'flex-end',
   },
   modalBackdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: Colors.overlay,
+    backgroundColor: c.overlay,
   },
   modalContent: {
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 24,
@@ -178,13 +178,13 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: '700' as const,
-    color: Colors.text,
+    color: c.text,
     letterSpacing: -0.3,
   },
   modalInputRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surfaceAlt,
+    backgroundColor: c.surfaceAlt,
     borderRadius: 16,
     paddingHorizontal: 20,
     paddingVertical: 16,
@@ -193,14 +193,14 @@ const styles = StyleSheet.create({
   modalCurrency: {
     fontSize: 28,
     fontWeight: '700' as const,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     marginRight: 4,
   },
   modalInput: {
     flex: 1,
     fontSize: 28,
     fontWeight: '700' as const,
-    color: Colors.text,
+    color: c.text,
     padding: 0,
   },
   quickAmounts: {
@@ -213,32 +213,32 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 12,
-    backgroundColor: Colors.surfaceAlt,
+    backgroundColor: c.surfaceAlt,
   },
   quickAmountChipActive: {
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: c.primaryLight,
   },
   quickAmountText: {
     fontSize: 14,
     fontWeight: '600' as const,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
   },
   quickAmountTextActive: {
-    color: Colors.primary,
+    color: c.primary,
   },
   modalSaveBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    backgroundColor: Colors.primary,
+    backgroundColor: c.primary,
     borderRadius: 16,
     paddingVertical: 16,
   },
   modalSaveBtnText: {
     fontSize: 16,
     fontWeight: '700' as const,
-    color: Colors.white,
+    color: c.white,
   },
 });
 

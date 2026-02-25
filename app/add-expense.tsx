@@ -34,6 +34,7 @@ import {
 import { useHome } from '@/contexts/HomeContext';
 import { LightColors } from '@/constants/colors';
 import { BudgetCategory, ExpenseProvider, TrustedPro } from '@/types';
+import { Switch } from 'react-native';
 import formStyles from '@/constants/formStyles';
 import ApplianceChipSelector from '@/components/ApplianceChipSelector';
 import { successNotification, lightImpact } from '@/utils/haptics';
@@ -64,6 +65,7 @@ export default function AddExpenseScreen() {
   const [invoiceNumber, setInvoiceNumber] = useState('');
   const [expenseNotes, setExpenseNotes] = useState('');
   const [showPaymentPicker, setShowPaymentPicker] = useState(false);
+  const [taxDeductible, setTaxDeductible] = useState<boolean>(false);
 
   const [providerExpanded, setProviderExpanded] = useState(false);
   const [providerName, setProviderName] = useState('');
@@ -202,6 +204,7 @@ export default function AddExpenseScreen() {
       paymentMethod: paymentMethod || undefined,
       invoiceNumber: invoiceNumber.trim() || undefined,
       notes: expenseNotes.trim() || undefined,
+      taxDeductible: taxDeductible || undefined,
     });
 
     router.back();
@@ -209,7 +212,7 @@ export default function AddExpenseScreen() {
     description, amount, category, date, selectedApplianceId,
     receiptImages, providerName, providerPhone, providerEmail,
     providerWebsite, providerAddress, providerSpecialty, providerNotes,
-    paymentMethod, invoiceNumber, expenseNotes, selectedTrustedProId,
+    paymentMethod, invoiceNumber, expenseNotes, taxDeductible, selectedTrustedProId,
     trustedPros, addBudgetItem, addTrustedPro, router,
   ]);
 
@@ -321,6 +324,22 @@ export default function AddExpenseScreen() {
                 ))}
               </View>
             )}
+            <View style={formStyles.divider} />
+            <View style={formStyles.inputRow}>
+              <View style={formStyles.inputContent}>
+                <Text style={formStyles.inputLabel}>Tax Deductible</Text>
+              </View>
+              <Switch
+                value={taxDeductible}
+                onValueChange={(val) => {
+                  lightImpact();
+                  setTaxDeductible(val);
+                }}
+                trackColor={{ false: c.surfaceAlt, true: c.primaryLight }}
+                thumbColor={taxDeductible ? c.primary : c.textTertiary}
+                testID="expense-tax-deductible"
+              />
+            </View>
             <View style={formStyles.divider} />
             <View style={formStyles.inputRow}>
               <View style={formStyles.inputContent}>

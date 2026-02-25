@@ -25,6 +25,8 @@ import {
   Calendar,
   Tag,
   ExternalLink,
+  CheckCircle,
+  XCircle,
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -152,6 +154,18 @@ export default function ExpenseDetailScreen() {
                 </View>
               </>
             )}
+            <View style={styles.divider} />
+            <View style={styles.detailRow}>
+              {expense.taxDeductible ? (
+                <CheckCircle size={16} color={c.success} />
+              ) : (
+                <XCircle size={16} color={c.textTertiary} />
+              )}
+              <Text style={styles.detailLabel}>Tax Deductible</Text>
+              <Text style={[styles.detailValue, { color: expense.taxDeductible ? c.success : c.textSecondary }]}>
+                {expense.taxDeductible ? 'Yes' : 'No'}
+              </Text>
+            </View>
             {expense.notes && (
               <>
                 <View style={styles.divider} />

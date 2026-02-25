@@ -96,6 +96,7 @@ export interface BudgetItem {
   paymentMethod?: string;
   invoiceNumber?: string;
   notes?: string;
+  taxDeductible?: boolean;
 }
 
 export interface Budget {

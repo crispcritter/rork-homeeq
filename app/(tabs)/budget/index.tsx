@@ -1,69 +1,138 @@
-import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useRef } from 'react';
 import {
   View,
   Text,
   ScrollView,
   Animated,
   TouchableOpacity,
+  Alert,
+  Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import {
   TrendingDown,
-  TrendingUp,
   Receipt,
   Camera,
   UserCheck,
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
   Phone,
-  Pencil,
+  CalendarDays,
+  CalendarRange,
+  Download,
+  FileSpreadsheet,
+  FileText,
+  Table,
+  Share2,
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { categoryLabels, BUDGET_CATEGORY_COLORS } from '@/constants/categories';
 import FloatingActionButton from '@/components/FloatingActionButton';
 import ScreenHeader from '@/components/ScreenHeader';
-import BudgetEditModal from '@/components/BudgetEditModal';
 import { useBudgetSummary } from '@/hooks/useBudgetSummary';
-import { mediumImpact, lightImpact } from '@/utils/haptics';
+import { mediumImpact, lightImpact, successNotification } from '@/utils/haptics';
 import createStyles from '@/styles/budget';
+import { File, Paths } from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
+
+function generateCSV(items: any[], categoryLabelsMap: Record<string, string>): string {
+  const headers = ['Date', 'Description', 'Category', 'Amount', 'Payment Method', 'Invoice #', 'Tax Deductible', 'Provider', 'Notes'];
+  const rows = items.map((item) => [
+    item.date,
+    `"${(item.description || '').replace(/"/g, '""')}"`,
+    categoryLabelsMap[item.category] || item.category,
+    item.amount.toFixed(2),
+    item.paymentMethod || '',
+    item.invoiceNumber || '',
+    item.taxDeductible ? 'Yes' : 'No',
+    item.provider?.name || '',
+    `"${(item.notes || '').replace(/"/g, '""')}"`,
+  ]);
+  return [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+}
 
 export default function BudgetScreen() {
   const router = useRouter();
   const { colors: c } = useTheme();
   const styles = useMemo(() => createStyles(c), [c]);
-  const { trustedPros, setMonthlyBudget } = useHome();
+  const { trustedPros } = useHome();
   const {
     budgetItems,
-    monthlyBudget,
-    totalSpent,
-    budgetProgress,
-    remaining,
-    budgetColor,
-    budgetPercentUsed,
+    spentThisMonth,
+    spentThisYear,
     categoryBreakdown,
     recentItems,
   } = useBudgetSummary();
 
-  const [editModalVisible, setEditModalVisible] = useState<boolean>(false);
-  const progressAnim = useRef(new Animated.Value(0)).current;
+  const [exportExpanded, setExportExpanded] = useState<boolean>(false);
+  const exportAnim = useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
-    Animated.timing(progressAnim, {
-      toValue: budgetProgress,
-      duration: 1200,
+  const toggleExport = useCallback(() => {
+    lightImpact();
+    const toValue = exportExpanded ? 0 : 1;
+    setExportExpanded(!exportExpanded);
+    Animated.timing(exportAnim, {
+      toValue,
+      duration: 250,
       useNativeDriver: false,
     }).start();
-  }, [budgetProgress]);
+  }, [exportExpanded, exportAnim]);
 
-  const openEditModal = useCallback(() => {
-    setEditModalVisible(true);
+  const handleExport = useCallback(async (format: 'csv' | 'excel' | 'google-sheets' | 'apple-numbers') => {
     mediumImpact();
-  }, []);
 
-  const handleSaveBudget = useCallback((amount: number) => {
-    setMonthlyBudget(amount);
-    console.log('[BudgetScreen] Monthly budget updated to:', amount);
-  }, [setMonthlyBudget]);
+    if (budgetItems.length === 0) {
+      Alert.alert('No Data', 'There are no expenses to export yet.');
+      return;
+    }
+
+    const csvContent = generateCSV(budgetItems, categoryLabels);
+    const fileName = `HomeEQ_Expenses_${new Date().toISOString().split('T')[0]}`;
+
+    if (Platform.OS === 'web') {
+      try {
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${fileName}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        successNotification();
+        Alert.alert('Exported', `Your expenses have been downloaded as ${fileName}.csv`);
+      } catch (e) {
+        console.error('[Export] Web export error:', e);
+        Alert.alert('Error', 'Could not export file on this platform.');
+      }
+      return;
+    }
+
+    try {
+      const file = new File(Paths.cache, `${fileName}.csv`);
+      file.create();
+      file.write(csvContent);
+
+      const canShare = await Sharing.isAvailableAsync();
+      if (canShare) {
+        await Sharing.shareAsync(file.uri, {
+          mimeType: 'text/csv',
+          dialogTitle: `Export Expenses (${format.toUpperCase()})`,
+          UTI: format === 'apple-numbers' ? 'com.apple.numbers.tables' : 'public.comma-separated-values-text',
+        });
+        successNotification();
+        console.log('[Export] Shared successfully as', format);
+      } else {
+        Alert.alert('Export Ready', `File saved successfully.`);
+      }
+    } catch (e) {
+      console.error('[Export] Error:', e);
+      Alert.alert('Export Error', 'Something went wrong while exporting. Please try again.');
+    }
+  }, [budgetItems]);
+
+  const currentMonthName = new Date().toLocaleString('en-US', { month: 'long' });
 
   return (
     <View style={styles.container}>
@@ -72,42 +141,20 @@ export default function BudgetScreen() {
 
         <View style={styles.heroCard}>
           <View style={styles.heroTop}>
-            <View>
-              <Text style={styles.heroLabel}>This month</Text>
-              <Text style={[styles.heroAmount, { color: budgetColor }]}>${totalSpent.toLocaleString()}</Text>
+            <View style={styles.heroStatBlock}>
+              <View style={[styles.heroStatIconWrap, { backgroundColor: c.dangerLight }]}>
+                <CalendarDays size={16} color={c.danger} />
+              </View>
+              <Text style={styles.heroLabel}>{currentMonthName}</Text>
+              <Text style={[styles.heroAmount, { color: c.text }]}>${spentThisMonth.toLocaleString()}</Text>
             </View>
-            <View style={styles.heroPercentBadge}>
-              <Text style={[styles.heroPercentText, { color: budgetColor }]}>{budgetPercentUsed}%</Text>
-              <Text style={styles.heroPercentSub}>used</Text>
-            </View>
-          </View>
-
-          <View style={styles.progressContainer}>
-            <View style={styles.progressBg}>
-              <Animated.View
-                style={[
-                  styles.progressFill,
-                  {
-                    backgroundColor: budgetColor,
-                    width: progressAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: ['0%', '100%'],
-                    }),
-                  },
-                ]}
-              />
-            </View>
-            <View style={styles.progressLabels}>
-              <Text style={styles.progressSpent}>${totalSpent.toLocaleString()} spent</Text>
-              <TouchableOpacity
-                onPress={openEditModal}
-                activeOpacity={0.6}
-                style={styles.budgetEditBtn}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-              >
-                <Text style={styles.progressTotal}>${monthlyBudget.toLocaleString()} budget</Text>
-                <Pencil size={10} color={c.textTertiary} />
-              </TouchableOpacity>
+            <View style={styles.heroDivider} />
+            <View style={styles.heroStatBlock}>
+              <View style={[styles.heroStatIconWrap, { backgroundColor: c.primaryLight }]}>
+                <CalendarRange size={16} color={c.primary} />
+              </View>
+              <Text style={styles.heroLabel}>{new Date().getFullYear()}</Text>
+              <Text style={[styles.heroAmount, { color: c.text }]}>${spentThisYear.toLocaleString()}</Text>
             </View>
           </View>
 
@@ -116,18 +163,10 @@ export default function BudgetScreen() {
               <View style={[styles.heroStatIcon, { backgroundColor: c.dangerLight }]}>
                 <TrendingDown size={14} color={c.danger} />
               </View>
-              <Text style={styles.heroStatLabel}>Spent</Text>
-              <Text style={styles.heroStatValue}>${totalSpent.toLocaleString()}</Text>
+              <Text style={styles.heroStatLabel}>This Month</Text>
+              <Text style={styles.heroStatValue}>${spentThisMonth.toLocaleString()}</Text>
             </View>
-            <View style={styles.heroDivider} />
-            <View style={styles.heroStat}>
-              <View style={[styles.heroStatIcon, { backgroundColor: c.successLight }]}>
-                <TrendingUp size={14} color={c.success} />
-              </View>
-              <Text style={styles.heroStatLabel}>Left</Text>
-              <Text style={styles.heroStatValue}>${remaining.toLocaleString()}</Text>
-            </View>
-            <View style={styles.heroDivider} />
+            <View style={styles.heroStatDivider} />
             <View style={styles.heroStat}>
               <View style={[styles.heroStatIcon, { backgroundColor: c.primaryLight }]}>
                 <Receipt size={14} color={c.primary} />
@@ -260,6 +299,11 @@ export default function BudgetScreen() {
                           <UserCheck size={10} color={c.primary} />
                         </View>
                       )}
+                      {item.taxDeductible && (
+                        <View style={[styles.expenseBadge, { backgroundColor: c.successLight }]}>
+                          <FileText size={10} color={c.success} />
+                        </View>
+                      )}
                     </View>
                   </View>
                   {item.provider && (
@@ -277,15 +321,100 @@ export default function BudgetScreen() {
           )}
         </View>
 
+        <View style={styles.section}>
+          <TouchableOpacity
+            style={styles.exportHeader}
+            onPress={toggleExport}
+            activeOpacity={0.7}
+            testID="export-toggle"
+          >
+            <View style={styles.exportHeaderLeft}>
+              <View style={[styles.exportHeaderIcon, { backgroundColor: c.primaryLight }]}>
+                <Download size={18} color={c.primary} />
+              </View>
+              <View>
+                <Text style={styles.exportHeaderTitle}>Export</Text>
+                <Text style={styles.exportHeaderSubtitle}>Download your spending data</Text>
+              </View>
+            </View>
+            {exportExpanded ? (
+              <ChevronUp size={20} color={c.textTertiary} />
+            ) : (
+              <ChevronDown size={20} color={c.textTertiary} />
+            )}
+          </TouchableOpacity>
+
+          {exportExpanded && (
+            <View style={styles.exportOptions}>
+              <TouchableOpacity
+                style={styles.exportOption}
+                onPress={() => handleExport('csv')}
+                activeOpacity={0.7}
+                testID="export-csv"
+              >
+                <View style={[styles.exportOptionIcon, { backgroundColor: c.successLight }]}>
+                  <FileText size={20} color={c.success} />
+                </View>
+                <View style={styles.exportOptionInfo}>
+                  <Text style={styles.exportOptionTitle}>CSV</Text>
+                  <Text style={styles.exportOptionDesc}>Universal spreadsheet format</Text>
+                </View>
+                <Share2 size={16} color={c.textTertiary} />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.exportOption}
+                onPress={() => handleExport('excel')}
+                activeOpacity={0.7}
+                testID="export-excel"
+              >
+                <View style={[styles.exportOptionIcon, { backgroundColor: '#E8F5E9' }]}>
+                  <FileSpreadsheet size={20} color="#2E7D32" />
+                </View>
+                <View style={styles.exportOptionInfo}>
+                  <Text style={styles.exportOptionTitle}>Excel</Text>
+                  <Text style={styles.exportOptionDesc}>Open in Microsoft Excel</Text>
+                </View>
+                <Share2 size={16} color={c.textTertiary} />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.exportOption}
+                onPress={() => handleExport('google-sheets')}
+                activeOpacity={0.7}
+                testID="export-google-sheets"
+              >
+                <View style={[styles.exportOptionIcon, { backgroundColor: '#E3F2FD' }]}>
+                  <Table size={20} color="#1565C0" />
+                </View>
+                <View style={styles.exportOptionInfo}>
+                  <Text style={styles.exportOptionTitle}>Google Sheets</Text>
+                  <Text style={styles.exportOptionDesc}>Open in Google Sheets</Text>
+                </View>
+                <Share2 size={16} color={c.textTertiary} />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.exportOption}
+                onPress={() => handleExport('apple-numbers')}
+                activeOpacity={0.7}
+                testID="export-apple-numbers"
+              >
+                <View style={[styles.exportOptionIcon, { backgroundColor: '#FFF3E0' }]}>
+                  <FileSpreadsheet size={20} color="#E65100" />
+                </View>
+                <View style={styles.exportOptionInfo}>
+                  <Text style={styles.exportOptionTitle}>Apple Numbers</Text>
+                  <Text style={styles.exportOptionDesc}>Open in Numbers on iOS/Mac</Text>
+                </View>
+                <Share2 size={16} color={c.textTertiary} />
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+
         <View style={{ height: 90 }} />
       </ScrollView>
-
-      <BudgetEditModal
-        visible={editModalVisible}
-        currentBudget={monthlyBudget}
-        onSave={handleSaveBudget}
-        onClose={() => setEditModalVisible(false)}
-      />
 
       <FloatingActionButton
         onPress={() => {

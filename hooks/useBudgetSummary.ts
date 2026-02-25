@@ -1,7 +1,5 @@
 import { useMemo } from 'react';
 import { useHome } from '@/contexts/HomeContext';
-import { getBudgetColor } from '@/utils/budget';
-import { BudgetItem } from '@/types';
 import { BUDGET_CATEGORY_COLORS } from '@/constants/categories';
 
 export interface CategoryBreakdown {
@@ -12,27 +10,49 @@ export interface CategoryBreakdown {
 }
 
 export function useBudgetSummary() {
-  const { budgetItems, monthlyBudget, totalSpent } = useHome();
+  const { budgetItems } = useHome();
 
-  const budgetProgress = monthlyBudget > 0 ? Math.min(totalSpent / monthlyBudget, 1) : 0;
-  const remaining = Math.max(monthlyBudget - totalSpent, 0);
-  const budgetColor = getBudgetColor(budgetProgress);
-  const budgetPercentUsed = Math.round(budgetProgress * 100);
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+
+  const spentThisMonth = useMemo(() => {
+    return budgetItems
+      .filter((item) => {
+        const d = new Date(item.date);
+        return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+      })
+      .reduce((sum, item) => sum + item.amount, 0);
+  }, [budgetItems, currentMonth, currentYear]);
+
+  const spentThisYear = useMemo(() => {
+    return budgetItems
+      .filter((item) => {
+        const d = new Date(item.date);
+        return d.getFullYear() === currentYear;
+      })
+      .reduce((sum, item) => sum + item.amount, 0);
+  }, [budgetItems, currentYear]);
 
   const categoryBreakdown = useMemo((): CategoryBreakdown[] => {
+    const monthItems = budgetItems.filter((item) => {
+      const d = new Date(item.date);
+      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+    });
+    const total = monthItems.reduce((s, i) => s + i.amount, 0);
     const breakdown: Record<string, number> = {};
-    budgetItems.forEach((item) => {
+    monthItems.forEach((item) => {
       breakdown[item.category] = (breakdown[item.category] || 0) + item.amount;
     });
     return Object.entries(breakdown)
       .map(([category, amount]) => ({
         category,
         amount,
-        percentage: totalSpent > 0 ? (amount / totalSpent) * 100 : 0,
+        percentage: total > 0 ? (amount / total) * 100 : 0,
         color: BUDGET_CATEGORY_COLORS[category] || '#AEA69D',
       }))
       .sort((a, b) => b.amount - a.amount);
-  }, [budgetItems, totalSpent]);
+  }, [budgetItems, currentMonth, currentYear]);
 
   const recentItems = useMemo(
     () => [...budgetItems].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10),
@@ -41,12 +61,8 @@ export function useBudgetSummary() {
 
   return {
     budgetItems,
-    monthlyBudget,
-    totalSpent,
-    budgetProgress,
-    remaining,
-    budgetColor,
-    budgetPercentUsed,
+    spentThisMonth,
+    spentThisYear,
     categoryBreakdown,
     recentItems,
   };

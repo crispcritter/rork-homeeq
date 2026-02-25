@@ -16,7 +16,7 @@ export default function BudgetLayout() {
     >
       <Stack.Screen
         name="index"
-        options={{ title: "Budget" }}
+        options={{ title: "Spending" }}
       />
     </Stack>
   );

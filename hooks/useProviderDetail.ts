@@ -4,6 +4,7 @@ import { useHome } from '@/contexts/HomeContext';
 import { ReviewRating, ProServiceCategory } from '@/types';
 import { lightImpact, successNotification } from '@/utils/haptics';
 import { getAverageRating } from '@/utils/ratings';
+import { toRating, isValidRating } from '@/types';
 
 export function useProviderDetail(providerId: string | undefined) {
   const {
@@ -156,7 +157,7 @@ export function useProviderDetail(providerId: string | undefined) {
   }) => {
     if (!pro) return false;
     const val = parseFloat(rating.value);
-    if (isNaN(val) || val < 0 || val > 5) {
+    if (isNaN(val) || !isValidRating(val)) {
       Alert.alert('Invalid', 'Rating must be between 0 and 5');
       return false;
     }
@@ -164,7 +165,7 @@ export function useProviderDetail(providerId: string | undefined) {
     const filtered = existing.filter((r) => r.source !== rating.source);
     const newRating: ReviewRating = {
       source: rating.source,
-      rating: Math.round(val * 10) / 10,
+      rating: toRating(val),
       reviewCount: rating.reviewCount ? parseInt(rating.reviewCount, 10) : undefined,
       url: rating.url.trim() || undefined,
     };

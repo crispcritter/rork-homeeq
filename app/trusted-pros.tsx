@@ -37,7 +37,7 @@ import {
 import { useHome } from '@/contexts/HomeContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { lightImpact, mediumImpact, successNotification } from '@/utils/haptics';
-import { ProServiceCategory, toISOTimestamp } from '@/types';
+import { ProServiceCategory, toISOTimestamp, toRating } from '@/types';
 import { SERVICE_FILTER_OPTIONS, RADIUS_FILTER_OPTIONS, SEARCH_RADIUS_OPTIONS, APPLIANCE_TO_SERVICE } from '@/constants/serviceCategories';
 import StarRating from '@/components/StarRating';
 import { searchPlaces, PlaceResult } from '@/utils/googlePlaces';
@@ -175,7 +175,7 @@ export default function TrustedProsScreen() {
       expenseIds: [] as string[],
       createdAt: toISOTimestamp(new Date()),
       ratings: place.rating !== null
-        ? [{ source: 'google' as const, rating: place.rating, reviewCount: place.userRatingCount ?? undefined }]
+        ? [{ source: 'google' as const, rating: toRating(place.rating), reviewCount: place.userRatingCount ?? undefined }]
         : [],
       serviceCategories: [] as ProServiceCategory[],
     };

@@ -12,6 +12,17 @@ export function asISODateString(value: string): ISODateString {
   return value as ISODateString;
 }
 
+export type Rating = number & { readonly __brand: 'Rating' };
+
+export function toRating(value: number): Rating {
+  const clamped = Math.round(Math.max(0, Math.min(5, value)) * 10) / 10;
+  return clamped as Rating;
+}
+
+export function isValidRating(value: number): boolean {
+  return !isNaN(value) && value >= 0 && value <= 5;
+}
+
 export type ApplianceCategory =
   | 'hvac'
   | 'plumbing'
@@ -152,7 +163,7 @@ export interface HomeProfile {
 
 export interface ReviewRating {
   source: 'google' | 'yelp' | 'angies_list' | 'bbb' | 'homeadvisor' | 'thumbtack';
-  rating: number;
+  rating: Rating;
   reviewCount?: number;
   url?: string;
 }

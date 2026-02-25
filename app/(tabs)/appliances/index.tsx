@@ -16,6 +16,8 @@ import {
   MapPin,
   Shield,
   ChevronRight,
+  ArrowUpDown,
+  Check,
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import { ColorScheme } from '@/constants/colors';
@@ -31,6 +33,16 @@ import { rowsToCSV, buildHtmlReport } from '@/utils/export';
 import ExportSection from '@/components/ExportSection';
 import { RecommendedItem } from '@/mocks/recommendedItems';
 import { Appliance, asISODateString } from '@/types';
+import { categoryLabels } from '@/constants/categories';
+
+type SortOption = 'name' | 'category' | 'location' | 'warranty';
+
+const SORT_OPTIONS: { key: SortOption; label: string }[] = [
+  { key: 'name', label: 'Name' },
+  { key: 'category', label: 'Type' },
+  { key: 'location', label: 'Location' },
+  { key: 'warranty', label: 'Warranty' },
+];
 
 
 
@@ -55,13 +67,47 @@ export default function AppliancesScreen() {
     await refreshAll();
   }, [refreshAll]);
   const [search, setSearch] = useState('');
+  const [sortBy, setSortBy] = useState<SortOption>('name');
+  const [showSortMenu, setShowSortMenu] = useState(false);
 
-  const filtered = appliances.filter(
-    (a) =>
-      a.name.toLowerCase().includes(search.toLowerCase()) ||
-      a.brand.toLowerCase().includes(search.toLowerCase()) ||
-      a.category.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = useMemo(() => {
+    const list = appliances.filter(
+      (a) =>
+        a.name.toLowerCase().includes(search.toLowerCase()) ||
+        a.brand.toLowerCase().includes(search.toLowerCase()) ||
+        a.category.toLowerCase().includes(search.toLowerCase())
+    );
+
+    return [...list].sort((a, b) => {
+      switch (sortBy) {
+        case 'name':
+          return (a.name || '').localeCompare(b.name || '');
+        case 'category': {
+          const catA = categoryLabels[a.category] || a.category || '';
+          const catB = categoryLabels[b.category] || b.category || '';
+          const catCmp = catA.localeCompare(catB);
+          return catCmp !== 0 ? catCmp : (a.name || '').localeCompare(b.name || '');
+        }
+        case 'location': {
+          const locA = a.location || 'zzz';
+          const locB = b.location || 'zzz';
+          const locCmp = locA.localeCompare(locB);
+          return locCmp !== 0 ? locCmp : (a.name || '').localeCompare(b.name || '');
+        }
+        case 'warranty': {
+          const wA = getWarrantyStatus(a.warrantyExpiry, c);
+          const wB = getWarrantyStatus(b.warrantyExpiry, c);
+          const order: Record<string, number> = { 'Expiring Soon': 0, 'Covered': 1, 'Expired': 2, 'Unknown': 3 };
+          const oA = order[wA.label] ?? 4;
+          const oB = order[wB.label] ?? 4;
+          if (oA !== oB) return oA - oB;
+          return wB.daysLeft - wA.daysLeft;
+        }
+        default:
+          return 0;
+      }
+    });
+  }, [appliances, search, sortBy, c]);
 
   const proNameByApplianceId = useMemo(() => {
     const map = new Map<string, string>();
@@ -160,12 +206,33 @@ export default function AppliancesScreen() {
         </View>
       </View>
 
+      <View style={styles.sortRow}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.sortScrollContent}>
+          {SORT_OPTIONS.map((opt) => {
+            const active = sortBy === opt.key;
+            return (
+              <TouchableOpacity
+                key={opt.key}
+                style={[styles.sortChip, active && { backgroundColor: c.primary + '18', borderColor: c.primary }]}
+                onPress={() => setSortBy(opt.key)}
+                activeOpacity={0.7}
+                testID={`sort-${opt.key}`}
+              >
+                {active && <Check size={12} color={c.primary} />}
+                <Text style={[styles.sortChipText, active && { color: c.primary, fontWeight: '600' as const }]}>{opt.label}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+      </View>
+
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.list}
         refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={c.primary} colors={[c.primary]} />
         }
+        testID="appliance-scroll"
       >
         {filtered.length === 0 ? (
           <View style={styles.emptyState}>
@@ -267,7 +334,33 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   searchRow: {
     paddingHorizontal: 20,
-    paddingVertical: 12,
+    paddingTop: 12,
+    paddingBottom: 4,
+  },
+  sortRow: {
+    paddingBottom: 8,
+  },
+  sortScrollContent: {
+    paddingHorizontal: 20,
+    gap: 8,
+    paddingVertical: 4,
+  },
+  sortChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: c.border,
+    backgroundColor: c.surface,
+  },
+  sortChipText: {
+    fontSize: 13,
+    color: c.textSecondary,
+    fontWeight: '500' as const,
+    lineHeight: 17,
   },
   searchContainer: {
     flexDirection: 'row',

@@ -36,21 +36,76 @@ import { mediumImpact, lightImpact, successNotification } from '@/utils/haptics'
 import createStyles from '@/styles/budget';
 import { File, Paths } from 'expo-file-system';
 import { shareAsync, isAvailableAsync } from 'expo-sharing';
+import * as XLSX from 'xlsx';
 
-function generateCSV(items: any[], categoryLabelsMap: Record<string, string>): string {
-  const headers = ['Date', 'Description', 'Category', 'Amount', 'Payment Method', 'Invoice #', 'Tax Deductible', 'Provider', 'Notes'];
+function escapeCSVField(value: string): string {
+  if (value.includes(',') || value.includes('"') || value.includes('\n') || value.includes('\r')) {
+    return `"${value.replace(/"/g, '""')}"`;
+  }
+  return value;
+}
+
+function buildExpenseRows(items: any[], categoryLabelsMap: Record<string, string>): string[][] {
+  const headers = [
+    'Date',
+    'Description',
+    'Category',
+    'Amount',
+    'Payment Method',
+    'Invoice #',
+    'Tax Deductible',
+    'Provider Name',
+    'Provider Phone',
+    'Provider Email',
+    'Provider Website',
+    'Provider Address',
+    'Provider Specialty',
+    'Notes',
+    'Appliance ID',
+  ];
   const rows = items.map((item) => [
-    item.date,
-    `"${(item.description || '').replace(/"/g, '""')}"`,
-    categoryLabelsMap[item.category] || item.category,
-    item.amount.toFixed(2),
+    item.date || '',
+    item.description || '',
+    categoryLabelsMap[item.category] || item.category || '',
+    item.amount != null ? item.amount.toFixed(2) : '0.00',
     item.paymentMethod || '',
     item.invoiceNumber || '',
     item.taxDeductible ? 'Yes' : 'No',
     item.provider?.name || '',
-    `"${(item.notes || '').replace(/"/g, '""')}"`,
+    item.provider?.phone || '',
+    item.provider?.email || '',
+    item.provider?.website || '',
+    item.provider?.address || '',
+    item.provider?.specialty || '',
+    item.notes || '',
+    item.applianceId || '',
   ]);
-  return [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+  return [headers, ...rows];
+}
+
+function generateCSV(items: any[], categoryLabelsMap: Record<string, string>): string {
+  const allRows = buildExpenseRows(items, categoryLabelsMap);
+  return allRows.map((row) => row.map(escapeCSVField).join(',')).join('\r\n');
+}
+
+function generateXLSX(items: any[], categoryLabelsMap: Record<string, string>): Uint8Array {
+  const allRows = buildExpenseRows(items, categoryLabelsMap);
+  const ws = XLSX.utils.aoa_to_sheet(allRows);
+
+  const colWidths = allRows[0].map((_, colIdx) => {
+    let max = 10;
+    for (const row of allRows) {
+      const len = (row[colIdx] || '').length;
+      if (len > max) max = len;
+    }
+    return { wch: Math.min(max + 2, 40) };
+  });
+  ws['!cols'] = colWidths;
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Expenses');
+  const wbOut = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+  return new Uint8Array(wbOut);
 }
 
 export default function BudgetScreen() {
@@ -91,20 +146,33 @@ export default function BudgetScreen() {
     const csvContent = generateCSV(budgetItems, categoryLabels);
     const fileName = `HomeEQ_Expenses_${new Date().toISOString().split('T')[0]}`;
 
+    const isExcel = format === 'excel';
+    const ext = isExcel ? 'xlsx' : 'csv';
+    const mimeType = isExcel
+      ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      : 'text/csv;charset=utf-8;';
+    const fullName = `${fileName}.${ext}`;
+
     if (Platform.OS === 'web') {
       try {
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        let blob: Blob;
+        if (isExcel) {
+          const xlsxData = generateXLSX(budgetItems, categoryLabels);
+          blob = new Blob([xlsxData.buffer as ArrayBuffer], { type: mimeType });
+        } else {
+          blob = new Blob([csvContent], { type: mimeType });
+        }
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.setAttribute('href', url);
-        link.setAttribute('download', `${fileName}.csv`);
+        link.setAttribute('download', fullName);
         link.style.display = 'none';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
         successNotification();
-        Alert.alert('Exported', `Your expenses have been downloaded as ${fileName}.csv`);
+        Alert.alert('Exported', `Your expenses have been downloaded as ${fullName}`);
       } catch (e) {
         console.error('[Export] Web export error:', e);
         Alert.alert('Error', 'Could not export file on this platform.');
@@ -113,18 +181,31 @@ export default function BudgetScreen() {
     }
 
     try {
-      const file = new File(Paths.cache, `${fileName}.csv`);
+      const file = new File(Paths.cache, fullName);
       console.log('[Export] Writing file to:', file.uri);
-      file.write(csvContent);
+
+      if (isExcel) {
+        const xlsxData = generateXLSX(budgetItems, categoryLabels);
+        const binaryStr = Array.from(xlsxData).map((b) => String.fromCharCode(b)).join('');
+        file.write(binaryStr);
+      } else {
+        file.write(csvContent);
+      }
       console.log('[Export] File written successfully');
 
       const canShare = await isAvailableAsync();
       console.log('[Export] Sharing available:', canShare);
       if (canShare) {
+        let uti = 'public.comma-separated-values-text';
+        if (isExcel) {
+          uti = 'org.openxmlformats.spreadsheetml.sheet';
+        } else if (format === 'apple-numbers') {
+          uti = 'com.apple.iwork.numbers.sffnumbers';
+        }
         await shareAsync(file.uri, {
-          mimeType: 'text/csv',
+          mimeType: isExcel ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' : 'text/csv',
           dialogTitle: `Export Expenses (${format.toUpperCase()})`,
-          UTI: format === 'apple-numbers' ? 'com.apple.numbers.tables' : 'public.comma-separated-values-text',
+          UTI: uti,
         });
         successNotification();
         console.log('[Export] Shared successfully as', format);

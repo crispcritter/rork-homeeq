@@ -53,7 +53,7 @@ export const [HomeProvider, useHome] = createContextHook(() => {
   const homeProfile = homeProfileQuery.data ?? DEFAULT_PROFILE;
   const customRecommendedGroups = recommendedGroupsQuery.data ?? defaultRecommendedGroups;
   const trustedPros = trustedProsQuery.data ?? [];
-  const isLoading = appliancesQuery.isLoading || tasksQuery.isLoading || budgetItemsQuery.isLoading;
+  const isLoading = appliancesQuery.isLoading || tasksQuery.isLoading || budgetItemsQuery.isLoading || monthlyBudgetQuery.isLoading || homeProfileQuery.isLoading || recommendedGroupsQuery.isLoading || trustedProsQuery.isLoading;
 
   const listMutate = useCallback(async <TItem extends { id: string }>(
     storageKey: string,

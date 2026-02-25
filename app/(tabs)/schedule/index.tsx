@@ -10,7 +10,7 @@ import {
   Platform,
   UIManager,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import {
   Check,
   Clock,
@@ -113,7 +113,14 @@ export default function ScheduleScreen() {
   const { colors: c } = useTheme();
   const styles = useMemo(() => createStyles(c), [c]);
   const { tasks, appliances, completeTask, trustedPros } = useHome();
-  const [filter, setFilter] = useState<FilterType>('all');
+  const params = useLocalSearchParams<{ filter?: string }>();
+  const [filter, setFilter] = useState<FilterType>(() => {
+    const validFilters: FilterType[] = ['all', 'upcoming', 'overdue', 'completed', 'archived'];
+    if (params.filter && validFilters.includes(params.filter as FilterType)) {
+      return params.filter as FilterType;
+    }
+    return 'all';
+  });
   const [sortMode, setSortMode] = useState<SortMode>('item');
   const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
   const [completedCollapsed, setCompletedCollapsed] = useState<boolean>(true);

@@ -93,7 +93,7 @@ export default function DashboardScreen() {
           <AnimatedCard index={0}>
             <PressableCard
               style={styles.alertBanner}
-              onPress={() => handlePress('/(tabs)/schedule')}
+              onPress={() => handlePress('/(tabs)/schedule?filter=overdue')}
             >
               <View style={styles.alertIconWrap}>
                 <AlertTriangle size={18} color={c.danger} />

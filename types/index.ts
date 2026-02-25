@@ -155,19 +155,6 @@ export interface HomeProfile {
   householdMembers?: HouseholdMember[];
 }
 
-export interface ServiceProvider {
-  id: string;
-  name: string;
-  specialty: string;
-  phone: string;
-  email?: string;
-  website?: string;
-  address?: string;
-  rating: number;
-  imageUrl: string;
-  notes?: string;
-}
-
 export interface ReviewRating {
   source: 'google' | 'yelp' | 'angies_list' | 'bbb' | 'homeadvisor' | 'thumbtack';
   rating: number;

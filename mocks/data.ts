@@ -1,4 +1,4 @@
-import { Appliance, MaintenanceTask, BudgetItem, ServiceProvider, asISODateString } from '@/types';
+import { Appliance, MaintenanceTask, BudgetItem, asISODateString } from '@/types';
 
 export const sampleAppliances: Appliance[] = [
   {
@@ -124,31 +124,4 @@ export const sampleBudgetItems: BudgetItem[] = [
   { id: '3', category: 'inspection', description: 'Annual HVAC Inspection', amount: 175, date: asISODateString('2026-02-01'), applianceId: '1' },
   { id: '4', category: 'maintenance', description: 'Gutter Guard Install', amount: 320, date: asISODateString('2026-02-10') },
   { id: '5', category: 'emergency', description: 'Pipe Burst Repair', amount: 450, date: asISODateString('2026-02-14') },
-];
-
-export const sampleProviders: ServiceProvider[] = [
-  {
-    id: '1',
-    name: 'ProAir HVAC Services',
-    specialty: 'Heating & Cooling',
-    phone: '(555) 234-5678',
-    rating: 4.8,
-    imageUrl: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=200',
-  },
-  {
-    id: '2',
-    name: 'QuickFlow Plumbing',
-    specialty: 'Plumbing & Water Systems',
-    phone: '(555) 345-6789',
-    rating: 4.6,
-    imageUrl: 'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=200',
-  },
-  {
-    id: '3',
-    name: 'BrightSpark Electric',
-    specialty: 'Electrical & Wiring',
-    phone: '(555) 456-7890',
-    rating: 4.9,
-    imageUrl: 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=200',
-  },
 ];

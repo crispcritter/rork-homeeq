@@ -378,6 +378,24 @@ export default function ApplianceDetailScreen() {
           </View>
           </CollapsibleSection>
 
+          <CollapsibleSection
+            title="Replace Item"
+            icon={<ShoppingCart size={16} color="#16A34A" />}
+            isCollapsed={collapsedSections['replace'] ?? false}
+            onToggle={() => toggleSection('replace')}
+            styles={styles}
+            colors={c}
+          >
+          <View style={styles.replaceCard}>
+            <Text style={styles.replaceSubtitle}>Find a replacement via popular retailers</Text>
+            <View style={styles.replacePreviews}>
+              {replaceSearchUrls.map((url, i) => (
+                <LinkPreview key={i} url={url} />
+              ))}
+            </View>
+          </View>
+          </CollapsibleSection>
+
           {(appliance.purchaseData && (appliance.purchaseData.price || appliance.purchaseData.retailer || appliance.purchaseData.paymentMethod || appliance.purchaseData.orderNumber)) ? (
             <CollapsibleSection
               title="Purchase Details"
@@ -785,24 +803,6 @@ export default function ApplianceDetailScreen() {
             </View>
             </CollapsibleSection>
           )}
-
-          <CollapsibleSection
-            title="Replace Item"
-            icon={<ShoppingCart size={16} color="#16A34A" />}
-            isCollapsed={collapsedSections['replace'] ?? false}
-            onToggle={() => toggleSection('replace')}
-            styles={styles}
-            colors={c}
-          >
-          <View style={styles.replaceCard}>
-            <Text style={styles.replaceSubtitle}>Find a replacement via popular retailers</Text>
-            <View style={styles.replacePreviews}>
-              {replaceSearchUrls.map((url, i) => (
-                <LinkPreview key={i} url={url} />
-              ))}
-            </View>
-          </View>
-          </CollapsibleSection>
 
           <View style={styles.actionRow}>
             <TouchableOpacity style={styles.editBtn} onPress={() => router.push({ pathname: '/edit-appliance' as any, params: { id: appliance.id } })} activeOpacity={0.7} testID="edit-appliance">

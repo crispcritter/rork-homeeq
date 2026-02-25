@@ -543,6 +543,14 @@ export const [HomeProvider, useHome] = createContextHook(() => {
     [appliances]
   );
 
+  const refreshAll = useCallback(() => {
+    const queryKeys = ['appliances', 'tasks', 'budgetItems', 'monthlyBudget', 'homeProfile', 'recommendedGroups', 'trustedPros'];
+    console.log('[HomeContext] Pull-to-refresh: invalidating all queries');
+    return Promise.all(queryKeys.map((key) => queryClient.invalidateQueries({ queryKey: [key] })));
+  }, [queryClient]);
+
+  const isRefreshing = appliancesQuery.isRefetching || tasksQuery.isRefetching || budgetItemsQuery.isRefetching || monthlyBudgetQuery.isRefetching || homeProfileQuery.isRefetching || recommendedGroupsQuery.isRefetching || trustedProsQuery.isRefetching;
+
   return {
     appliances,
     tasks,
@@ -595,6 +603,8 @@ export const [HomeProvider, useHome] = createContextHook(() => {
     syncRecommendedItem,
     resetData,
     isResetting: resetDataMutation.isPending,
+    refreshAll,
+    isRefreshing,
     addHouseholdMember,
     removeHouseholdMember,
     updateHouseholdMember,

@@ -1,10 +1,11 @@
-import React, { useCallback, useRef, useEffect, useMemo } from 'react';
+import React, { useCallback, useRef, useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
   ScrollView,
   TouchableOpacity,
   Animated,
+  RefreshControl,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { AlertTriangle, ChevronRight, Plus, Clock, Star, CirclePlus, Wrench, DollarSign, Search } from 'lucide-react-native';
@@ -41,7 +42,13 @@ export default function DashboardScreen() {
     isLoading,
     homeProfile,
     trustedPros,
+    refreshAll,
+    isRefreshing,
   } = useHome();
+
+  const onRefresh = useCallback(async () => {
+    await refreshAll();
+  }, [refreshAll]);
 
   const budgetProgress = monthlyBudget > 0 ? Math.min(totalSpent / monthlyBudget, 1) : 0;
   const budgetBarWidth = useRef(new Animated.Value(0)).current;
@@ -81,7 +88,13 @@ export default function DashboardScreen() {
 
   return (
     <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={c.primary} colors={[c.primary]} />
+        }
+      >
         <View style={styles.greetingSection}>
           <Text style={styles.greeting}>{getGreeting()}</Text>
           <Text style={styles.greetingSubtitle}>

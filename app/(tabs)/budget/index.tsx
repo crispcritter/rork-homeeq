@@ -4,6 +4,7 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
+  RefreshControl,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { parseLocalDate } from '@/utils/dates';
@@ -61,7 +62,11 @@ export default function BudgetScreen() {
   const router = useRouter();
   const { colors: c } = useTheme();
   const styles = useMemo(() => createStyles(c), [c]);
-  const { trustedPros } = useHome();
+  const { trustedPros, refreshAll, isRefreshing } = useHome();
+
+  const onRefresh = useCallback(async () => {
+    await refreshAll();
+  }, [refreshAll]);
   const {
     budgetItems,
     spentThisMonth,
@@ -95,7 +100,13 @@ export default function BudgetScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.content}
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={c.primary} colors={[c.primary]} />
+        }
+      >
         <ScreenHeader title="Spending" subtitle="Track your home expenses" />
 
         <View style={styles.heroCard}>

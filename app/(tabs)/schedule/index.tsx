@@ -9,6 +9,7 @@ import {
   LayoutAnimation,
   Platform,
   UIManager,
+  RefreshControl,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import {
@@ -112,7 +113,11 @@ export default function ScheduleScreen() {
   const router = useRouter();
   const { colors: c } = useTheme();
   const styles = useMemo(() => createStyles(c), [c]);
-  const { tasks, appliances, completeTask, trustedPros } = useHome();
+  const { tasks, appliances, completeTask, trustedPros, refreshAll, isRefreshing } = useHome();
+
+  const onRefresh = useCallback(async () => {
+    await refreshAll();
+  }, [refreshAll]);
   const params = useLocalSearchParams<{ filter?: string }>();
   const [filter, setFilter] = useState<FilterType>(() => {
     const validFilters: FilterType[] = ['all', 'upcoming', 'overdue', 'completed', 'archived'];
@@ -482,11 +487,22 @@ export default function ScheduleScreen() {
       </View>
 
       {filteredTasks.length === 0 ? (
-        <ScrollView contentContainerStyle={styles.list}>
+        <ScrollView
+          contentContainerStyle={styles.list}
+          refreshControl={
+            <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={c.primary} colors={[c.primary]} />
+          }
+        >
           {renderEmpty()}
         </ScrollView>
       ) : (
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.list}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.list}
+          refreshControl={
+            <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={c.primary} colors={[c.primary]} />
+          }
+        >
           {groupedTasks.map((group) => {
             const isCollapsed = collapsedGroups[group.key] ?? false;
             return (

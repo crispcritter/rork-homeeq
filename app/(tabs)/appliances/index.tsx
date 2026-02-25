@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
+  RefreshControl,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
@@ -46,7 +47,13 @@ export default function AppliancesScreen() {
     duplicateRecommendedItem,
     syncRecommendedItem,
     trustedPros,
+    refreshAll,
+    isRefreshing,
   } = useHome();
+
+  const onRefresh = useCallback(async () => {
+    await refreshAll();
+  }, [refreshAll]);
   const [search, setSearch] = useState('');
 
   const filtered = appliances.filter(
@@ -148,7 +155,13 @@ export default function AppliancesScreen() {
         </View>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.list}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.list}
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={c.primary} colors={[c.primary]} />
+        }
+      >
         {filtered.length === 0 ? (
           <View style={styles.emptyState}>
             <View style={styles.emptyIconWrap}>

@@ -75,6 +75,8 @@ import {
   GarageType,
   HouseholdMember,
   HouseholdRole,
+  toISOTimestamp,
+  asISODateString,
 } from '@/types';
 import { numericToString, stringToNumeric } from '@/utils/numeric';
 
@@ -391,7 +393,7 @@ export default function ProfileScreen() {
                 <TextInput
                   style={[styles.textInput, { color: c.text }]}
                   value={form.purchaseDate}
-                  onChangeText={(v) => updateField('purchaseDate', v)}
+                  onChangeText={(v) => updateField('purchaseDate', asISODateString(v))}
                   placeholder="e.g. March 2020"
                   placeholderTextColor={c.textTertiary}
                 />
@@ -1140,7 +1142,7 @@ export default function ProfileScreen() {
                     email: inviteMethod === 'email' ? contact : undefined,
                     phone: inviteMethod === 'sms' ? contact : undefined,
                     role: inviteRole,
-                    invitedAt: new Date().toISOString(),
+                    invitedAt: toISOTimestamp(new Date()),
                     status: 'pending',
                   };
 

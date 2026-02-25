@@ -3,7 +3,7 @@ import { Alert, Platform, Animated } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import * as ImagePicker from 'expo-image-picker';
 import { generateObject } from '@rork-ai/toolkit-sdk';
-import { ApplianceCategory, AppliancePhoto } from '@/types';
+import { ApplianceCategory, AppliancePhoto, ISODateString } from '@/types';
 import { applianceSchema, labelReadSchema, lookupSchema, receiptSchema } from './schemas';
 
 interface FormSetters {
@@ -13,7 +13,7 @@ interface FormSetters {
   setSerialNumber: (v: string) => void;
   setCategory: (v: ApplianceCategory) => void;
   setNotes: (v: string | ((prev: string) => string)) => void;
-  setPurchaseDate: (v: string) => void;
+  setPurchaseDate: (v: string | ISODateString) => void;
   setPurchasePrice: (v: string) => void;
   setRetailer: (v: string) => void;
   setPaymentMethod: (v: string) => void;

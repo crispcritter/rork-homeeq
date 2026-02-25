@@ -29,7 +29,7 @@ import { lightImpact } from '@/utils/haptics';
 import { rowsToCSV, buildHtmlReport } from '@/utils/export';
 import ExportSection from '@/components/ExportSection';
 import { RecommendedItem } from '@/mocks/recommendedItems';
-import { Appliance } from '@/types';
+import { Appliance, asISODateString } from '@/types';
 
 
 
@@ -114,8 +114,8 @@ export default function AppliancesScreen() {
       model: '',
       serialNumber: '',
       category: item.category,
-      purchaseDate: '',
-      warrantyExpiry: '',
+      purchaseDate: asISODateString(''),
+      warrantyExpiry: asISODateString(''),
       notes: '',
       location: item.location,
     };

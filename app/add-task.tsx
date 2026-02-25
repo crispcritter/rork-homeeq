@@ -15,7 +15,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useHome } from '@/contexts/HomeContext';
 import Colors from '@/constants/colors';
 import { useTheme } from '@/contexts/ThemeContext';
-import { TaskPriority } from '@/types';
+import { TaskPriority, asISODateString } from '@/types';
 import { PRIORITIES } from '@/constants/priorities';
 import formStyles from '@/constants/formStyles';
 import ApplianceChipSelector from '@/components/ApplianceChipSelector';
@@ -52,7 +52,7 @@ export default function AddTaskScreen() {
       id: Date.now().toString(),
       title: title.trim(),
       description: description.trim(),
-      dueDate: dueDate.trim(),
+      dueDate: asISODateString(dueDate.trim()),
       priority,
       status: 'upcoming' as const,
       applianceId: selectedApplianceId || undefined,

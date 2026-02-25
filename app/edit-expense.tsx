@@ -33,7 +33,7 @@ import {
   StickyNote,
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
-import { BudgetCategory, ExpenseProvider, TrustedPro } from '@/types';
+import { BudgetCategory, ExpenseProvider, TrustedPro, toISODateString, asISODateString } from '@/types';
 import formStyles from '@/constants/formStyles';
 import ApplianceChipSelector from '@/components/ApplianceChipSelector';
 import { successNotification, lightImpact } from '@/utils/haptics';
@@ -60,7 +60,7 @@ export default function EditExpenseScreen() {
   const [description, setDescription] = useState(expense?.description ?? '');
   const [amount, setAmount] = useState(expense?.amount?.toString() ?? '');
   const [category, setCategory] = useState<BudgetCategory>(expense?.category ?? 'maintenance');
-  const [date, setDate] = useState(expense?.date ?? new Date().toISOString().split('T')[0]);
+  const [date, setDate] = useState<string>(expense?.date ?? toISODateString(new Date()));
   const [selectedApplianceId, setSelectedApplianceId] = useState<string>(expense?.applianceId ?? '');
   const [receiptImages, setReceiptImages] = useState<string[]>(expense?.receiptImages ?? []);
   const [paymentMethod, setPaymentMethod] = useState(expense?.paymentMethod ?? '');
@@ -180,7 +180,7 @@ export default function EditExpenseScreen() {
       description: description.trim(),
       amount: parseFloat(amount),
       category,
-      date,
+      date: asISODateString(date),
       applianceId: selectedApplianceId || undefined,
       receiptImages: receiptImages.length > 0 ? receiptImages : undefined,
       provider,

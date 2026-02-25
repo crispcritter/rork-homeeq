@@ -1,4 +1,6 @@
-export function parseLocalDate(dateStr: string): Date {
+import { ISODateString } from '@/types';
+
+export function parseLocalDate(dateStr: ISODateString | string): Date {
   const [year, month, day] = dateStr.split('-').map(Number);
   if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
     return new Date(year, month - 1, day);
@@ -6,7 +8,7 @@ export function parseLocalDate(dateStr: string): Date {
   return new Date(dateStr);
 }
 
-export function formatRelativeDate(dateStr: string): string {
+export function formatRelativeDate(dateStr: ISODateString | string): string {
   const date = parseLocalDate(dateStr);
   const now = new Date();
   const diffDays = Math.ceil((date.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
@@ -17,20 +19,20 @@ export function formatRelativeDate(dateStr: string): string {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
-export function formatShortDate(dateStr: string): string {
+export function formatShortDate(dateStr: ISODateString | string): string {
   const date = parseLocalDate(dateStr);
   return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 }
 
-export function formatMonthDay(dateStr: string): string {
+export function formatMonthDay(dateStr: ISODateString | string): string {
   return parseLocalDate(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
-export function formatLongDate(dateStr: string): string {
+export function formatLongDate(dateStr: ISODateString | string): string {
   return parseLocalDate(dateStr).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 }
 
-export function formatMonthYear(dateStr: string): string {
+export function formatMonthYear(dateStr: ISODateString | string): string {
   return parseLocalDate(dateStr).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 }
 
@@ -40,7 +42,7 @@ export interface WarrantyStatus {
   daysLeft: number;
 }
 
-export function getWeekEndingSaturday(dateStr: string): Date {
+export function getWeekEndingSaturday(dateStr: ISODateString | string): Date {
   const date = parseLocalDate(dateStr);
   const day = date.getDay();
   const daysUntilSaturday = day === 6 ? 0 : 6 - day;
@@ -52,7 +54,7 @@ export function formatWeekEnding(saturday: Date): string {
   return `Week ending ${saturday.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
 }
 
-export function getWarrantyStatus(expiryDate: string, colors: { danger: string; warning: string; success: string; textTertiary: string }): WarrantyStatus {
+export function getWarrantyStatus(expiryDate: ISODateString | string, colors: { danger: string; warning: string; success: string; textTertiary: string }): WarrantyStatus {
   const expiry = parseLocalDate(expiryDate);
   const now = new Date();
   const diffDays = Math.ceil((expiry.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import createContextHook from '@nkzw/create-context-hook';
-import { Appliance, MaintenanceTask, BudgetItem, HomeProfile, TrustedPro, PrivateNote, ReviewRating, ProServiceCategory, HouseholdMember } from '../types';
+import { Appliance, MaintenanceTask, BudgetItem, HomeProfile, TrustedPro, PrivateNote, ReviewRating, ProServiceCategory, HouseholdMember, toISODateString, toISOTimestamp } from '../types';
 import { RecommendedGroup, RecommendedItem, recommendedGroups as defaultRecommendedGroups } from '../mocks/recommendedItems';
 import { STORAGE_KEYS, loadFromStorage, loadMonthlyBudget, resetAllData, saveToStorage, saveMonthlyBudget } from './storage';
 import { DEFAULT_PROFILE } from '@/constants/defaultProfile';
@@ -127,7 +127,7 @@ export const [HomeProvider, useHome] = createContextHook(() => {
 
       const completedItems = items.map((t) =>
         t.id === taskId
-          ? { ...t, status: 'completed' as const, completedDate: new Date().toISOString().split('T')[0] }
+          ? { ...t, status: 'completed' as const, completedDate: toISODateString(new Date()) }
           : t
       );
 
@@ -148,7 +148,7 @@ export const [HomeProvider, useHome] = createContextHook(() => {
           id: `task-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
           title: task.title,
           description: task.description,
-          dueDate: nextDue.toISOString().split('T')[0],
+          dueDate: toISODateString(nextDue),
           priority: task.priority,
           status: 'upcoming',
           recurring: true,
@@ -171,7 +171,7 @@ export const [HomeProvider, useHome] = createContextHook(() => {
     listMutate<MaintenanceTask>(STORAGE_KEYS.tasks, ['tasks'], (items) =>
       items.map((t) =>
         t.id === taskId
-          ? { ...t, status: 'archived' as const, archivedDate: new Date().toISOString().split('T')[0] }
+          ? { ...t, status: 'archived' as const, archivedDate: toISODateString(new Date()) }
           : t
       )
     );
@@ -264,7 +264,7 @@ export const [HomeProvider, useHome] = createContextHook(() => {
   }, [listMutate]);
 
   const addProPrivateNote = useCallback((proId: string, text: string) => {
-    const note: PrivateNote = { id: `note-${Date.now()}`, text, createdAt: new Date().toISOString() };
+    const note: PrivateNote = { id: `note-${Date.now()}`, text, createdAt: toISOTimestamp(new Date()) };
     listMutate<TrustedPro>(STORAGE_KEYS.trustedPros, ['trustedPros'], (items) =>
       items.map((p) => p.id === proId ? { ...p, privateNotes: [...(p.privateNotes ?? []), note] } : p)
     );

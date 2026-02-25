@@ -1,7 +1,7 @@
 import { useMemo, useCallback, useState } from 'react';
 import { Alert, Platform } from 'react-native';
 import { useHome } from '@/contexts/HomeContext';
-import { TaskPriority, TrustedPro } from '@/types';
+import { TaskPriority, TrustedPro, ISODateString, asISODateString } from '@/types';
 import { successNotification, mediumImpact, lightImpact } from '@/utils/haptics';
 import {
   addTaskToCalendar,
@@ -268,7 +268,7 @@ export function useTaskDetail(taskId: string | undefined) {
   const handleSaveEdit = useCallback((edits: {
     title: string;
     description: string;
-    dueDate: string;
+    dueDate: ISODateString | string;
     priority: TaskPriority;
     estimatedCost: string;
     recurring: boolean;
@@ -291,7 +291,7 @@ export function useTaskDetail(taskId: string | undefined) {
       ...task,
       title: edits.title.trim(),
       description: edits.description.trim(),
-      dueDate: edits.dueDate.trim(),
+      dueDate: asISODateString(edits.dueDate.trim()),
       priority: edits.priority,
       estimatedCost: costVal,
       recurring: edits.recurring,

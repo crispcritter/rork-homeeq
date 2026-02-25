@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { Alert } from 'react-native';
 import { generateObject } from '@rork-ai/toolkit-sdk';
 import { z } from 'zod';
-import { Appliance, MaintenanceTask } from '@/types';
+import { Appliance, MaintenanceTask, toISODateString } from '@/types';
 import { categoryLabels } from '@/constants/categories';
 import { successNotification, lightImpact } from '@/utils/haptics';
 
@@ -80,7 +80,7 @@ export function useMaintenanceRecommendations(
       id: Date.now().toString() + '_' + index,
       title: rec.title,
       description: rec.description,
-      dueDate: dueDate.toISOString().split('T')[0],
+      dueDate: toISODateString(dueDate),
       priority: rec.priority,
       status: 'upcoming' as const,
       applianceId: appliance.id,

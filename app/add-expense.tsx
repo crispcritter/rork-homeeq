@@ -33,7 +33,7 @@ import {
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import { LightColors } from '@/constants/colors';
-import { BudgetCategory, ExpenseProvider, TrustedPro } from '@/types';
+import { BudgetCategory, ExpenseProvider, TrustedPro, toISODateString, toISOTimestamp, asISODateString } from '@/types';
 import { Switch } from 'react-native';
 import formStyles from '@/constants/formStyles';
 import ApplianceChipSelector from '@/components/ApplianceChipSelector';
@@ -58,7 +58,7 @@ export default function AddExpenseScreen() {
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState<BudgetCategory>('maintenance');
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [date, setDate] = useState<string>(toISODateString(new Date()));
   const [selectedApplianceId, setSelectedApplianceId] = useState<string>('');
   const [receiptImages, setReceiptImages] = useState<string[]>([]);
   const [paymentMethod, setPaymentMethod] = useState('');
@@ -185,7 +185,7 @@ export default function AddExpenseScreen() {
           address: providerAddress.trim() || undefined,
           notes: providerNotes.trim() || undefined,
           expenseIds: [expenseId],
-          createdAt: new Date().toISOString(),
+          createdAt: toISOTimestamp(new Date()),
         };
         addTrustedPro(newPro);
         console.log('[AddExpense] Created new Trusted Pro:', newPro.name);
@@ -197,7 +197,7 @@ export default function AddExpenseScreen() {
       description: description.trim(),
       amount: parseFloat(amount),
       category,
-      date,
+      date: asISODateString(date),
       applianceId: selectedApplianceId || undefined,
       receiptImages: receiptImages.length > 0 ? receiptImages : undefined,
       provider,

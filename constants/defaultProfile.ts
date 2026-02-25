@@ -1,4 +1,4 @@
-import { HomeProfile } from '@/types';
+import { HomeProfile, asISODateString } from '@/types';
 
 export const DEFAULT_PROFILE: HomeProfile = {
   id: 'default',
@@ -23,7 +23,7 @@ export const DEFAULT_PROFILE: HomeProfile = {
   hasPool: false,
   hasHoa: false,
   hoaAmount: null,
-  purchaseDate: '',
+  purchaseDate: asISODateString(''),
   notes: '',
   zillowLink: '',
   householdMembers: [],

@@ -1,3 +1,17 @@
+export type ISODateString = string & { readonly __brand: 'ISODate' };
+
+export function toISODateString(date: Date): ISODateString {
+  return date.toISOString().split('T')[0] as ISODateString;
+}
+
+export function toISOTimestamp(date: Date): ISODateString {
+  return date.toISOString() as ISODateString;
+}
+
+export function asISODateString(value: string): ISODateString {
+  return value as ISODateString;
+}
+
 export type ApplianceCategory =
   | 'hvac'
   | 'plumbing'
@@ -17,7 +31,7 @@ export type BudgetCategory = 'maintenance' | 'repair' | 'upgrade' | 'emergency' 
 export interface PurchaseData {
   price?: number;
   retailer?: string;
-  purchaseDate?: string;
+  purchaseDate?: ISODateString;
   receiptImageUrl?: string;
   paymentMethod?: string;
   orderNumber?: string;
@@ -43,8 +57,8 @@ export interface Appliance {
   model: string;
   serialNumber: string;
   category: ApplianceCategory;
-  purchaseDate: string;
-  warrantyExpiry: string;
+  purchaseDate: ISODateString;
+  warrantyExpiry: ISODateString;
   imageUrl?: string;
   photos?: AppliancePhoto[];
   notes: string;
@@ -59,15 +73,15 @@ export interface MaintenanceTask {
   applianceId?: string;
   title: string;
   description: string;
-  dueDate: string;
-  completedDate?: string;
+  dueDate: ISODateString;
+  completedDate?: ISODateString;
   priority: TaskPriority;
   status: TaskStatus;
   recurring: boolean;
   recurringInterval?: number;
   estimatedCost?: number;
   notes?: string[];
-  archivedDate?: string;
+  archivedDate?: ISODateString;
   productLink?: string;
   trustedProId?: string;
   calendarEventId?: string;
@@ -89,7 +103,7 @@ export interface BudgetItem {
   category: BudgetCategory;
   description: string;
   amount: number;
-  date: string;
+  date: ISODateString;
   applianceId?: string;
   receiptImages?: string[];
   provider?: ExpenseProvider;
@@ -134,7 +148,7 @@ export interface HomeProfile {
   hasPool: boolean;
   hasHoa: boolean;
   hoaAmount: number | null;
-  purchaseDate: string;
+  purchaseDate: ISODateString;
   notes: string;
   profileImage?: string;
   zillowLink?: string;
@@ -164,7 +178,7 @@ export interface ReviewRating {
 export interface PrivateNote {
   id: string;
   text: string;
-  createdAt: string;
+  createdAt: ISODateString;
 }
 
 export type ProServiceCategory = ApplianceCategory | 'general' | 'landscaping' | 'painting' | 'cleaning' | 'pest-control' | 'security';
@@ -177,7 +191,7 @@ export interface HouseholdMember {
   email?: string;
   phone?: string;
   role: HouseholdRole;
-  invitedAt: string;
+  invitedAt: ISODateString;
   status: 'pending' | 'accepted';
 }
 
@@ -191,7 +205,7 @@ export interface TrustedPro {
   address?: string;
   notes?: string;
   expenseIds: string[];
-  createdAt: string;
+  createdAt: ISODateString;
   ratings?: ReviewRating[];
   linkedApplianceIds?: string[];
   privateNotes?: PrivateNote[];

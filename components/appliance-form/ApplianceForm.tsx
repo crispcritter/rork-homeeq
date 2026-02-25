@@ -15,7 +15,7 @@ import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { Camera, X, Sparkles, ChevronRight, ScanLine, Hash, Receipt, Plus, Star, ImagePlus, BookOpen, Upload, Search, ExternalLink } from 'lucide-react-native';
 import Colors from '@/constants/colors';
-import { Appliance, ApplianceCategory, PurchaseData, AppliancePhoto, ManualInfo } from '@/types';
+import { Appliance, ApplianceCategory, PurchaseData, AppliancePhoto, ManualInfo, asISODateString, toISODateString } from '@/types';
 import { successNotification } from '@/utils/haptics';
 import { CATEGORIES } from '@/components/appliance-form/constants';
 import { formStyles as styles } from '@/components/appliance-form/styles';
@@ -89,7 +89,7 @@ export default function ApplianceForm({ mode, initialData, onSave }: ApplianceFo
     const purchaseData: PurchaseData = {};
     if (purchasePrice.trim()) purchaseData.price = parseFloat(purchasePrice.trim());
     if (retailer.trim()) purchaseData.retailer = retailer.trim();
-    if (purchaseDate.trim()) purchaseData.purchaseDate = purchaseDate.trim();
+    if (purchaseDate.trim()) purchaseData.purchaseDate = asISODateString(purchaseDate.trim());
     if (receiptImageUri) purchaseData.receiptImageUrl = receiptImageUri;
     if (paymentMethod.trim()) purchaseData.paymentMethod = paymentMethod.trim();
     if (orderNumber.trim()) purchaseData.orderNumber = orderNumber.trim();
@@ -111,8 +111,8 @@ export default function ApplianceForm({ mode, initialData, onSave }: ApplianceFo
       model: model.trim(),
       serialNumber: serialNumber.trim(),
       category,
-      purchaseDate: purchaseDate.trim() || new Date().toISOString().split('T')[0],
-      warrantyExpiry: hasWarranty ? (warrantyExpiry.trim() || '') : '',
+      purchaseDate: asISODateString(purchaseDate.trim()) || toISODateString(new Date()),
+      warrantyExpiry: asISODateString(hasWarranty ? (warrantyExpiry.trim() || '') : ''),
       hasWarranty,
       notes: notes.trim(),
       location: location.trim(),

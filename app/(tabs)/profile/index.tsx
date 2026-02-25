@@ -46,8 +46,10 @@ import {
   Trash2,
   Crown,
   User,
+  Palette,
 } from 'lucide-react-native';
 import { Alert, Linking, Modal } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useHome } from '@/contexts/HomeContext';
 import Colors from '@/constants/colors';
 import { useTheme, ThemeMode } from '@/contexts/ThemeContext';
@@ -189,6 +191,7 @@ const getRoleLabel = (role: HouseholdRole): string => {
 export default function ProfileScreen() {
   const { homeProfile, updateHomeProfile, resetData, isResetting, addHouseholdMember, removeHouseholdMember, sectionsDefaultOpen, setSectionsDefaultOpen } = useHome();
   const { colors: c, themeMode, setThemeMode, isDark } = useTheme();
+  const router = useRouter();
   const [form, setForm] = useState<ProfileFormState>(() => profileToForm(homeProfile));
   const [activePicker, setActivePicker] = useState<string | null>(null);
   const [showZillowModal, setShowZillowModal] = useState<boolean>(false);
@@ -946,6 +949,21 @@ export default function ProfileScreen() {
                 testID="sections-default-open-toggle"
               />
             </View>
+            <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
+            <TouchableOpacity
+              style={styles.switchRow}
+              onPress={() => router.push('/color-guide')}
+              activeOpacity={0.7}
+              testID="color-guide-link"
+            >
+              <View style={styles.switchLeft}>
+                <View style={[styles.inputIcon, { backgroundColor: c.primaryLight }]}>
+                  <Palette size={18} color={c.primary} />
+                </View>
+                <Text style={[styles.switchLabel, { color: c.text }]}>Color Guide</Text>
+              </View>
+              <ChevronDown size={16} color={c.textTertiary} style={{ transform: [{ rotate: '-90deg' }] }} />
+            </TouchableOpacity>
           </View>
         </View>
 

@@ -84,7 +84,13 @@ export const [HomeProvider, useHome] = createContextHook(() => {
   }, [queryClient]);
 
   const addAppliance = useCallback((appliance: Appliance) => {
-    listMutate<Appliance>(STORAGE_KEYS.appliances, ['appliances'], (items) => [...items, appliance]);
+    listMutate<Appliance>(STORAGE_KEYS.appliances, ['appliances'], (items) => {
+      if (items.some((a) => a.id === appliance.id)) {
+        console.warn('[HomeContext] Duplicate appliance rejected:', appliance.id);
+        return items;
+      }
+      return [...items, appliance];
+    });
   }, [listMutate]);
 
   const updateAppliance = useCallback((appliance: Appliance) => {
@@ -100,7 +106,13 @@ export const [HomeProvider, useHome] = createContextHook(() => {
   }, [listMutate]);
 
   const addTask = useCallback((task: MaintenanceTask) => {
-    listMutate<MaintenanceTask>(STORAGE_KEYS.tasks, ['tasks'], (items) => [...items, task]);
+    listMutate<MaintenanceTask>(STORAGE_KEYS.tasks, ['tasks'], (items) => {
+      if (items.some((t) => t.id === task.id)) {
+        console.warn('[HomeContext] Duplicate task rejected:', task.id);
+        return items;
+      }
+      return [...items, task];
+    });
   }, [listMutate]);
 
   const updateTask = useCallback((task: MaintenanceTask) => {
@@ -215,7 +227,13 @@ export const [HomeProvider, useHome] = createContextHook(() => {
   }, [listMutate]);
 
   const addBudgetItem = useCallback((item: BudgetItem) => {
-    listMutate<BudgetItem>(STORAGE_KEYS.budgetItems, ['budgetItems'], (items) => [...items, item]);
+    listMutate<BudgetItem>(STORAGE_KEYS.budgetItems, ['budgetItems'], (items) => {
+      if (items.some((i) => i.id === item.id)) {
+        console.warn('[HomeContext] Duplicate budget item rejected:', item.id);
+        return items;
+      }
+      return [...items, item];
+    });
   }, [listMutate]);
 
   const updateBudgetItem = useCallback((item: BudgetItem) => {

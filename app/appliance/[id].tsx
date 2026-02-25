@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState } from 'react';
+import React, { useMemo, useCallback, useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import {
   FlatList,
   Linking,
   ActivityIndicator,
+  Animated,
 } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { Image } from 'expo-image';
@@ -29,6 +30,7 @@ import {
   Receipt,
   Star,
   ChevronRight,
+  ChevronDown,
   BookOpen,
   Upload,
   Search,
@@ -41,7 +43,10 @@ import {
   UserCheck,
   XCircle,
   Phone,
+  RefreshCw,
+  ShoppingCart,
 } from 'lucide-react-native';
+import LinkPreview from '@/components/LinkPreview';
 import { useHome } from '@/contexts/HomeContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { categoryLabels } from '@/constants/categories';
@@ -61,6 +66,27 @@ export default function ApplianceDetailScreen() {
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
   const [showProPicker, setShowProPicker] = useState(false);
   const screenWidth = Dimensions.get('window').width;
+
+  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
+
+  const toggleSection = useCallback((key: string) => {
+    lightImpact();
+    setCollapsedSections((prev) => ({ ...prev, [key]: !prev[key] }));
+  }, []);
+
+  const replaceSearchUrls = useMemo(() => {
+    if (!appliance) return [];
+    const parts: string[] = [];
+    if (appliance.name) parts.push(appliance.name);
+    if (appliance.brand) parts.push(appliance.brand);
+    if (appliance.model) parts.push(appliance.model);
+    const query = encodeURIComponent(parts.join(' '));
+    return [
+      `https://www.google.com/search?tbm=shop&q=${query}`,
+      `https://www.amazon.com/s?k=${query}`,
+      `https://www.homedepot.com/s/${query}`,
+    ];
+  }, [appliance]);
 
   const { isSearchingManual, handleUploadManual, handleFindManual } = useManualSearch({
     brand: appliance?.brand ?? '',
@@ -277,6 +303,14 @@ export default function ApplianceDetailScreen() {
             </View>
           )}
 
+          <CollapsibleSection
+            title="Details"
+            icon={<Wrench size={16} color={c.primary} />}
+            isCollapsed={collapsedSections['details'] ?? false}
+            onToggle={() => toggleSection('details')}
+            styles={styles}
+            colors={c}
+          >
           <View style={styles.detailsCard}>
             <View style={styles.detailItem}>
               <View style={[styles.detailIcon, { backgroundColor: c.primaryLight }]}>
@@ -342,8 +376,17 @@ export default function ApplianceDetailScreen() {
               </View>
             </View>
           </View>
+          </CollapsibleSection>
 
           {(appliance.purchaseData && (appliance.purchaseData.price || appliance.purchaseData.retailer || appliance.purchaseData.paymentMethod || appliance.purchaseData.orderNumber)) ? (
+            <CollapsibleSection
+              title="Purchase Details"
+              icon={<Receipt size={16} color={c.warning} />}
+              isCollapsed={collapsedSections['purchase'] ?? false}
+              onToggle={() => toggleSection('purchase')}
+              styles={styles}
+              colors={c}
+            >
             <View style={styles.purchaseCard}>
               <View style={styles.purchaseHeader}>
                 <Receipt size={18} color={c.warning} />
@@ -412,15 +455,33 @@ export default function ApplianceDetailScreen() {
                 </>
               ) : null}
             </View>
+            </CollapsibleSection>
           ) : null}
 
           {appliance.notes ? (
+            <CollapsibleSection
+              title="Notes"
+              icon={<FileText size={16} color="#7C3AED" />}
+              isCollapsed={collapsedSections['notes'] ?? false}
+              onToggle={() => toggleSection('notes')}
+              styles={styles}
+              colors={c}
+            >
             <View style={styles.notesCard}>
               <Text style={styles.cardTitle}>Notes</Text>
               <Text style={styles.notesText}>{appliance.notes}</Text>
             </View>
+            </CollapsibleSection>
           ) : null}
 
+          <CollapsibleSection
+            title="User Manual"
+            icon={<BookOpen size={16} color="#5B8CB8" />}
+            isCollapsed={collapsedSections['manual'] ?? false}
+            onToggle={() => toggleSection('manual')}
+            styles={styles}
+            colors={c}
+          >
           <View style={styles.manualCard}>
             <View style={styles.manualHeader}>
               <BookOpen size={18} color="#5B8CB8" />
@@ -490,7 +551,16 @@ export default function ApplianceDetailScreen() {
               </View>
             )}
           </View>
+          </CollapsibleSection>
 
+          <CollapsibleSection
+            title="Trusted Pro"
+            icon={<UserCheck size={16} color={c.primary} />}
+            isCollapsed={collapsedSections['pro'] ?? false}
+            onToggle={() => toggleSection('pro')}
+            styles={styles}
+            colors={c}
+          >
           <View style={styles.proSection}>
             <View style={styles.proSectionHeader}>
               <View style={styles.proTitleRow}>
@@ -578,7 +648,17 @@ export default function ApplianceDetailScreen() {
               </View>
             )}
           </View>
+          </CollapsibleSection>
 
+          <CollapsibleSection
+            title="Maintenance"
+            icon={<Clock size={16} color={c.warning} />}
+            isCollapsed={collapsedSections['maintenance'] ?? false}
+            onToggle={() => toggleSection('maintenance')}
+            styles={styles}
+            colors={c}
+            badge={relatedTasks.length > 0 ? String(relatedTasks.length) : undefined}
+          >
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Text style={styles.cardTitle}>Maintenance</Text>
@@ -674,8 +754,18 @@ export default function ApplianceDetailScreen() {
               </View>
             )}
           </View>
+          </CollapsibleSection>
 
           {relatedExpenses.length > 0 && (
+            <CollapsibleSection
+              title="Expenses"
+              icon={<DollarSign size={16} color={c.accent} />}
+              isCollapsed={collapsedSections['expenses'] ?? false}
+              onToggle={() => toggleSection('expenses')}
+              styles={styles}
+              colors={c}
+              badge={`${totalExpenses}`}
+            >
             <View style={styles.section}>
               <View style={styles.sectionHeader}>
                 <Text style={styles.cardTitle}>Expenses</Text>
@@ -693,7 +783,26 @@ export default function ApplianceDetailScreen() {
                 </View>
               ))}
             </View>
+            </CollapsibleSection>
           )}
+
+          <CollapsibleSection
+            title="Replace Item"
+            icon={<ShoppingCart size={16} color="#16A34A" />}
+            isCollapsed={collapsedSections['replace'] ?? false}
+            onToggle={() => toggleSection('replace')}
+            styles={styles}
+            colors={c}
+          >
+          <View style={styles.replaceCard}>
+            <Text style={styles.replaceSubtitle}>Find a replacement via popular retailers</Text>
+            <View style={styles.replacePreviews}>
+              {replaceSearchUrls.map((url, i) => (
+                <LinkPreview key={i} url={url} />
+              ))}
+            </View>
+          </View>
+          </CollapsibleSection>
 
           <View style={styles.actionRow}>
             <TouchableOpacity style={styles.editBtn} onPress={() => router.push({ pathname: '/edit-appliance' as any, params: { id: appliance.id } })} activeOpacity={0.7} testID="edit-appliance">
@@ -710,6 +819,48 @@ export default function ApplianceDetailScreen() {
         </View>
       </ScrollView>
     </>
+  );
+}
+
+interface CollapsibleSectionProps {
+  title: string;
+  icon: React.ReactNode;
+  isCollapsed: boolean;
+  onToggle: () => void;
+  styles: any;
+  colors: any;
+  badge?: string;
+  children: React.ReactNode;
+}
+
+function CollapsibleSection({ title, icon, isCollapsed, onToggle, styles, colors, badge, children }: CollapsibleSectionProps) {
+  return (
+    <View style={styles.collapsibleSection}>
+      <TouchableOpacity
+        style={styles.collapsibleHeader}
+        onPress={onToggle}
+        activeOpacity={0.7}
+        testID={`section-${title.toLowerCase().replace(/\s/g, '-')}`}
+      >
+        <View style={styles.collapsibleHeaderLeft}>
+          {icon}
+          <Text style={styles.collapsibleHeaderTitle}>{title}</Text>
+          {badge && (
+            <View style={styles.collapsibleBadge}>
+              <Text style={styles.collapsibleBadgeText}>{badge}</Text>
+            </View>
+          )}
+        </View>
+        <View style={[styles.collapsibleChevronWrap, isCollapsed && styles.collapsibleChevronCollapsed]}>
+          <ChevronDown size={16} color={colors.textSecondary} style={isCollapsed ? { transform: [{ rotate: '-90deg' }] } : undefined} />
+        </View>
+      </TouchableOpacity>
+      {!isCollapsed && (
+        <View style={styles.collapsibleContent}>
+          {children}
+        </View>
+      )}
+    </View>
   );
 }
 
@@ -732,14 +883,14 @@ const createApplianceStyles = (c: any) => StyleSheet.create({
   warrantyStatus: { fontSize: 16, fontWeight: '600' as const },
   warrantyExpiry: { fontSize: 14, color: c.text, fontWeight: '500' as const, marginBottom: 4 },
   warrantyDate: { fontSize: 13, color: c.textTertiary },
-  detailsCard: { backgroundColor: c.surface, borderRadius: 18, padding: 6, marginBottom: 16, shadowColor: c.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2 },
+  detailsCard: { padding: 6 },
   detailItem: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 14 },
   detailDivider: { height: 1, backgroundColor: c.borderLight, marginHorizontal: 14 },
   detailIcon: { width: 38, height: 38, borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
   detailTextWrap: { flex: 1 },
   detailLabel: { fontSize: 11, color: c.textTertiary, marginBottom: 2 },
   detailValue: { fontSize: 14, fontWeight: '600' as const, color: c.text },
-  notesCard: { backgroundColor: c.surface, borderRadius: 18, padding: 18, marginBottom: 16, shadowColor: c.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2 },
+  notesCard: { padding: 18 },
   cardTitle: { fontSize: 17, fontWeight: '600' as const, color: c.text, marginBottom: 8 },
   notesText: { fontSize: 14, color: c.textSecondary, lineHeight: 21 },
   section: { marginBottom: 18 },
@@ -764,14 +915,14 @@ const createApplianceStyles = (c: any) => StyleSheet.create({
   expenseDesc: { fontSize: 14, fontWeight: '600' as const, color: c.text, marginBottom: 2 },
   expenseMeta: { fontSize: 12, color: c.textTertiary },
   expenseAmount: { fontSize: 15, fontWeight: '600' as const, color: c.text },
-  purchaseCard: { backgroundColor: c.surface, borderRadius: 18, padding: 6, marginBottom: 16, shadowColor: c.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2 },
-  purchaseHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 14, paddingTop: 14, paddingBottom: 6 },
+  purchaseCard: { padding: 6 },
+  purchaseHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 14, paddingTop: 6, paddingBottom: 6 },
   purchaseItem: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 14 },
   purchaseDivider: { height: 1, backgroundColor: c.borderLight, marginHorizontal: 14 },
   receiptImageWrap: { padding: 14, alignItems: 'center', gap: 8 },
   receiptImage: { width: '100%', height: 160, borderRadius: 12 },
   receiptImageLabel: { fontSize: 12, color: c.textTertiary, fontWeight: '500' as const },
-  proSection: { backgroundColor: c.surface, borderRadius: 18, padding: 16, marginBottom: 16, shadowColor: c.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2 },
+  proSection: { padding: 16, paddingTop: 0 },
   proSectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
   proTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   proSectionTitle: { fontSize: 15, fontWeight: '600' as const, color: c.text },
@@ -804,6 +955,18 @@ const createApplianceStyles = (c: any) => StyleSheet.create({
   proPickerCancelText: { fontSize: 14, fontWeight: '500' as const, color: c.textSecondary },
   proPickerEmpty: { alignItems: 'center', gap: 12, paddingVertical: 8 },
   proPickerEmptyText: { fontSize: 13, color: c.textTertiary },
+  collapsibleSection: { marginBottom: 16, backgroundColor: c.surface, borderRadius: 18, shadowColor: c.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2, overflow: 'hidden' },
+  collapsibleHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 14 },
+  collapsibleHeaderLeft: { flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 },
+  collapsibleHeaderTitle: { fontSize: 16, fontWeight: '600' as const, color: c.text },
+  collapsibleBadge: { backgroundColor: c.surfaceAlt, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8, marginLeft: 4 },
+  collapsibleBadgeText: { fontSize: 12, fontWeight: '600' as const, color: c.textSecondary },
+  collapsibleChevronWrap: { width: 30, height: 30, borderRadius: 10, backgroundColor: c.surfaceAlt, justifyContent: 'center', alignItems: 'center' },
+  collapsibleChevronCollapsed: {},
+  collapsibleContent: { paddingBottom: 4 },
+  replaceCard: { paddingHorizontal: 16, paddingBottom: 12 },
+  replaceSubtitle: { fontSize: 13, color: c.textSecondary, marginBottom: 12 },
+  replacePreviews: { gap: 10 },
   actionRow: { gap: 10, marginTop: 8 },
   editBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 14, borderRadius: 14, borderWidth: 1, borderColor: c.primary + '30', backgroundColor: c.primaryLight },
   editBtnText: { fontSize: 14, fontWeight: '600' as const, color: c.primary },
@@ -813,8 +976,8 @@ const createApplianceStyles = (c: any) => StyleSheet.create({
   notFoundText: { fontSize: 18, fontWeight: '600' as const, color: c.textSecondary, marginBottom: 16 },
   backBtn: { paddingHorizontal: 20, paddingVertical: 12, borderRadius: 12, backgroundColor: c.primary },
   backBtnText: { fontSize: 14, fontWeight: '600' as const, color: c.white },
-  manualCard: { backgroundColor: c.surface, borderRadius: 18, padding: 6, marginBottom: 16, shadowColor: c.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2 },
-  manualHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 14, paddingTop: 14, paddingBottom: 6 },
+  manualCard: { padding: 6 },
+  manualHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 14, paddingTop: 6, paddingBottom: 6 },
   manualContent: { padding: 8 },
   manualLinkRow: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: '#F0F7FF', borderRadius: 14, padding: 14 },
   manualLinkIcon: { width: 40, height: 40, borderRadius: 12, backgroundColor: '#DBEAFE', justifyContent: 'center', alignItems: 'center' },

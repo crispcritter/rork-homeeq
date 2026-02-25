@@ -75,7 +75,10 @@ export default function AppliancesScreen() {
       (a) =>
         a.name.toLowerCase().includes(search.toLowerCase()) ||
         a.brand.toLowerCase().includes(search.toLowerCase()) ||
-        a.category.toLowerCase().includes(search.toLowerCase())
+        a.category.toLowerCase().includes(search.toLowerCase()) ||
+        (a.location || '').toLowerCase().includes(search.toLowerCase()) ||
+        (a.model || '').toLowerCase().includes(search.toLowerCase()) ||
+        (a.serialNumber || '').toLowerCase().includes(search.toLowerCase())
     );
 
     return [...list].sort((a, b) => {
@@ -197,7 +200,7 @@ export default function AppliancesScreen() {
           <Search size={16} color={c.textTertiary} />
           <TextInput
             style={styles.searchInput}
-            placeholder="Search by name, brand, or type..."
+            placeholder="Search by name, brand, type, location..."
             placeholderTextColor={c.textTertiary}
             value={search}
             onChangeText={setSearch}

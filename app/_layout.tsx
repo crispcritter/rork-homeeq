@@ -55,6 +55,10 @@ function RootLayoutNav() {
         options={{ presentation: "fullScreenModal", title: "Edit Item" }}
       />
       <Stack.Screen
+        name="edit-expense"
+        options={{ presentation: "fullScreenModal", title: "Edit Expense" }}
+      />
+      <Stack.Screen
         name="task/[id]"
         options={{ title: "Task Details" }}
       />

@@ -27,6 +27,7 @@ import {
   ExternalLink,
   CheckCircle,
   XCircle,
+  Pencil,
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -85,7 +86,24 @@ export default function ExpenseDetailScreen() {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: 'Expense Details' }} />
+      <Stack.Screen
+        options={{
+          title: 'Expense Details',
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => {
+                lightImpact();
+                router.push(`/edit-expense?id=${expense.id}` as any);
+              }}
+              activeOpacity={0.7}
+              style={{ padding: 4 }}
+              testID="edit-expense-btn"
+            >
+              <Pencil size={20} color={c.primary} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <View style={styles.heroCard}>
           <View style={[styles.categoryBadge, { backgroundColor: catColor }]}>
@@ -295,6 +313,19 @@ export default function ExpenseDetailScreen() {
             </TouchableOpacity>
           </View>
         )}
+
+        <TouchableOpacity
+          style={styles.editBtn}
+          onPress={() => {
+            lightImpact();
+            router.push(`/edit-expense?id=${expense.id}` as any);
+          }}
+          activeOpacity={0.7}
+          testID="edit-expense-action"
+        >
+          <Pencil size={18} color={c.primary} />
+          <Text style={styles.editBtnText}>Edit Expense</Text>
+        </TouchableOpacity>
 
         <TouchableOpacity style={styles.deleteBtn} onPress={handleDelete} activeOpacity={0.7}>
           <Trash2 size={18} color={c.danger} />
@@ -523,6 +554,21 @@ const createStyles = (c: { background: string; surface: string; surfaceAlt: stri
     fontSize: 13,
     color: Colors.textSecondary,
     lineHeight: 17,
+  },
+  editBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: Colors.primaryLight,
+    borderRadius: 14,
+    paddingVertical: 14,
+    marginBottom: 12,
+  },
+  editBtnText: {
+    fontSize: 15,
+    fontWeight: '600' as const,
+    color: Colors.primary,
   },
   deleteBtn: {
     flexDirection: 'row',

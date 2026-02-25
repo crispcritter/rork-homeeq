@@ -51,7 +51,13 @@ export async function loadFromStorage<T>(key: string, fallback: T): Promise<T> {
   try {
     await initializeData();
     const data = await AsyncStorage.getItem(key);
-    return data ? JSON.parse(data) : fallback;
+    if (!data) return fallback;
+    try {
+      return JSON.parse(data) as T;
+    } catch (parseError) {
+      console.error(`[Storage] JSON.parse failed for key "${key}", returning fallback:`, parseError);
+      return fallback;
+    }
   } catch (e) {
     console.error(`[Storage] loadFromStorage error for key "${key}":`, e);
     return fallback;

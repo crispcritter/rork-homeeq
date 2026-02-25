@@ -61,6 +61,13 @@ export interface ManualInfo {
   foundVia?: 'user' | 'search';
 }
 
+export interface AppInfo {
+  appStoreUrl?: string;
+  appName?: string;
+  username?: string;
+  password?: string;
+}
+
 export interface Appliance {
   id: string;
   name: string;
@@ -77,6 +84,7 @@ export interface Appliance {
   purchaseData?: PurchaseData;
   manual?: ManualInfo;
   hasWarranty?: boolean;
+  appInfo?: AppInfo;
 }
 
 export interface MaintenanceTask {

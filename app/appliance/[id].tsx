@@ -45,6 +45,12 @@ import {
   Phone,
   RefreshCw,
   ShoppingCart,
+  Smartphone,
+  User,
+  Lock,
+  Eye,
+  EyeOff,
+  Copy,
 } from 'lucide-react-native';
 import LinkPreview from '@/components/LinkPreview';
 import { useHome } from '@/contexts/HomeContext';
@@ -54,6 +60,7 @@ import { getWarrantyStatus, formatMonthDay, formatMonthYear, formatLongDate, par
 import { lightImpact, successNotification, warningNotification } from '@/utils/haptics';
 import { useManualSearch } from '@/hooks/useManualSearch';
 import { useMaintenanceRecommendations } from '@/hooks/useMaintenanceRecommendations';
+import * as Clipboard from 'expo-clipboard';
 
 export default function ApplianceDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -68,6 +75,7 @@ export default function ApplianceDetailScreen() {
   const screenWidth = Dimensions.get('window').width;
 
   const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
+  const [showAppPassword, setShowAppPassword] = useState(false);
 
   const toggleSection = useCallback((key: string) => {
     lightImpact();
@@ -571,6 +579,119 @@ export default function ApplianceDetailScreen() {
           </View>
           </CollapsibleSection>
 
+          {appliance.appInfo && (appliance.appInfo.appStoreUrl || appliance.appInfo.appName || appliance.appInfo.username || appliance.appInfo.password) ? (
+            <CollapsibleSection
+              title="Associated App"
+              icon={<Smartphone size={16} color="#0A84FF" />}
+              isCollapsed={collapsedSections['app'] ?? false}
+              onToggle={() => toggleSection('app')}
+              styles={styles}
+              colors={c}
+            >
+            <View style={styles.appInfoCard}>
+              {appliance.appInfo.appName ? (
+                <View style={styles.appInfoNameRow}>
+                  <View style={styles.appInfoIconWrap}>
+                    <Smartphone size={20} color="#0A84FF" />
+                  </View>
+                  <View style={styles.appInfoNameText}>
+                    <Text style={styles.appInfoAppName}>{appliance.appInfo.appName}</Text>
+                    <Text style={styles.appInfoAppLabel}>Mobile App</Text>
+                  </View>
+                </View>
+              ) : null}
+              {appliance.appInfo.appStoreUrl ? (
+                <>
+                  {appliance.appInfo.appName ? <View style={styles.appInfoDivider} /> : null}
+                  <TouchableOpacity
+                    style={styles.appInfoLinkRow}
+                    onPress={() => {
+                      lightImpact();
+                      Linking.openURL(appliance.appInfo!.appStoreUrl!).catch(() => {
+                        Alert.alert('Error', 'Could not open the App Store link.');
+                      });
+                    }}
+                    activeOpacity={0.7}
+                    testID="open-app-store-link"
+                  >
+                    <View style={styles.appInfoLinkIcon}>
+                      <ExternalLink size={16} color="#0A84FF" />
+                    </View>
+                    <View style={styles.appInfoLinkContent}>
+                      <Text style={styles.appInfoLinkTitle}>Open in App Store</Text>
+                      <Text style={styles.appInfoLinkUrl} numberOfLines={1}>{appliance.appInfo.appStoreUrl}</Text>
+                    </View>
+                    <ChevronRight size={16} color={c.textTertiary} />
+                  </TouchableOpacity>
+                </>
+              ) : null}
+              {appliance.appInfo.username ? (
+                <>
+                  <View style={styles.appInfoDivider} />
+                  <View style={styles.appInfoCredRow}>
+                    <View style={[styles.appInfoCredIcon, { backgroundColor: '#E8F5E9' }]}>
+                      <User size={15} color="#43A047" />
+                    </View>
+                    <View style={styles.appInfoCredContent}>
+                      <Text style={styles.appInfoCredLabel}>Username</Text>
+                      <Text style={styles.appInfoCredValue} selectable>{appliance.appInfo.username}</Text>
+                    </View>
+                    <TouchableOpacity
+                      style={styles.appInfoCopyBtn}
+                      onPress={() => {
+                        lightImpact();
+                        Clipboard.setStringAsync(appliance.appInfo!.username!);
+                      }}
+                      activeOpacity={0.7}
+                      hitSlop={8}
+                    >
+                      <Copy size={14} color={c.textTertiary} />
+                    </TouchableOpacity>
+                  </View>
+                </>
+              ) : null}
+              {appliance.appInfo.password ? (
+                <>
+                  <View style={styles.appInfoDivider} />
+                  <View style={styles.appInfoCredRow}>
+                    <View style={[styles.appInfoCredIcon, { backgroundColor: '#FFF3E0' }]}>
+                      <Lock size={15} color="#EF6C00" />
+                    </View>
+                    <View style={styles.appInfoCredContent}>
+                      <Text style={styles.appInfoCredLabel}>Password</Text>
+                      <Text style={styles.appInfoCredValue} selectable>
+                        {showAppPassword ? appliance.appInfo.password : '••••••••'}
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      style={styles.appInfoCopyBtn}
+                      onPress={() => {
+                        lightImpact();
+                        setShowAppPassword((prev) => !prev);
+                      }}
+                      activeOpacity={0.7}
+                      hitSlop={8}
+                    >
+                      {showAppPassword ? <EyeOff size={14} color={c.textTertiary} /> : <Eye size={14} color={c.textTertiary} />}
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.appInfoCopyBtn}
+                      onPress={() => {
+                        lightImpact();
+                        Clipboard.setStringAsync(appliance.appInfo!.password!);
+                      }}
+                      activeOpacity={0.7}
+                      hitSlop={8}
+                    >
+                      <Copy size={14} color={c.textTertiary} />
+                    </TouchableOpacity>
+                  </View>
+                </>
+              ) : null}
+            </View>
+            </CollapsibleSection>
+          ) : null}
+
           <CollapsibleSection
             title="Trusted Pro"
             icon={<UserCheck size={16} color={c.primary} />}
@@ -1021,4 +1142,22 @@ const createApplianceStyles = (c: any) => StyleSheet.create({
   recMetaText: { fontSize: 11, color: c.textTertiary, fontWeight: '500' as const },
   recAddBtn: { width: 36, height: 36, borderRadius: 12, backgroundColor: c.primaryLight, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: c.primary + '25' },
   recAddBtnDone: { backgroundColor: c.successLight, borderColor: c.success + '25' },
+  appInfoCard: { padding: 6 },
+  appInfoNameRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 14, paddingVertical: 12 },
+  appInfoIconWrap: { width: 42, height: 42, borderRadius: 13, backgroundColor: '#E3F2FD', justifyContent: 'center', alignItems: 'center' },
+  appInfoNameText: { flex: 1 },
+  appInfoAppName: { fontSize: 16, fontWeight: '600' as const, color: c.text },
+  appInfoAppLabel: { fontSize: 12, color: c.textTertiary, marginTop: 1 },
+  appInfoDivider: { height: 1, backgroundColor: c.borderLight, marginHorizontal: 14 },
+  appInfoLinkRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 14, paddingVertical: 12 },
+  appInfoLinkIcon: { width: 38, height: 38, borderRadius: 11, backgroundColor: '#E3F2FD', justifyContent: 'center', alignItems: 'center' },
+  appInfoLinkContent: { flex: 1 },
+  appInfoLinkTitle: { fontSize: 14, fontWeight: '600' as const, color: '#0A84FF', marginBottom: 2 },
+  appInfoLinkUrl: { fontSize: 11, color: c.textTertiary },
+  appInfoCredRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 14, paddingVertical: 12 },
+  appInfoCredIcon: { width: 34, height: 34, borderRadius: 10, justifyContent: 'center', alignItems: 'center' },
+  appInfoCredContent: { flex: 1 },
+  appInfoCredLabel: { fontSize: 11, color: c.textTertiary, marginBottom: 2 },
+  appInfoCredValue: { fontSize: 14, fontWeight: '500' as const, color: c.text },
+  appInfoCopyBtn: { padding: 6 },
 });

@@ -13,9 +13,9 @@ import {
 } from 'react-native';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { Camera, X, Sparkles, ChevronRight, ScanLine, Hash, Receipt, Plus, Star, ImagePlus, BookOpen, Upload, Search, ExternalLink } from 'lucide-react-native';
+import { Camera, X, Sparkles, ChevronRight, ScanLine, Hash, Receipt, Plus, Star, ImagePlus, BookOpen, Upload, Search, ExternalLink, Smartphone } from 'lucide-react-native';
 import Colors from '@/constants/colors';
-import { Appliance, ApplianceCategory, PurchaseData, AppliancePhoto, ManualInfo, asISODateString, toISODateString } from '@/types';
+import { Appliance, ApplianceCategory, PurchaseData, AppliancePhoto, ManualInfo, AppInfo, asISODateString, toISODateString } from '@/types';
 import { successNotification } from '@/utils/haptics';
 import { CATEGORIES } from '@/components/appliance-form/constants';
 import { formStyles as styles } from '@/components/appliance-form/styles';
@@ -49,6 +49,11 @@ export default function ApplianceForm({ mode, initialData, onSave }: ApplianceFo
   const [receiptImageUri, setReceiptImageUri] = useState<string | null>(initialData?.purchaseData?.receiptImageUrl ?? null);
   const [manual, setManual] = useState<ManualInfo | undefined>(initialData?.manual);
   const [hasWarranty, setHasWarranty] = useState<boolean>(initialData?.hasWarranty ?? (initialData?.warrantyExpiry ? true : false));
+
+  const [appName, setAppName] = useState(initialData?.appInfo?.appName ?? '');
+  const [appStoreUrl, setAppStoreUrl] = useState(initialData?.appInfo?.appStoreUrl ?? '');
+  const [appUsername, setAppUsername] = useState(initialData?.appInfo?.username ?? '');
+  const [appPassword, setAppPassword] = useState(initialData?.appInfo?.password ?? '');
 
   const nameRef = useRef(name);
   nameRef.current = name;
@@ -103,6 +108,12 @@ export default function ApplianceForm({ mode, initialData, onSave }: ApplianceFo
     const primaryPhoto = allPhotos.find((p) => p.isPrimary) ?? allPhotos[0];
     const primaryImageUrl = primaryPhoto?.uri || imageUri || undefined;
 
+    const appInfo: AppInfo = {};
+    if (appName.trim()) appInfo.appName = appName.trim();
+    if (appStoreUrl.trim()) appInfo.appStoreUrl = appStoreUrl.trim();
+    if (appUsername.trim()) appInfo.username = appUsername.trim();
+    if (appPassword.trim()) appInfo.password = appPassword.trim();
+
     console.log(`[ApplianceForm] Saving (${mode}):`, name.trim());
     onSave({
       id: initialData?.id ?? Date.now().toString(),
@@ -120,9 +131,10 @@ export default function ApplianceForm({ mode, initialData, onSave }: ApplianceFo
       photos: allPhotos.length > 0 ? allPhotos : undefined,
       purchaseData: Object.keys(purchaseData).length > 0 ? purchaseData : undefined,
       manual,
+      appInfo: Object.keys(appInfo).length > 0 ? appInfo : undefined,
     });
     router.back();
-  }, [name, brand, model, serialNumber, category, purchaseDate, warrantyExpiry, hasWarranty, notes, location, imageUri, photos, purchasePrice, retailer, paymentMethod, orderNumber, receiptImageUri, manual, initialData, mode, onSave, router]);
+  }, [name, brand, model, serialNumber, category, purchaseDate, warrantyExpiry, hasWarranty, notes, location, imageUri, photos, purchasePrice, retailer, paymentMethod, orderNumber, receiptImageUri, manual, appName, appStoreUrl, appUsername, appPassword, initialData, mode, onSave, router]);
 
   const handleManualUpload = useCallback(async () => {
     const result = await handleUploadManual();
@@ -387,6 +399,27 @@ export default function ApplianceForm({ mode, initialData, onSave }: ApplianceFo
               </TouchableOpacity>
             </View>
           )}
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionLabel}>Associated App</Text>
+          <View style={styles.card}>
+            <View style={styles.inputRow}>
+              <View style={[{ width: 36, height: 36, borderRadius: 10, justifyContent: 'center', alignItems: 'center', backgroundColor: '#E3F2FD' }]}>
+                <Smartphone size={16} color="#0A84FF" />
+              </View>
+              <View style={[styles.inputContent, { marginLeft: 12 }]}>
+                <Text style={styles.inputLabel}>App name</Text>
+                <TextInput style={styles.textInput} placeholder="e.g. Ring, Nest, Hue" placeholderTextColor={Colors.textTertiary} value={appName} onChangeText={setAppName} testID={`${testIdPrefix}input-app-name`} />
+              </View>
+            </View>
+            <View style={styles.divider} />
+            <View style={styles.inputRow}><View style={styles.inputContent}><Text style={styles.inputLabel}>App Store URL</Text><TextInput style={styles.textInput} placeholder="https://apps.apple.com/..." placeholderTextColor={Colors.textTertiary} value={appStoreUrl} onChangeText={setAppStoreUrl} autoCapitalize="none" keyboardType="url" testID={`${testIdPrefix}input-app-store-url`} /></View></View>
+            <View style={styles.divider} />
+            <View style={styles.inputRow}><View style={styles.inputContent}><Text style={styles.inputLabel}>Username / Email</Text><TextInput style={styles.textInput} placeholder="Your login for this app" placeholderTextColor={Colors.textTertiary} value={appUsername} onChangeText={setAppUsername} autoCapitalize="none" testID={`${testIdPrefix}input-app-username`} /></View></View>
+            <View style={styles.divider} />
+            <View style={styles.inputRow}><View style={styles.inputContent}><Text style={styles.inputLabel}>Password</Text><TextInput style={styles.textInput} placeholder="Your password for this app" placeholderTextColor={Colors.textTertiary} value={appPassword} onChangeText={setAppPassword} secureTextEntry autoCapitalize="none" testID={`${testIdPrefix}input-app-password`} /></View></View>
+          </View>
         </View>
 
         <View style={styles.section}>

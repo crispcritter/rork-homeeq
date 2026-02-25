@@ -847,7 +847,10 @@ export default function ProfileScreen() {
           </View>
         </CollapsibleSection>
 
-        <CollapsibleSection title="Settings" defaultOpen={false} themeColors={c}>
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={[styles.sectionLabel, { color: c.textSecondary }]}>Settings</Text>
+          </View>
           <View style={[styles.card, { backgroundColor: c.surface }]}>
             <View style={styles.switchRow}>
               <View style={styles.switchLeft}>
@@ -931,25 +934,25 @@ export default function ProfileScreen() {
                   <ChevronsUpDown size={18} color={c.primary} />
                 </View>
                 <View style={{ flex: 1, marginLeft: 14 }}>
-                  <Text style={[styles.switchLabel, { color: c.text, marginLeft: 0 }]}>Sections Expanded</Text>
+                  <Text style={[styles.switchLabel, { color: c.text, marginLeft: 0 }]}>Show All Sections Collapsed</Text>
                   <Text style={{ fontSize: 12, color: c.textTertiary, marginTop: 2 }}>
-                    {sectionsDefaultOpen ? 'Sections open by default' : 'Sections collapsed by default'}
+                    {sectionsDefaultOpen ? 'Sections are expanded by default' : 'Sections are collapsed by default'}
                   </Text>
                 </View>
               </View>
               <Switch
-                value={sectionsDefaultOpen}
+                value={!sectionsDefaultOpen}
                 onValueChange={(v) => {
-                  setSectionsDefaultOpen(v);
+                  setSectionsDefaultOpen(!v);
                   successNotification();
                 }}
                 trackColor={{ false: c.surfaceAlt, true: c.primaryLight }}
-                thumbColor={sectionsDefaultOpen ? c.primary : c.textTertiary}
+                thumbColor={!sectionsDefaultOpen ? c.primary : c.textTertiary}
                 testID="sections-default-open-toggle"
               />
             </View>
           </View>
-        </CollapsibleSection>
+        </View>
 
         <TouchableOpacity style={[styles.saveButtonLarge, { backgroundColor: c.primary }]} onPress={handleSave} activeOpacity={0.8}>
           <Text style={styles.saveButtonLargeText}>Save Profile</Text>

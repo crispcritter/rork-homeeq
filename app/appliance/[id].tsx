@@ -414,10 +414,6 @@ export default function ApplianceDetailScreen() {
               colors={c}
             >
             <View style={styles.purchaseCard}>
-              <View style={styles.purchaseHeader}>
-                <Receipt size={18} color={c.warning} />
-                <Text style={styles.cardTitle}>Purchase Details</Text>
-              </View>
               {appliance.purchaseData.price ? (
                 <>
                   <View style={styles.purchaseItem}>
@@ -494,7 +490,6 @@ export default function ApplianceDetailScreen() {
               colors={c}
             >
             <View style={styles.notesCard}>
-              <Text style={styles.cardTitle}>Notes</Text>
               <Text style={styles.notesText}>{appliance.notes}</Text>
             </View>
             </CollapsibleSection>
@@ -509,10 +504,6 @@ export default function ApplianceDetailScreen() {
             colors={c}
           >
           <View style={styles.manualCard}>
-            <View style={styles.manualHeader}>
-              <BookOpen size={18} color="#5B8CB8" />
-              <Text style={styles.cardTitle}>User Manual</Text>
-            </View>
             {appliance.manual ? (
               <View style={styles.manualContent}>
                 {appliance.manual.type === 'link' ? (
@@ -702,10 +693,6 @@ export default function ApplianceDetailScreen() {
           >
           <View style={styles.proSection}>
             <View style={styles.proSectionHeader}>
-              <View style={styles.proTitleRow}>
-                <UserCheck size={16} color={c.textSecondary} />
-                <Text style={styles.proSectionTitle}>Trusted Pro</Text>
-              </View>
               {linkedPro && (
                 <TouchableOpacity style={styles.proRemoveBtn} onPress={handleRemovePro} activeOpacity={0.7} hitSlop={8}>
                   <XCircle size={16} color={c.textTertiary} />
@@ -799,12 +786,6 @@ export default function ApplianceDetailScreen() {
             badge={relatedTasks.length > 0 ? String(relatedTasks.length) : undefined}
           >
           <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.cardTitle}>Maintenance</Text>
-              <View style={styles.countBadge}>
-                <Text style={styles.countText}>{relatedTasks.length}</Text>
-              </View>
-            </View>
             {relatedTasks.length === 0 ? (
               <View style={styles.emptyCard}>
                 <Text style={styles.emptyText}>No maintenance tasks yet</Text>
@@ -906,10 +887,6 @@ export default function ApplianceDetailScreen() {
               badge={`${totalExpenses}`}
             >
             <View style={styles.section}>
-              <View style={styles.sectionHeader}>
-                <Text style={styles.cardTitle}>Expenses</Text>
-                <Text style={styles.totalExpense}>${totalExpenses}</Text>
-              </View>
               {relatedExpenses.map((expense) => (
                 <View key={expense.id} style={styles.expenseRow}>
                   <View style={styles.expenseInfo}>

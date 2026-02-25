@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import createContextHook from '@nkzw/create-context-hook';
@@ -54,6 +54,18 @@ export const [HomeProvider, useHome] = createContextHook(() => {
   const customRecommendedGroups = recommendedGroupsQuery.data ?? defaultRecommendedGroups;
   const trustedPros = trustedProsQuery.data ?? [];
   const isLoading = appliancesQuery.isLoading || tasksQuery.isLoading || budgetItemsQuery.isLoading || monthlyBudgetQuery.isLoading || homeProfileQuery.isLoading || recommendedGroupsQuery.isLoading || trustedProsQuery.isLoading;
+  const isError = appliancesQuery.isError || tasksQuery.isError || budgetItemsQuery.isError || monthlyBudgetQuery.isError || homeProfileQuery.isError || recommendedGroupsQuery.isError || trustedProsQuery.isError;
+  const errors = useMemo(() => {
+    const entries: { key: string; error: Error }[] = [];
+    if (appliancesQuery.error) entries.push({ key: 'appliances', error: appliancesQuery.error });
+    if (tasksQuery.error) entries.push({ key: 'tasks', error: tasksQuery.error });
+    if (budgetItemsQuery.error) entries.push({ key: 'budgetItems', error: budgetItemsQuery.error });
+    if (monthlyBudgetQuery.error) entries.push({ key: 'monthlyBudget', error: monthlyBudgetQuery.error });
+    if (homeProfileQuery.error) entries.push({ key: 'homeProfile', error: homeProfileQuery.error });
+    if (recommendedGroupsQuery.error) entries.push({ key: 'recommendedGroups', error: recommendedGroupsQuery.error });
+    if (trustedProsQuery.error) entries.push({ key: 'trustedPros', error: trustedProsQuery.error });
+    return entries;
+  }, [appliancesQuery.error, tasksQuery.error, budgetItemsQuery.error, monthlyBudgetQuery.error, homeProfileQuery.error, recommendedGroupsQuery.error, trustedProsQuery.error]);
 
   const listMutate = useCallback(async <TItem extends { id: string }>(
     storageKey: string,
@@ -431,6 +443,14 @@ export const [HomeProvider, useHome] = createContextHook(() => {
     resetDataMutation.mutate();
   }, [resetDataMutation]);
 
+  useEffect(() => {
+    if (errors.length > 0) {
+      errors.forEach(({ key, error }) => {
+        console.error(`[HomeContext] Query "${key}" failed:`, error.message);
+      });
+    }
+  }, [errors]);
+
   const totalSpent = useMemo(() => {
     const now = new Date();
     const currentMonth = now.getMonth();
@@ -481,6 +501,8 @@ export const [HomeProvider, useHome] = createContextHook(() => {
     homeProfile,
     customRecommendedGroups,
     isLoading,
+    isError,
+    errors,
     totalSpent,
     upcomingTasks,
     overdueTasks,

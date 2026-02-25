@@ -1,5 +1,9 @@
 import { Alert, Platform } from 'react-native';
 import { mediumImpact, successNotification } from '@/utils/haptics';
+import { File, Paths } from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
+import * as MailComposer from 'expo-mail-composer';
+import * as Print from 'expo-print';
 
 export function escapeCSVField(value: string): string {
   if (value.includes(',') || value.includes('"') || value.includes('\n') || value.includes('\r')) {
@@ -69,14 +73,6 @@ interface ExportActions {
   emailBodyHtml: string;
 }
 
-async function getFileSystemModules() {
-  const { File, Paths } = await import('expo-file-system');
-  const { shareAsync, isAvailableAsync } = await import('expo-sharing');
-  const MailComposer = await import('expo-mail-composer');
-  const Print = await import('expo-print');
-  return { File, Paths, shareAsync, isAvailableAsync, MailComposer, Print };
-}
-
 export async function handleExportEmail(actions: ExportActions): Promise<void> {
   mediumImpact();
   if (actions.entityCount === 0) {
@@ -95,8 +91,8 @@ export async function handleExportEmail(actions: ExportActions): Promise<void> {
       return;
     }
 
-    const { File, Paths, MailComposer } = await getFileSystemModules();
     const file = new File(Paths.cache, fileName);
+    file.create({ overwrite: true });
     file.write(csvContent);
     console.log('[Export] CSV file written to:', file.uri);
 
@@ -141,13 +137,12 @@ export async function handleExportPDF(actions: ExportActions): Promise<void> {
       return;
     }
 
-    const { shareAsync, isAvailableAsync, Print } = await getFileSystemModules();
     const { uri } = await Print.printToFileAsync({ html });
     console.log('[Export] PDF saved to:', uri);
 
-    const canShare = await isAvailableAsync();
+    const canShare = await Sharing.isAvailableAsync();
     if (canShare) {
-      await shareAsync(uri, { UTI: '.pdf', mimeType: 'application/pdf' });
+      await Sharing.shareAsync(uri, { UTI: '.pdf', mimeType: 'application/pdf' });
       successNotification();
     } else {
       Alert.alert('PDF Ready', 'PDF saved but sharing is not available on this device.');
@@ -184,14 +179,14 @@ export async function handleExportCSV(actions: ExportActions): Promise<void> {
       return;
     }
 
-    const { File, Paths, shareAsync, isAvailableAsync } = await getFileSystemModules();
     const file = new File(Paths.cache, fileName);
+    file.create({ overwrite: true });
     file.write(csvContent);
     console.log('[Export] CSV written to:', file.uri);
 
-    const canShare = await isAvailableAsync();
+    const canShare = await Sharing.isAvailableAsync();
     if (canShare) {
-      await shareAsync(file.uri, { UTI: 'public.comma-separated-values-text', mimeType: 'text/csv' });
+      await Sharing.shareAsync(file.uri, { UTI: 'public.comma-separated-values-text', mimeType: 'text/csv' });
       successNotification();
     } else {
       Alert.alert('CSV Ready', 'CSV saved but sharing is not available on this device.');
@@ -222,7 +217,6 @@ export async function handleExportPrint(actions: ExportActions): Promise<void> {
       return;
     }
 
-    const { Print } = await getFileSystemModules();
     await Print.printAsync({ html });
     successNotification();
     console.log('[Export] Print dialog opened');

@@ -695,6 +695,22 @@ export default function TaskDetailScreen() {
           )}
         </View>
 
+        {appliance && (
+          <TouchableOpacity style={styles.applianceCard} onPress={handleNavigateToAppliance} activeOpacity={0.7}>
+            <View style={[styles.applianceIconWrap, { backgroundColor: c.accentLight }]}>
+              <Wrench size={18} color={c.accent} />
+            </View>
+            <View style={styles.applianceInfo}>
+              <Text style={styles.applianceLabel}>Related Item</Text>
+              <Text style={styles.applianceName}>{appliance.name}</Text>
+              <Text style={styles.applianceMeta}>
+                {appliance.brand} {appliance.model ? `· ${appliance.model}` : ''}
+              </Text>
+            </View>
+            <ChevronRight size={18} color={c.textTertiary} />
+          </TouchableOpacity>
+        )}
+
         <CollapsibleSection
           title="Product Link"
           icon={<Link size={16} color={c.textSecondary} />}
@@ -806,22 +822,6 @@ export default function TaskDetailScreen() {
             <ExternalLink size={12} color={c.textTertiary} style={{ marginLeft: 'auto' }} />
           </TouchableOpacity>
         </CollapsibleSection>
-
-        {appliance && (
-          <TouchableOpacity style={styles.applianceCard} onPress={handleNavigateToAppliance} activeOpacity={0.7}>
-            <View style={[styles.applianceIconWrap, { backgroundColor: c.accentLight }]}>
-              <Wrench size={18} color={c.accent} />
-            </View>
-            <View style={styles.applianceInfo}>
-              <Text style={styles.applianceLabel}>Related Item</Text>
-              <Text style={styles.applianceName}>{appliance.name}</Text>
-              <Text style={styles.applianceMeta}>
-                {appliance.brand} {appliance.model ? `· ${appliance.model}` : ''}
-              </Text>
-            </View>
-            <ChevronRight size={18} color={c.textTertiary} />
-          </TouchableOpacity>
-        )}
 
         <CollapsibleSection
           title="Trusted Pro"

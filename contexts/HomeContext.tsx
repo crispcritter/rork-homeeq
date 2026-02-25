@@ -451,6 +451,36 @@ export const [HomeProvider, useHome] = createContextHook(() => {
     }
   }, [errors]);
 
+  useEffect(() => {
+    if (tasksQuery.isLoading || tasks.length === 0) return;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const needsUpdate = tasks.some((t) => {
+      if (t.status !== 'upcoming') return false;
+      const due = parseLocalDate(t.dueDate);
+      due.setHours(0, 0, 0, 0);
+      return due < today;
+    });
+
+    if (!needsUpdate) return;
+
+    console.log('[HomeContext] Detected overdue tasks, updating statuses');
+    listMutate<MaintenanceTask>(STORAGE_KEYS.tasks, ['tasks'], (items) =>
+      items.map((t) => {
+        if (t.status !== 'upcoming') return t;
+        const due = parseLocalDate(t.dueDate);
+        due.setHours(0, 0, 0, 0);
+        if (due < today) {
+          console.log('[HomeContext] Task marked overdue:', t.title, '| due:', t.dueDate);
+          return { ...t, status: 'overdue' as const };
+        }
+        return t;
+      })
+    );
+  }, [tasks, tasksQuery.isLoading, listMutate]);
+
   const totalSpent = useMemo(() => {
     const now = new Date();
     const currentMonth = now.getMonth();

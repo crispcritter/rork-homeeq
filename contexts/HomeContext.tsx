@@ -62,8 +62,12 @@ export const [HomeProvider, useHome] = createContextHook(() => {
   ) => {
     const currentItems = (queryClient.getQueryData<TItem[]>(queryKey) ?? []);
     const updated = updater(currentItems);
-    await AsyncStorage.setItem(storageKey, JSON.stringify(updated));
-    queryClient.setQueryData(queryKey, updated);
+    try {
+      await AsyncStorage.setItem(storageKey, JSON.stringify(updated));
+      queryClient.setQueryData(queryKey, updated);
+    } catch (error) {
+      console.error(`[HomeContext] Failed to persist ${storageKey}:`, error);
+    }
     return updated;
   }, [queryClient]);
 
@@ -284,41 +288,65 @@ export const [HomeProvider, useHome] = createContextHook(() => {
   }, [listMutate]);
 
   const setMonthlyBudget = useCallback(async (amount: number) => {
-    await AsyncStorage.setItem(STORAGE_KEYS.monthlyBudget, amount.toString());
-    queryClient.setQueryData(['monthlyBudget'], amount);
+    try {
+      await AsyncStorage.setItem(STORAGE_KEYS.monthlyBudget, amount.toString());
+      queryClient.setQueryData(['monthlyBudget'], amount);
+    } catch (error) {
+      console.error('[HomeContext] Failed to persist monthlyBudget:', error);
+    }
   }, [queryClient]);
 
   const updateHomeProfile = useCallback(async (profile: HomeProfile) => {
-    await AsyncStorage.setItem(STORAGE_KEYS.homeProfile, JSON.stringify(profile));
-    queryClient.setQueryData(['homeProfile'], profile);
+    try {
+      await AsyncStorage.setItem(STORAGE_KEYS.homeProfile, JSON.stringify(profile));
+      queryClient.setQueryData(['homeProfile'], profile);
+    } catch (error) {
+      console.error('[HomeContext] Failed to persist homeProfile:', error);
+    }
   }, [queryClient]);
 
   const addHouseholdMember = useCallback(async (member: HouseholdMember) => {
     const current = queryClient.getQueryData<HomeProfile>(['homeProfile']) ?? DEFAULT_PROFILE;
     const updated = { ...current, householdMembers: [...(current.householdMembers ?? []), member] };
-    await AsyncStorage.setItem(STORAGE_KEYS.homeProfile, JSON.stringify(updated));
-    queryClient.setQueryData(['homeProfile'], updated);
-    console.log('[HomeContext] Added household member:', member.name);
+    try {
+      await AsyncStorage.setItem(STORAGE_KEYS.homeProfile, JSON.stringify(updated));
+      queryClient.setQueryData(['homeProfile'], updated);
+      console.log('[HomeContext] Added household member:', member.name);
+    } catch (error) {
+      console.error('[HomeContext] Failed to persist household member add:', error);
+    }
   }, [queryClient]);
 
   const removeHouseholdMember = useCallback(async (memberId: string) => {
     const current = queryClient.getQueryData<HomeProfile>(['homeProfile']) ?? DEFAULT_PROFILE;
     const updated = { ...current, householdMembers: (current.householdMembers ?? []).filter((m) => m.id !== memberId) };
-    await AsyncStorage.setItem(STORAGE_KEYS.homeProfile, JSON.stringify(updated));
-    queryClient.setQueryData(['homeProfile'], updated);
-    console.log('[HomeContext] Removed household member:', memberId);
+    try {
+      await AsyncStorage.setItem(STORAGE_KEYS.homeProfile, JSON.stringify(updated));
+      queryClient.setQueryData(['homeProfile'], updated);
+      console.log('[HomeContext] Removed household member:', memberId);
+    } catch (error) {
+      console.error('[HomeContext] Failed to persist household member removal:', error);
+    }
   }, [queryClient]);
 
   const updateHouseholdMember = useCallback(async (member: HouseholdMember) => {
     const current = queryClient.getQueryData<HomeProfile>(['homeProfile']) ?? DEFAULT_PROFILE;
     const updated = { ...current, householdMembers: (current.householdMembers ?? []).map((m) => m.id === member.id ? member : m) };
-    await AsyncStorage.setItem(STORAGE_KEYS.homeProfile, JSON.stringify(updated));
-    queryClient.setQueryData(['homeProfile'], updated);
+    try {
+      await AsyncStorage.setItem(STORAGE_KEYS.homeProfile, JSON.stringify(updated));
+      queryClient.setQueryData(['homeProfile'], updated);
+    } catch (error) {
+      console.error('[HomeContext] Failed to persist household member update:', error);
+    }
   }, [queryClient]);
 
   const updateRecommendedGroups = useCallback(async (groups: RecommendedGroup[]) => {
-    await AsyncStorage.setItem(STORAGE_KEYS.recommendedItems, JSON.stringify(groups));
-    queryClient.setQueryData(['recommendedGroups'], groups);
+    try {
+      await AsyncStorage.setItem(STORAGE_KEYS.recommendedItems, JSON.stringify(groups));
+      queryClient.setQueryData(['recommendedGroups'], groups);
+    } catch (error) {
+      console.error('[HomeContext] Failed to persist recommendedGroups:', error);
+    }
   }, [queryClient]);
 
   const addRecommendedItem = useCallback((groupKey: string, item: RecommendedItem) => {

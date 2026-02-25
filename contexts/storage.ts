@@ -1,5 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { sampleAppliances, sampleTasks, sampleBudgetItems } from '@/mocks/data';
+import type { Appliance, MaintenanceTask, BudgetItem, HomeProfile, TrustedPro } from '@/types';
+
+type Validator<T> = (value: unknown) => value is T;
 
 export const STORAGE_KEYS = {
   appliances: 'home_appliances',
@@ -14,6 +17,43 @@ export const STORAGE_KEYS = {
 } as const;
 
 export const CURRENT_SCHEMA_VERSION = 1;
+
+function isRecord(v: unknown): v is Record<string, unknown> {
+  return typeof v === 'object' && v !== null && !Array.isArray(v);
+}
+
+function isArrayOf<T>(arr: unknown, check: (item: unknown) => item is T): arr is T[] {
+  return Array.isArray(arr) && arr.every(check);
+}
+
+function isAppliance(v: unknown): v is Appliance {
+  return isRecord(v) && typeof v.id === 'string' && typeof v.name === 'string' && typeof v.category === 'string';
+}
+
+function isTask(v: unknown): v is MaintenanceTask {
+  return isRecord(v) && typeof v.id === 'string' && typeof v.title === 'string' && typeof v.status === 'string';
+}
+
+function isBudgetItem(v: unknown): v is BudgetItem {
+  return isRecord(v) && typeof v.id === 'string' && typeof v.category === 'string' && typeof v.amount === 'number';
+}
+
+function isHomeProfile(v: unknown): v is HomeProfile {
+  return isRecord(v) && typeof v.id === 'string' && typeof v.nickname === 'string' && typeof v.homeType === 'string';
+}
+
+function isTrustedPro(v: unknown): v is TrustedPro {
+  return isRecord(v) && typeof v.id === 'string' && typeof v.name === 'string' && typeof v.specialty === 'string';
+}
+
+const validators: Record<string, Validator<unknown>> = {
+  [STORAGE_KEYS.appliances]: ((v: unknown) => isArrayOf(v, isAppliance)) as Validator<unknown>,
+  [STORAGE_KEYS.tasks]: ((v: unknown) => isArrayOf(v, isTask)) as Validator<unknown>,
+  [STORAGE_KEYS.budgetItems]: ((v: unknown) => isArrayOf(v, isBudgetItem)) as Validator<unknown>,
+  [STORAGE_KEYS.homeProfile]: isHomeProfile as Validator<unknown>,
+  [STORAGE_KEYS.trustedPros]: ((v: unknown) => isArrayOf(v, isTrustedPro)) as Validator<unknown>,
+  [STORAGE_KEYS.recommendedItems]: ((v: unknown) => Array.isArray(v)) as Validator<unknown>,
+};
 
 type MigrationFn = () => Promise<void>;
 
@@ -134,7 +174,13 @@ export async function loadFromStorage<T>(key: string, fallback: T): Promise<T> {
     const data = await AsyncStorage.getItem(key);
     if (!data) return fallback;
     try {
-      return JSON.parse(data) as T;
+      const parsed: unknown = JSON.parse(data);
+      const validator = validators[key];
+      if (validator && !validator(parsed)) {
+        console.warn(`[Storage] Type validation failed for key "${key}", returning fallback`);
+        return fallback;
+      }
+      return parsed as T;
     } catch (parseError) {
       console.error(`[Storage] JSON.parse failed for key "${key}", returning fallback:`, parseError);
       return fallback;

@@ -76,6 +76,52 @@ import {
   HouseholdMember,
   HouseholdRole,
 } from '@/types';
+import { numericToString, stringToNumeric } from '@/utils/numeric';
+
+const NUMERIC_PROFILE_KEYS = [
+  'yearBuilt',
+  'squareFootage',
+  'lotSize',
+  'bedrooms',
+  'bathrooms',
+  'stories',
+  'roofAge',
+  'hoaAmount',
+] as const;
+
+type NumericProfileKey = typeof NUMERIC_PROFILE_KEYS[number];
+
+type ProfileFormState = Omit<HomeProfile, NumericProfileKey> & {
+  [K in NumericProfileKey]: string;
+};
+
+function profileToForm(profile: HomeProfile): ProfileFormState {
+  return {
+    ...profile,
+    yearBuilt: numericToString(profile.yearBuilt),
+    squareFootage: numericToString(profile.squareFootage),
+    lotSize: numericToString(profile.lotSize),
+    bedrooms: numericToString(profile.bedrooms),
+    bathrooms: numericToString(profile.bathrooms),
+    stories: numericToString(profile.stories),
+    roofAge: numericToString(profile.roofAge),
+    hoaAmount: numericToString(profile.hoaAmount),
+  };
+}
+
+function formToProfile(form: ProfileFormState): HomeProfile {
+  return {
+    ...form,
+    yearBuilt: stringToNumeric(form.yearBuilt),
+    squareFootage: stringToNumeric(form.squareFootage),
+    lotSize: stringToNumeric(form.lotSize),
+    bedrooms: stringToNumeric(form.bedrooms),
+    bathrooms: stringToNumeric(form.bathrooms),
+    stories: stringToNumeric(form.stories),
+    roofAge: stringToNumeric(form.roofAge),
+    hoaAmount: stringToNumeric(form.hoaAmount),
+  };
+}
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -140,7 +186,7 @@ const getRoleLabel = (role: HouseholdRole): string => {
 export default function ProfileScreen() {
   const { homeProfile, updateHomeProfile, resetData, isResetting, addHouseholdMember, removeHouseholdMember } = useHome();
   const { colors: c, themeMode, setThemeMode, isDark } = useTheme();
-  const [form, setForm] = useState<HomeProfile>(homeProfile);
+  const [form, setForm] = useState<ProfileFormState>(() => profileToForm(homeProfile));
   const [activePicker, setActivePicker] = useState<string | null>(null);
   const [showZillowModal, setShowZillowModal] = useState<boolean>(false);
   const [zillowInput, setZillowInput] = useState<string>(form.zillowLink ?? '');
@@ -151,14 +197,14 @@ export default function ProfileScreen() {
   const [inviteMethod, setInviteMethod] = useState<'email' | 'sms'>('email');
 
   useEffect(() => {
-    setForm(homeProfile);
+    setForm(profileToForm(homeProfile));
   }, [homeProfile]);
 
   useEffect(() => {
     setZillowInput(form.zillowLink ?? '');
   }, [form.zillowLink]);
 
-  const updateField = useCallback(<K extends keyof HomeProfile>(key: K, value: HomeProfile[K]) => {
+  const updateField = useCallback(<K extends keyof ProfileFormState>(key: K, value: ProfileFormState[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   }, []);
 
@@ -227,7 +273,7 @@ export default function ProfileScreen() {
   }, [form.profileImage, takePhoto, pickImage, updateField]);
 
   const handleSave = useCallback(() => {
-    updateHomeProfile(form);
+    updateHomeProfile(formToProfile(form));
     successNotification();
     Alert.alert('Saved', 'Your home profile has been updated.');
   }, [form, updateHomeProfile]);

@@ -7,15 +7,21 @@ const propertyResultSchema = z.object({
   state: z.string().optional(),
   zipCode: z.string().optional(),
   homeType: z.string().optional(),
-  yearBuilt: z.string().optional(),
-  squareFootage: z.string().optional(),
-  lotSize: z.string().optional(),
-  bedrooms: z.string().optional(),
-  bathrooms: z.string().optional(),
-  stories: z.string().optional(),
+  yearBuilt: z.number().nullable().optional(),
+  squareFootage: z.number().nullable().optional(),
+  lotSize: z.number().nullable().optional(),
+  bedrooms: z.number().nullable().optional(),
+  bathrooms: z.number().nullable().optional(),
+  stories: z.number().nullable().optional(),
 });
 
 export type PropertyResult = z.infer<typeof propertyResultSchema>;
+
+function parseNumericField(value: unknown): number | null {
+  if (value === null || value === undefined || value === '') return null;
+  const num = Number(value);
+  return isNaN(num) ? null : num;
+}
 
 function mapRealtorHomeType(rawType: string | undefined): string {
   if (!rawType) return 'single-family';
@@ -129,12 +135,12 @@ export const propertyRouter = createTRPCRouter({
           state: address.state_code ?? address.state ?? input.state ?? "",
           zipCode: address.postal_code ?? address.zipcode ?? input.zipCode ?? "",
           homeType: mapRealtorHomeType(description.type ?? detail.prop_type ?? detail.homeType),
-          yearBuilt: (description.year_built ?? detail.year_built ?? "").toString(),
-          squareFootage: (description.sqft ?? detail.sqft ?? description.livingArea ?? "").toString(),
-          lotSize: lotAcres,
-          bedrooms: (description.beds ?? detail.beds ?? "").toString(),
-          bathrooms: (description.baths ?? detail.baths ?? "").toString(),
-          stories: (description.stories ?? detail.stories ?? "").toString(),
+          yearBuilt: parseNumericField(description.year_built ?? detail.year_built),
+          squareFootage: parseNumericField(description.sqft ?? detail.sqft ?? description.livingArea),
+          lotSize: lotAcres ? parseFloat(lotAcres) : null,
+          bedrooms: parseNumericField(description.beds ?? detail.beds),
+          bathrooms: parseNumericField(description.baths ?? detail.baths),
+          stories: parseNumericField(description.stories ?? detail.stories),
         };
 
         console.log("[PropertyLookup] Returning property data:", JSON.stringify(result));

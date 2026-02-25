@@ -16,7 +16,7 @@ export const STORAGE_KEYS = {
   schemaVersion: 'home_schema_version',
 } as const;
 
-export const CURRENT_SCHEMA_VERSION = 1;
+export const CURRENT_SCHEMA_VERSION = 2;
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return typeof v === 'object' && v !== null && !Array.isArray(v);
@@ -57,23 +57,47 @@ const validators: Record<string, Validator<unknown>> = {
 
 type MigrationFn = () => Promise<void>;
 
+function migrateStringToNumeric(value: unknown): number | null {
+  if (value === null || value === undefined) return null;
+  if (typeof value === 'number') return isNaN(value) ? null : value;
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (trimmed === '') return null;
+    const parsed = Number(trimmed);
+    return isNaN(parsed) ? null : parsed;
+  }
+  return null;
+}
+
+const NUMERIC_PROFILE_FIELDS = [
+  'yearBuilt',
+  'squareFootage',
+  'lotSize',
+  'bedrooms',
+  'bathrooms',
+  'stories',
+  'roofAge',
+  'hoaAmount',
+] as const;
+
 const migrations: Record<number, MigrationFn> = {
-  // Example migration for version 2:
-  // 2: async () => {
-  //   const raw = await AsyncStorage.getItem(STORAGE_KEYS.appliances);
-  //   if (raw) {
-  //     try {
-  //       const appliances = JSON.parse(raw) as Record<string, unknown>[];
-  //       const migrated = appliances.map((a) => ({
-  //         ...a,
-  //         newField: a.newField ?? 'default',
-  //       }));
-  //       await AsyncStorage.setItem(STORAGE_KEYS.appliances, JSON.stringify(migrated));
-  //     } catch (e) {
-  //       console.error('[Migration] v2 appliances migration failed:', e);
-  //     }
-  //   }
-  // },
+  2: async () => {
+    const raw = await AsyncStorage.getItem(STORAGE_KEYS.homeProfile);
+    if (raw) {
+      try {
+        const profile = JSON.parse(raw) as Record<string, unknown>;
+        for (const field of NUMERIC_PROFILE_FIELDS) {
+          if (field in profile) {
+            profile[field] = migrateStringToNumeric(profile[field]);
+          }
+        }
+        await AsyncStorage.setItem(STORAGE_KEYS.homeProfile, JSON.stringify(profile));
+        console.log('[Migration] v2: Converted HomeProfile numeric fields from string to number|null');
+      } catch (e) {
+        console.error('[Migration] v2 HomeProfile migration failed:', e);
+      }
+    }
+  },
 };
 
 async function runMigrations(): Promise<void> {

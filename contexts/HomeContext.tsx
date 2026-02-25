@@ -320,37 +320,22 @@ export const [HomeProvider, useHome] = createContextHook(() => {
   const addHouseholdMember = useCallback(async (member: HouseholdMember) => {
     const current = queryClient.getQueryData<HomeProfile>(['homeProfile']) ?? DEFAULT_PROFILE;
     const updated = { ...current, householdMembers: [...(current.householdMembers ?? []), member] };
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.homeProfile, JSON.stringify(updated));
-      queryClient.setQueryData(['homeProfile'], updated);
-      console.log('[HomeContext] Added household member:', member.name);
-    } catch (error) {
-      console.error('[HomeContext] Failed to persist household member add:', error);
-    }
-  }, [queryClient]);
+    await updateHomeProfile(updated);
+    console.log('[HomeContext] Added household member:', member.name);
+  }, [queryClient, updateHomeProfile]);
 
   const removeHouseholdMember = useCallback(async (memberId: string) => {
     const current = queryClient.getQueryData<HomeProfile>(['homeProfile']) ?? DEFAULT_PROFILE;
     const updated = { ...current, householdMembers: (current.householdMembers ?? []).filter((m) => m.id !== memberId) };
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.homeProfile, JSON.stringify(updated));
-      queryClient.setQueryData(['homeProfile'], updated);
-      console.log('[HomeContext] Removed household member:', memberId);
-    } catch (error) {
-      console.error('[HomeContext] Failed to persist household member removal:', error);
-    }
-  }, [queryClient]);
+    await updateHomeProfile(updated);
+    console.log('[HomeContext] Removed household member:', memberId);
+  }, [queryClient, updateHomeProfile]);
 
   const updateHouseholdMember = useCallback(async (member: HouseholdMember) => {
     const current = queryClient.getQueryData<HomeProfile>(['homeProfile']) ?? DEFAULT_PROFILE;
     const updated = { ...current, householdMembers: (current.householdMembers ?? []).map((m) => m.id === member.id ? member : m) };
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.homeProfile, JSON.stringify(updated));
-      queryClient.setQueryData(['homeProfile'], updated);
-    } catch (error) {
-      console.error('[HomeContext] Failed to persist household member update:', error);
-    }
-  }, [queryClient]);
+    await updateHomeProfile(updated);
+  }, [queryClient, updateHomeProfile]);
 
   const updateRecommendedGroups = useCallback(async (groups: RecommendedGroup[]) => {
     try {

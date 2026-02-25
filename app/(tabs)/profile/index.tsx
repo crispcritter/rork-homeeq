@@ -53,7 +53,7 @@ import { useRouter } from 'expo-router';
 import { useHome } from '@/contexts/HomeContext';
 import Colors from '@/constants/colors';
 import { useTheme, ThemeMode } from '@/contexts/ThemeContext';
-import { ColorScheme } from '@/constants/colors';
+import { ColorScheme, PALETTE_OPTIONS, PaletteId } from '@/constants/colors';
 import { Settings, Moon, Sun, Smartphone, ChevronsUpDown } from 'lucide-react-native';
 import { successNotification } from '@/utils/haptics';
 import PickerModal from '@/components/PickerModal';
@@ -190,7 +190,7 @@ const getRoleLabel = (role: HouseholdRole): string => {
 
 export default function ProfileScreen() {
   const { homeProfile, updateHomeProfile, resetData, isResetting, addHouseholdMember, removeHouseholdMember, sectionsDefaultOpen, setSectionsDefaultOpen } = useHome();
-  const { colors: c, themeMode, setThemeMode, isDark } = useTheme();
+  const { colors: c, themeMode, setThemeMode, isDark, paletteId, setPalette } = useTheme();
   const router = useRouter();
   const [form, setForm] = useState<ProfileFormState>(() => profileToForm(homeProfile));
   const [activePicker, setActivePicker] = useState<string | null>(null);
@@ -950,20 +950,43 @@ export default function ProfileScreen() {
               />
             </View>
             <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
-            <TouchableOpacity
-              style={styles.switchRow}
-              onPress={() => router.push('/color-guide')}
-              activeOpacity={0.7}
-              testID="color-guide-link"
-            >
+            <View style={styles.switchRow}>
               <View style={styles.switchLeft}>
                 <View style={[styles.inputIcon, { backgroundColor: c.primaryLight }]}>
                   <Palette size={18} color={c.primary} />
                 </View>
-                <Text style={[styles.switchLabel, { color: c.text }]}>Color Guide</Text>
+                <Text style={[styles.switchLabel, { color: c.text }]}>Color Palette</Text>
               </View>
-              <ChevronDown size={16} color={c.textTertiary} style={{ transform: [{ rotate: '-90deg' }] }} />
-            </TouchableOpacity>
+            </View>
+            <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
+            <View style={{ paddingHorizontal: 16, paddingVertical: 14 }}>
+              <View style={styles.themeToggleRow}>
+                {PALETTE_OPTIONS.map((option) => (
+                  <TouchableOpacity
+                    key={option.id}
+                    style={[
+                      styles.paletteButton,
+                      { backgroundColor: c.surfaceAlt, borderColor: c.border },
+                      paletteId === option.id && styles.paletteButtonActive,
+                      paletteId === option.id && { borderColor: c.primary },
+                    ]}
+                    onPress={() => {
+                      setPalette(option.id);
+                      successNotification();
+                    }}
+                    activeOpacity={0.7}
+                    testID={`palette-${option.id}`}
+                  >
+                    <View style={[styles.paletteSwatch, { backgroundColor: option.preview }]} />
+                    <Text style={[
+                      styles.paletteLabel,
+                      { color: c.textSecondary },
+                      paletteId === option.id && { color: c.primary, fontWeight: '700' as const },
+                    ]}>{option.label}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
           </View>
         </View>
 
@@ -1972,6 +1995,27 @@ const styles = StyleSheet.create({
     fontWeight: '600' as const,
   },
   themeToggleTextActive: {
+    fontWeight: '600' as const,
+  },
+  paletteButton: {
+    flex: 1,
+    alignItems: 'center' as const,
+    justifyContent: 'center' as const,
+    gap: 8,
+    paddingVertical: 14,
+    borderRadius: 12,
+    borderWidth: 2,
+  },
+  paletteButtonActive: {
+    borderWidth: 2,
+  },
+  paletteSwatch: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+  },
+  paletteLabel: {
+    fontSize: 12,
     fontWeight: '600' as const,
   },
 });

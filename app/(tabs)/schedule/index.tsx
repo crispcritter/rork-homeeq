@@ -27,7 +27,7 @@ import PressableCard from '@/components/PressableCard';
 import FloatingActionButton from '@/components/FloatingActionButton';
 import ScreenHeader from '@/components/ScreenHeader';
 import ExportSection from '@/components/ExportSection';
-import { formatRelativeDate, formatShortDate, getWeekEndingSaturday, formatWeekEnding } from '@/utils/dates';
+import { formatRelativeDate, formatShortDate, getWeekEndingSaturday, formatWeekEnding, parseLocalDate } from '@/utils/dates';
 import { lightImpact, mediumImpact, successNotification } from '@/utils/haptics';
 import { rowsToCSV, buildHtmlReport } from '@/utils/export';
 import { getPriorityColor, getPriorityBgColor } from '@/constants/priorities';
@@ -73,7 +73,7 @@ interface TaskGroup {
 }
 
 function getWeekGroupKey(dateStr: string): { key: string; title: string; sortOrder: number } {
-  const date = new Date(dateStr);
+  const date = parseLocalDate(dateStr);
   const now = new Date();
   const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 

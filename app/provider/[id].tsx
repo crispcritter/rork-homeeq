@@ -11,6 +11,7 @@ import {
   FlatList,
 } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { parseLocalDate } from '@/utils/dates';
 import {
   Phone,
   Mail,
@@ -447,7 +448,7 @@ export default function ProviderDetailScreen() {
                   <View style={[styles.expenseDot, { backgroundColor: BUDGET_CATEGORY_COLORS[expense.category] || c.textTertiary }]} />
                   <View style={styles.expenseInfo}>
                     <Text style={styles.expenseDesc}>{expense.description}</Text>
-                    <Text style={styles.expenseMeta}>{categoryLabels[expense.category] || expense.category} · {new Date(expense.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</Text>
+                    <Text style={styles.expenseMeta}>{categoryLabels[expense.category] || expense.category} · {parseLocalDate(expense.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</Text>
                   </View>
                   <Text style={styles.expenseAmount}>-${expense.amount}</Text>
                 </TouchableOpacity>

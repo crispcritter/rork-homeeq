@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { parseLocalDate } from '@/utils/dates';
 import {
   TrendingDown,
   Receipt,
@@ -244,7 +245,7 @@ export default function BudgetScreen() {
                   <Text style={styles.expenseDesc}>{item.description}</Text>
                   <View style={styles.expenseMeta}>
                     <Text style={styles.expenseCategory}>
-                      {categoryLabels[item.category] || item.category} · {new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      {categoryLabels[item.category] || item.category} · {parseLocalDate(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                     </Text>
                     <View style={styles.expenseBadges}>
                       {item.receiptImages && item.receiptImages.length > 0 && (

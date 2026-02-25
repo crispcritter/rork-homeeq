@@ -6,6 +6,7 @@ import { Appliance, MaintenanceTask, BudgetItem, HomeProfile, TrustedPro, Privat
 import { RecommendedGroup, RecommendedItem, recommendedGroups as defaultRecommendedGroups } from '../mocks/recommendedItems';
 import { STORAGE_KEYS, loadFromStorage, loadMonthlyBudget, resetAllData } from './storage';
 import { DEFAULT_PROFILE } from '@/constants/defaultProfile';
+import { parseLocalDate } from '@/utils/dates';
 
 export const [HomeProvider, useHome] = createContextHook(() => {
   const queryClient = useQueryClient();
@@ -404,7 +405,7 @@ export const [HomeProvider, useHome] = createContextHook(() => {
     const currentYear = now.getFullYear();
     return budgetItems
       .filter((item) => {
-        const d = new Date(item.date);
+        const d = parseLocalDate(item.date);
         return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
       })
       .reduce((sum, item) => sum + item.amount, 0);

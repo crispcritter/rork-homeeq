@@ -10,6 +10,7 @@ import {
   Linking,
 } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { parseLocalDate } from '@/utils/dates';
 import {
   Receipt,
   Camera,
@@ -114,7 +115,7 @@ export default function ExpenseDetailScreen() {
           <Text style={styles.heroAmount}>-${expense.amount.toLocaleString()}</Text>
           <Text style={styles.heroDesc}>{expense.description}</Text>
           <Text style={styles.heroDate}>
-            {new Date(expense.date).toLocaleDateString('en-US', {
+            {parseLocalDate(expense.date).toLocaleDateString('en-US', {
               weekday: 'long',
               month: 'long',
               day: 'numeric',
@@ -130,7 +131,7 @@ export default function ExpenseDetailScreen() {
               <Calendar size={16} color={c.textTertiary} />
               <Text style={styles.detailLabel}>Date</Text>
               <Text style={styles.detailValue}>
-                {new Date(expense.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                {parseLocalDate(expense.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
               </Text>
             </View>
             <View style={styles.divider} />

@@ -50,7 +50,7 @@ import LinkPreview from '@/components/LinkPreview';
 import { useHome } from '@/contexts/HomeContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { categoryLabels } from '@/constants/categories';
-import { getWarrantyStatus, formatMonthDay, formatMonthYear, formatLongDate } from '@/utils/dates';
+import { getWarrantyStatus, formatMonthDay, formatMonthYear, formatLongDate, parseLocalDate } from '@/utils/dates';
 import { lightImpact, successNotification, warningNotification } from '@/utils/haptics';
 import { useManualSearch } from '@/hooks/useManualSearch';
 import { useMaintenanceRecommendations } from '@/hooks/useMaintenanceRecommendations';
@@ -794,7 +794,7 @@ export default function ApplianceDetailScreen() {
                   <View style={styles.expenseInfo}>
                     <Text style={styles.expenseDesc}>{expense.description}</Text>
                     <Text style={styles.expenseMeta}>
-                      {new Date(expense.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      {parseLocalDate(expense.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </Text>
                   </View>
                   <Text style={styles.expenseAmount}>${expense.amount}</Text>

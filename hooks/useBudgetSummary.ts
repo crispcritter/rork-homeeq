@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useHome } from '@/contexts/HomeContext';
 import { BUDGET_CATEGORY_COLORS } from '@/constants/categories';
+import { parseLocalDate } from '@/utils/dates';
 
 export interface CategoryBreakdown {
   category: string;
@@ -19,7 +20,7 @@ export function useBudgetSummary() {
   const spentThisMonth = useMemo(() => {
     return budgetItems
       .filter((item) => {
-        const d = new Date(item.date);
+        const d = parseLocalDate(item.date);
         return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
       })
       .reduce((sum, item) => sum + item.amount, 0);
@@ -28,7 +29,7 @@ export function useBudgetSummary() {
   const spentThisYear = useMemo(() => {
     return budgetItems
       .filter((item) => {
-        const d = new Date(item.date);
+        const d = parseLocalDate(item.date);
         return d.getFullYear() === currentYear;
       })
       .reduce((sum, item) => sum + item.amount, 0);
@@ -36,7 +37,7 @@ export function useBudgetSummary() {
 
   const categoryBreakdown = useMemo((): CategoryBreakdown[] => {
     const monthItems = budgetItems.filter((item) => {
-      const d = new Date(item.date);
+      const d = parseLocalDate(item.date);
       return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
     });
     const total = monthItems.reduce((s, i) => s + i.amount, 0);

@@ -933,12 +933,7 @@ export default function ProfileScreen() {
                 <View style={[styles.inputIcon, { backgroundColor: c.primaryLight }]}>
                   <ChevronsUpDown size={18} color={c.primary} />
                 </View>
-                <View style={{ flex: 1, marginLeft: 14 }}>
-                  <Text style={[styles.switchLabel, { color: c.text, marginLeft: 0 }]}>Show All Sections Collapsed</Text>
-                  <Text style={{ fontSize: 12, color: c.textTertiary, marginTop: 2 }}>
-                    {sectionsDefaultOpen ? 'Sections are expanded by default' : 'Sections are collapsed by default'}
-                  </Text>
-                </View>
+                <Text style={[styles.switchLabel, { color: c.text }]}>Show All Sections Collapsed</Text>
               </View>
               <Switch
                 value={!sectionsDefaultOpen}

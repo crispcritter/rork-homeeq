@@ -50,8 +50,7 @@ export default function ApplianceForm({ mode, initialData, onSave }: ApplianceFo
   const [manual, setManual] = useState<ManualInfo | undefined>(initialData?.manual);
   const [hasWarranty, setHasWarranty] = useState<boolean>(initialData?.hasWarranty ?? (initialData?.warrantyExpiry ? true : false));
 
-  const [appName, setAppName] = useState(initialData?.appInfo?.appName ?? '');
-  const [appStoreUrl, setAppStoreUrl] = useState(initialData?.appInfo?.appStoreUrl ?? '');
+
   const [appUsername, setAppUsername] = useState(initialData?.appInfo?.username ?? '');
   const [appPassword, setAppPassword] = useState(initialData?.appInfo?.password ?? '');
 
@@ -109,8 +108,6 @@ export default function ApplianceForm({ mode, initialData, onSave }: ApplianceFo
     const primaryImageUrl = primaryPhoto?.uri || imageUri || undefined;
 
     const appInfo: AppInfo = {};
-    if (appName.trim()) appInfo.appName = appName.trim();
-    if (appStoreUrl.trim()) appInfo.appStoreUrl = appStoreUrl.trim();
     if (appUsername.trim()) appInfo.username = appUsername.trim();
     if (appPassword.trim()) appInfo.password = appPassword.trim();
 
@@ -134,7 +131,7 @@ export default function ApplianceForm({ mode, initialData, onSave }: ApplianceFo
       appInfo: Object.keys(appInfo).length > 0 ? appInfo : undefined,
     });
     router.back();
-  }, [name, brand, model, serialNumber, category, purchaseDate, warrantyExpiry, hasWarranty, notes, location, imageUri, photos, purchasePrice, retailer, paymentMethod, orderNumber, receiptImageUri, manual, appName, appStoreUrl, appUsername, appPassword, initialData, mode, onSave, router]);
+  }, [name, brand, model, serialNumber, category, purchaseDate, warrantyExpiry, hasWarranty, notes, location, imageUri, photos, purchasePrice, retailer, paymentMethod, orderNumber, receiptImageUri, manual, appUsername, appPassword, initialData, mode, onSave, router]);
 
   const handleManualUpload = useCallback(async () => {
     const result = await handleUploadManual();
@@ -409,14 +406,10 @@ export default function ApplianceForm({ mode, initialData, onSave }: ApplianceFo
                 <Smartphone size={16} color="#0A84FF" />
               </View>
               <View style={[styles.inputContent, { marginLeft: 12 }]}>
-                <Text style={styles.inputLabel}>App name</Text>
-                <TextInput style={styles.textInput} placeholder="e.g. Ring, Nest, Hue" placeholderTextColor={Colors.textTertiary} value={appName} onChangeText={setAppName} testID={`${testIdPrefix}input-app-name`} />
+                <Text style={styles.inputLabel}>Username / Email</Text>
+                <TextInput style={styles.textInput} placeholder="Your login for this app" placeholderTextColor={Colors.textTertiary} value={appUsername} onChangeText={setAppUsername} autoCapitalize="none" testID={`${testIdPrefix}input-app-username`} />
               </View>
             </View>
-            <View style={styles.divider} />
-            <View style={styles.inputRow}><View style={styles.inputContent}><Text style={styles.inputLabel}>App Store URL</Text><TextInput style={styles.textInput} placeholder="https://apps.apple.com/..." placeholderTextColor={Colors.textTertiary} value={appStoreUrl} onChangeText={setAppStoreUrl} autoCapitalize="none" keyboardType="url" testID={`${testIdPrefix}input-app-store-url`} /></View></View>
-            <View style={styles.divider} />
-            <View style={styles.inputRow}><View style={styles.inputContent}><Text style={styles.inputLabel}>Username / Email</Text><TextInput style={styles.textInput} placeholder="Your login for this app" placeholderTextColor={Colors.textTertiary} value={appUsername} onChangeText={setAppUsername} autoCapitalize="none" testID={`${testIdPrefix}input-app-username`} /></View></View>
             <View style={styles.divider} />
             <View style={styles.inputRow}><View style={styles.inputContent}><Text style={styles.inputLabel}>Password</Text><TextInput style={styles.textInput} placeholder="Your password for this app" placeholderTextColor={Colors.textTertiary} value={appPassword} onChangeText={setAppPassword} secureTextEntry autoCapitalize="none" testID={`${testIdPrefix}input-app-password`} /></View></View>
           </View>

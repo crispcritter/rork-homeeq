@@ -435,10 +435,25 @@ export const [HomeProvider, useHome] = createContextHook(() => {
 
   const resetDataMutation = useMutation({
     mutationFn: resetAllData,
+    onMutate: () => {
+      queryClient.setQueryData(['appliances'], []);
+      queryClient.setQueryData(['tasks'], []);
+      queryClient.setQueryData(['budgetItems'], []);
+      queryClient.setQueryData(['monthlyBudget'], 1500);
+      queryClient.setQueryData(['homeProfile'], DEFAULT_PROFILE);
+      queryClient.setQueryData(['recommendedGroups'], defaultRecommendedGroups);
+      queryClient.setQueryData(['trustedPros'], []);
+      console.log('[HomeContext] Cache optimistically cleared before reset');
+    },
     onSuccess: () => {
       const queryKeys = ['appliances', 'tasks', 'budgetItems', 'monthlyBudget', 'homeProfile', 'recommendedGroups', 'trustedPros'];
       queryKeys.forEach((key) => queryClient.invalidateQueries({ queryKey: [key] }));
       console.log('[HomeContext] All queries invalidated after reset');
+    },
+    onError: (error) => {
+      console.error('[HomeContext] Reset failed, refetching to restore state:', error);
+      const queryKeys = ['appliances', 'tasks', 'budgetItems', 'monthlyBudget', 'homeProfile', 'recommendedGroups', 'trustedPros'];
+      queryKeys.forEach((key) => queryClient.invalidateQueries({ queryKey: [key] }));
     },
   });
 

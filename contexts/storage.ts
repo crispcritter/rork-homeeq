@@ -10,7 +10,69 @@ export const STORAGE_KEYS = {
   homeProfile: 'home_profile',
   recommendedItems: 'home_recommended_items',
   trustedPros: 'home_trusted_pros',
+  schemaVersion: 'home_schema_version',
 } as const;
+
+export const CURRENT_SCHEMA_VERSION = 1;
+
+type MigrationFn = () => Promise<void>;
+
+const migrations: Record<number, MigrationFn> = {
+  // Example migration for version 2:
+  // 2: async () => {
+  //   const raw = await AsyncStorage.getItem(STORAGE_KEYS.appliances);
+  //   if (raw) {
+  //     try {
+  //       const appliances = JSON.parse(raw) as Record<string, unknown>[];
+  //       const migrated = appliances.map((a) => ({
+  //         ...a,
+  //         newField: a.newField ?? 'default',
+  //       }));
+  //       await AsyncStorage.setItem(STORAGE_KEYS.appliances, JSON.stringify(migrated));
+  //     } catch (e) {
+  //       console.error('[Migration] v2 appliances migration failed:', e);
+  //     }
+  //   }
+  // },
+};
+
+async function runMigrations(): Promise<void> {
+  let currentVersion = 0;
+  try {
+    const stored = await AsyncStorage.getItem(STORAGE_KEYS.schemaVersion);
+    if (stored) {
+      currentVersion = parseInt(stored, 10) || 0;
+    }
+  } catch (e) {
+    console.error('[Storage] Failed to read schema version, assuming 0:', e);
+  }
+
+  if (currentVersion >= CURRENT_SCHEMA_VERSION) {
+    return;
+  }
+
+  console.log(`[Storage] Migrating from schema v${currentVersion} to v${CURRENT_SCHEMA_VERSION}`);
+
+  for (let v = currentVersion + 1; v <= CURRENT_SCHEMA_VERSION; v++) {
+    const migrationFn = migrations[v];
+    if (migrationFn) {
+      try {
+        console.log(`[Storage] Running migration to v${v}...`);
+        await migrationFn();
+        console.log(`[Storage] Migration to v${v} complete`);
+      } catch (e) {
+        console.error(`[Storage] Migration to v${v} failed:`, e);
+      }
+    }
+    try {
+      await AsyncStorage.setItem(STORAGE_KEYS.schemaVersion, v.toString());
+    } catch (e) {
+      console.error(`[Storage] Failed to persist schema version ${v}:`, e);
+    }
+  }
+
+  console.log(`[Storage] All migrations complete, now at v${CURRENT_SCHEMA_VERSION}`);
+}
 
 let initPromise: Promise<void> | null = null;
 let initRetryCount = 0;
@@ -21,6 +83,7 @@ export function initializeData(): Promise<void> {
   if (initPromise) return initPromise;
   initPromise = (async () => {
     try {
+      await runMigrations();
       const initialized = await AsyncStorage.getItem(STORAGE_KEYS.initialized);
       if (!initialized) {
         console.log('[Storage] Seeding initial data...');
@@ -54,7 +117,9 @@ export async function resetAllData(): Promise<void> {
   initPromise = null;
   initRetryCount = 0;
   const results = await Promise.allSettled(
-    Object.values(STORAGE_KEYS).map((key) => AsyncStorage.removeItem(key))
+    Object.values(STORAGE_KEYS)
+      .filter((key) => key !== STORAGE_KEYS.schemaVersion)
+      .map((key) => AsyncStorage.removeItem(key))
   );
   const failures = results.filter((r) => r.status === 'rejected') as PromiseRejectedResult[];
   if (failures.length > 0) {

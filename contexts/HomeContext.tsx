@@ -366,9 +366,13 @@ export const [HomeProvider, useHome] = createContextHook(() => {
     const group = groups.find((g) => g.key === groupKey);
     const item = group?.items.find((i) => i.id === itemId);
     if (!item) return;
-    const matchingAppliance = currentAppliances.find(
-      (a) => a.name.toLowerCase() === item.name.toLowerCase()
-    );
+    const matchingAppliance = currentAppliances.find((a) => {
+      const nameMatch = a.name.toLowerCase() === item.name.toLowerCase();
+      if (!nameMatch) return false;
+      if (item.category && a.category !== item.category) return false;
+      if (item.location && a.location && a.location.toLowerCase() !== item.location.toLowerCase()) return false;
+      return true;
+    });
     if (!matchingAppliance) return;
     const updatedGroups = groups.map((g) =>
       g.key === groupKey

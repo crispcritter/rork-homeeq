@@ -13,6 +13,9 @@ export const STORAGE_KEYS = {
 } as const;
 
 let initPromise: Promise<void> | null = null;
+let initRetryCount = 0;
+const MAX_INIT_RETRIES = 3;
+const BASE_RETRY_DELAY_MS = 500;
 
 export function initializeData(): Promise<void> {
   if (initPromise) return initPromise;
@@ -30,9 +33,19 @@ export function initializeData(): Promise<void> {
         ]);
         console.log('[Storage] Initial data seeded');
       }
+      initRetryCount = 0;
     } catch (e) {
       console.error('[Storage] initializeData error:', e);
       initPromise = null;
+      initRetryCount++;
+      if (initRetryCount >= MAX_INIT_RETRIES) {
+        console.error(`[Storage] initializeData failed ${initRetryCount} times, halting retries to prevent loop`);
+        initPromise = Promise.resolve();
+      } else {
+        const delay = BASE_RETRY_DELAY_MS * Math.pow(2, initRetryCount - 1);
+        console.warn(`[Storage] Will allow retry #${initRetryCount} after ${delay}ms backoff`);
+        await new Promise((r) => setTimeout(r, delay));
+      }
     }
   })();
   return initPromise;
@@ -41,6 +54,7 @@ export function initializeData(): Promise<void> {
 export async function resetAllData(): Promise<void> {
   console.log('[Storage] Resetting all data to defaults...');
   initPromise = null;
+  initRetryCount = 0;
   const results = await Promise.allSettled(
     Object.values(STORAGE_KEYS).map((key) => AsyncStorage.removeItem(key))
   );

@@ -444,10 +444,13 @@ export const [HomeProvider, useHome] = createContextHook(() => {
       queryClient.setQueryData(['trustedPros'], []);
       console.log('[HomeContext] Cache optimistically cleared before reset');
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      const { initializeData } = await import('./storage');
+      await initializeData();
+      console.log('[HomeContext] Re-seeding complete after reset');
       const queryKeys = ['appliances', 'tasks', 'budgetItems', 'monthlyBudget', 'homeProfile', 'recommendedGroups', 'trustedPros'];
       queryKeys.forEach((key) => queryClient.invalidateQueries({ queryKey: [key] }));
-      console.log('[HomeContext] All queries invalidated after reset');
+      console.log('[HomeContext] All queries invalidated after re-seed');
     },
     onError: (error) => {
       console.error('[HomeContext] Reset failed, refetching to restore state:', error);

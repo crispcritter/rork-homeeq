@@ -8,7 +8,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { AlertTriangle, ChevronRight, Plus, Clock, Star, CirclePlus, Wrench, DollarSign, Search } from 'lucide-react-native';
+import { AlertTriangle, ChevronRight, Plus, Clock, Star, CirclePlus, Wrench, DollarSign, Search, CalendarDays, Calendar } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import PressableCard from '@/components/PressableCard';
@@ -169,16 +169,22 @@ export default function DashboardScreen() {
             <Text style={[styles.budgetLabel, { color: c.textSecondary }]}>Spending</Text>
             <View style={styles.spendingRow}>
               <View style={styles.spendingItem}>
-                <Text style={[styles.spendingAmount, { color: c.text }]}>
-                  ${spentThisMonth.toLocaleString()}
-                </Text>
+                <View style={styles.spendingAmountRow}>
+                  <CalendarDays size={16} color={c.primary} />
+                  <Text style={[styles.spendingAmount, { color: c.text }]}>
+                    ${Math.floor(spentThisMonth).toLocaleString()}
+                  </Text>
+                </View>
                 <Text style={[styles.spendingPeriod, { color: c.textTertiary }]}>month to date</Text>
               </View>
               <View style={[styles.spendingDivider, { backgroundColor: c.border }]} />
               <View style={styles.spendingItem}>
-                <Text style={[styles.spendingAmount, { color: c.text }]}>
-                  ${spentThisYear.toLocaleString()}
-                </Text>
+                <View style={styles.spendingAmountRow}>
+                  <Calendar size={16} color={c.accent} />
+                  <Text style={[styles.spendingAmount, { color: c.text }]}>
+                    ${Math.floor(spentThisYear).toLocaleString()}
+                  </Text>
+                </View>
                 <Text style={[styles.spendingPeriod, { color: c.textTertiary }]}>year to date</Text>
               </View>
             </View>

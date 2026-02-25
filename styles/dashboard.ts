@@ -135,6 +135,11 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     flex: 1,
     alignItems: 'center',
   },
+  spendingAmountRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
   spendingAmount: {
     fontSize: 22,
     fontWeight: '700' as const,

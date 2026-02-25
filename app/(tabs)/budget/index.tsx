@@ -21,10 +21,7 @@ import {
   CalendarDays,
   CalendarRange,
   Download,
-  FileSpreadsheet,
   FileText,
-  Table,
-  Share2,
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -36,8 +33,6 @@ import { mediumImpact, lightImpact, successNotification } from '@/utils/haptics'
 import createStyles from '@/styles/budget';
 import { File, Paths } from 'expo-file-system';
 import { shareAsync, isAvailableAsync } from 'expo-sharing';
-import * as XLSX from 'xlsx';
-
 function escapeCSVField(value: string): string {
   if (value.includes(',') || value.includes('"') || value.includes('\n') || value.includes('\r')) {
     return `"${value.replace(/"/g, '""')}"`;
@@ -88,26 +83,6 @@ function generateCSV(items: any[], categoryLabelsMap: Record<string, string>): s
   return allRows.map((row) => row.map(escapeCSVField).join(',')).join('\r\n');
 }
 
-function generateXLSX(items: any[], categoryLabelsMap: Record<string, string>): Uint8Array {
-  const allRows = buildExpenseRows(items, categoryLabelsMap);
-  const ws = XLSX.utils.aoa_to_sheet(allRows);
-
-  const colWidths = allRows[0].map((_, colIdx) => {
-    let max = 10;
-    for (const row of allRows) {
-      const len = (row[colIdx] || '').length;
-      if (len > max) max = len;
-    }
-    return { wch: Math.min(max + 2, 40) };
-  });
-  ws['!cols'] = colWidths;
-
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Expenses');
-  const wbOut = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-  return new Uint8Array(wbOut);
-}
-
 export default function BudgetScreen() {
   const router = useRouter();
   const { colors: c } = useTheme();
@@ -144,35 +119,22 @@ export default function BudgetScreen() {
     }
 
     const csvContent = generateCSV(budgetItems, categoryLabels);
-    const fileName = `HomeEQ_Expenses_${new Date().toISOString().split('T')[0]}`;
-
-    const isExcel = format === 'excel';
-    const ext = isExcel ? 'xlsx' : 'csv';
-    const mimeType = isExcel
-      ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-      : 'text/csv;charset=utf-8;';
-    const fullName = `${fileName}.${ext}`;
+    const fileName = `HomeEQ_Expenses_${new Date().toISOString().split('T')[0]}.csv`;
 
     if (Platform.OS === 'web') {
       try {
-        let blob: Blob;
-        if (isExcel) {
-          const xlsxData = generateXLSX(budgetItems, categoryLabels);
-          blob = new Blob([xlsxData.buffer as ArrayBuffer], { type: mimeType });
-        } else {
-          blob = new Blob([csvContent], { type: mimeType });
-        }
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.setAttribute('href', url);
-        link.setAttribute('download', fullName);
+        link.setAttribute('download', fileName);
         link.style.display = 'none';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
         successNotification();
-        Alert.alert('Exported', `Your expenses have been downloaded as ${fullName}`);
+        Alert.alert('Exported', `Your expenses have been downloaded as ${fileName}`);
       } catch (e) {
         console.error('[Export] Web export error:', e);
         Alert.alert('Error', 'Could not export file on this platform.');
@@ -181,31 +143,18 @@ export default function BudgetScreen() {
     }
 
     try {
-      const file = new File(Paths.cache, fullName);
+      const file = new File(Paths.cache, fileName);
       console.log('[Export] Writing file to:', file.uri);
-
-      if (isExcel) {
-        const xlsxData = generateXLSX(budgetItems, categoryLabels);
-        const binaryStr = Array.from(xlsxData).map((b) => String.fromCharCode(b)).join('');
-        file.write(binaryStr);
-      } else {
-        file.write(csvContent);
-      }
+      file.write(csvContent);
       console.log('[Export] File written successfully');
 
       const canShare = await isAvailableAsync();
       console.log('[Export] Sharing available:', canShare);
       if (canShare) {
-        let uti = 'public.comma-separated-values-text';
-        if (isExcel) {
-          uti = 'org.openxmlformats.spreadsheetml.sheet';
-        } else if (format === 'apple-numbers') {
-          uti = 'com.apple.iwork.numbers.sffnumbers';
-        }
         await shareAsync(file.uri, {
-          mimeType: isExcel ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' : 'text/csv',
-          dialogTitle: `Export Expenses (${format.toUpperCase()})`,
-          UTI: uti,
+          mimeType: 'text/csv',
+          dialogTitle: `Export Expenses – ${format.replace('-', ' ').toUpperCase()}`,
+          UTI: 'public.comma-separated-values-text',
         });
         successNotification();
         console.log('[Export] Shared successfully as', format);
@@ -431,70 +380,75 @@ export default function BudgetScreen() {
           </TouchableOpacity>
 
           {exportExpanded && (
-            <View style={styles.exportOptions}>
-              <TouchableOpacity
-                style={styles.exportOption}
-                onPress={() => handleExport('csv')}
-                activeOpacity={0.7}
-                testID="export-csv"
-              >
-                <View style={[styles.exportOptionIcon, { backgroundColor: c.successLight }]}>
-                  <FileText size={20} color={c.success} />
-                </View>
-                <View style={styles.exportOptionInfo}>
-                  <Text style={styles.exportOptionTitle}>CSV</Text>
-                  <Text style={styles.exportOptionDesc}>Universal spreadsheet format</Text>
-                </View>
-                <Share2 size={16} color={c.textTertiary} />
-              </TouchableOpacity>
+            <View style={styles.exportGrid}>
+              <View style={styles.exportGridRow}>
+                <TouchableOpacity
+                  style={styles.exportGridItem}
+                  onPress={() => handleExport('csv')}
+                  activeOpacity={0.7}
+                  testID="export-csv"
+                >
+                  <View style={[styles.exportGridIcon, { backgroundColor: c.surfaceAlt }]}>
+                    <View style={[styles.exportAppBadge, { backgroundColor: '#5A8A60' }]}>
+                      <FileText size={18} color="#FFF" strokeWidth={2.5} />
+                    </View>
+                  </View>
+                  <Text style={styles.exportGridLabel}>CSV</Text>
+                </TouchableOpacity>
 
-              <TouchableOpacity
-                style={styles.exportOption}
-                onPress={() => handleExport('excel')}
-                activeOpacity={0.7}
-                testID="export-excel"
-              >
-                <View style={[styles.exportOptionIcon, { backgroundColor: '#E8F5E9' }]}>
-                  <FileSpreadsheet size={20} color="#2E7D32" />
-                </View>
-                <View style={styles.exportOptionInfo}>
-                  <Text style={styles.exportOptionTitle}>Excel</Text>
-                  <Text style={styles.exportOptionDesc}>Open in Microsoft Excel</Text>
-                </View>
-                <Share2 size={16} color={c.textTertiary} />
-              </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.exportGridItem}
+                  onPress={() => handleExport('excel')}
+                  activeOpacity={0.7}
+                  testID="export-excel"
+                >
+                  <View style={[styles.exportGridIcon, { backgroundColor: c.surfaceAlt }]}>
+                    <View style={[styles.exportAppBadge, { backgroundColor: '#1D6F42' }]}>
+                      <Text style={styles.exportAppLetter}>X</Text>
+                    </View>
+                  </View>
+                  <Text style={styles.exportGridLabel}>Excel</Text>
+                </TouchableOpacity>
+              </View>
 
-              <TouchableOpacity
-                style={styles.exportOption}
-                onPress={() => handleExport('google-sheets')}
-                activeOpacity={0.7}
-                testID="export-google-sheets"
-              >
-                <View style={[styles.exportOptionIcon, { backgroundColor: '#E3F2FD' }]}>
-                  <Table size={20} color="#1565C0" />
-                </View>
-                <View style={styles.exportOptionInfo}>
-                  <Text style={styles.exportOptionTitle}>Google Sheets</Text>
-                  <Text style={styles.exportOptionDesc}>Open in Google Sheets</Text>
-                </View>
-                <Share2 size={16} color={c.textTertiary} />
-              </TouchableOpacity>
+              <View style={styles.exportGridRow}>
+                <TouchableOpacity
+                  style={styles.exportGridItem}
+                  onPress={() => handleExport('google-sheets')}
+                  activeOpacity={0.7}
+                  testID="export-google-sheets"
+                >
+                  <View style={[styles.exportGridIcon, { backgroundColor: c.surfaceAlt }]}>
+                    <View style={[styles.exportAppBadge, { backgroundColor: '#0F9D58' }]}>
+                      <View style={styles.sheetsIconGrid}>
+                        <View style={[styles.sheetsCell, { backgroundColor: 'rgba(255,255,255,0.95)' }]} />
+                        <View style={[styles.sheetsCell, { backgroundColor: 'rgba(255,255,255,0.6)' }]} />
+                        <View style={[styles.sheetsCell, { backgroundColor: 'rgba(255,255,255,0.6)' }]} />
+                        <View style={[styles.sheetsCell, { backgroundColor: 'rgba(255,255,255,0.35)' }]} />
+                      </View>
+                    </View>
+                  </View>
+                  <Text style={styles.exportGridLabel}>Sheets</Text>
+                </TouchableOpacity>
 
-              <TouchableOpacity
-                style={styles.exportOption}
-                onPress={() => handleExport('apple-numbers')}
-                activeOpacity={0.7}
-                testID="export-apple-numbers"
-              >
-                <View style={[styles.exportOptionIcon, { backgroundColor: '#FFF3E0' }]}>
-                  <FileSpreadsheet size={20} color="#E65100" />
-                </View>
-                <View style={styles.exportOptionInfo}>
-                  <Text style={styles.exportOptionTitle}>Apple Numbers</Text>
-                  <Text style={styles.exportOptionDesc}>Open in Numbers on iOS/Mac</Text>
-                </View>
-                <Share2 size={16} color={c.textTertiary} />
-              </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.exportGridItem}
+                  onPress={() => handleExport('apple-numbers')}
+                  activeOpacity={0.7}
+                  testID="export-apple-numbers"
+                >
+                  <View style={[styles.exportGridIcon, { backgroundColor: c.surfaceAlt }]}>
+                    <View style={[styles.exportAppBadge, { backgroundColor: '#FF9500' }]}>
+                      <View style={styles.numbersBarGroup}>
+                        <View style={[styles.numbersBar, { height: 7, backgroundColor: 'rgba(255,255,255,0.5)' }]} />
+                        <View style={[styles.numbersBar, { height: 12, backgroundColor: 'rgba(255,255,255,0.75)' }]} />
+                        <View style={[styles.numbersBar, { height: 9, backgroundColor: 'rgba(255,255,255,0.95)' }]} />
+                      </View>
+                    </View>
+                  </View>
+                  <Text style={styles.exportGridLabel}>Numbers</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           )}
         </View>

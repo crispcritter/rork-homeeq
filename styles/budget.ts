@@ -379,44 +379,75 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     lineHeight: 16,
     marginTop: 1,
   },
-  exportOptions: {
-    marginTop: 10,
-    gap: 8,
+  exportGrid: {
+    marginTop: 12,
+    gap: 10,
   },
-  exportOption: {
+  exportGridRow: {
     flexDirection: 'row',
+    gap: 10,
+  },
+  exportGridItem: {
+    flex: 1,
     alignItems: 'center',
     backgroundColor: c.surface,
     borderRadius: 14,
-    padding: 14,
-    gap: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 8,
     shadowColor: c.cardShadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 1,
     shadowRadius: 4,
     elevation: 1,
   },
-  exportOptionIcon: {
-    width: 42,
-    height: 42,
-    borderRadius: 12,
+  exportGridIcon: {
+    width: 52,
+    height: 52,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  exportAppBadge: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  exportOptionInfo: {
-    flex: 1,
+  exportAppLetter: {
+    fontSize: 20,
+    fontWeight: '800' as const,
+    color: '#FFFFFF',
+    letterSpacing: -0.5,
   },
-  exportOptionTitle: {
-    fontSize: 15,
+  exportGridLabel: {
+    fontSize: 13,
     fontWeight: '600' as const,
     color: c.text,
-    lineHeight: 20,
+    lineHeight: 17,
   },
-  exportOptionDesc: {
-    fontSize: 12,
-    color: c.textTertiary,
-    lineHeight: 16,
-    marginTop: 1,
+  sheetsIconGrid: {
+    width: 18,
+    height: 18,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 2,
+  },
+  sheetsCell: {
+    width: 8,
+    height: 8,
+    borderRadius: 1.5,
+  },
+  numbersBarGroup: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: 3,
+    height: 16,
+  },
+  numbersBar: {
+    width: 5,
+    borderRadius: 1.5,
   },
 });
 

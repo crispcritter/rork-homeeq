@@ -14,7 +14,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import PressableCard from '@/components/PressableCard';
 import AnimatedCard from '@/components/AnimatedCard';
 import { formatRelativeDate } from '@/utils/dates';
-import { getBudgetColor } from '@/utils/budget';
+import { useBudgetSummary } from '@/hooks/useBudgetSummary';
 import { getAverageRating, formatRating } from '@/utils/ratings';
 import { getPriorityColor } from '@/constants/priorities';
 import { lightImpact } from '@/utils/haptics';
@@ -37,8 +37,7 @@ export default function DashboardScreen() {
     appliances,
     upcomingTasks,
     overdueTasks,
-    monthlyBudget,
-    totalSpent,
+
     isLoading,
     homeProfile,
     trustedPros,
@@ -50,17 +49,8 @@ export default function DashboardScreen() {
     await refreshAll();
   }, [refreshAll]);
 
-  const budgetProgress = monthlyBudget > 0 ? Math.min(totalSpent / monthlyBudget, 1) : 0;
-  const budgetBarWidth = useRef(new Animated.Value(0)).current;
+  const { spentThisMonth, spentThisYear } = useBudgetSummary();
   const fadeAnim = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    Animated.timing(budgetBarWidth, {
-      toValue: budgetProgress,
-      duration: 1000,
-      useNativeDriver: false,
-    }).start();
-  }, [budgetProgress]);
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -75,8 +65,7 @@ export default function DashboardScreen() {
     router.push(route as any);
   }, [router]);
 
-  const budgetColor = getBudgetColor(budgetProgress);
-  const remaining = Math.max(monthlyBudget - totalSpent, 0);
+
 
   if (isLoading) {
     return (
@@ -177,31 +166,21 @@ export default function DashboardScreen() {
             style={[styles.budgetCard, { backgroundColor: c.surface, shadowColor: c.cardShadow }]}
             onPress={() => handlePress('/(tabs)/budget')}
           >
-            <View style={styles.budgetTop}>
-              <Text style={[styles.budgetLabel, { color: c.textSecondary }]}>Monthly spending</Text>
-              <View style={styles.budgetRightCol}>
-                <Text style={[styles.budgetHighlight, { color: budgetColor }]}>
-                  ${remaining.toLocaleString()}
+            <Text style={[styles.budgetLabel, { color: c.textSecondary }]}>Spending</Text>
+            <View style={styles.spendingRow}>
+              <View style={styles.spendingItem}>
+                <Text style={[styles.spendingAmount, { color: c.text }]}>
+                  ${spentThisMonth.toLocaleString()}
                 </Text>
-                <Text style={[styles.budgetRightSub, { color: c.textTertiary }]}>remaining</Text>
+                <Text style={[styles.spendingPeriod, { color: c.textTertiary }]}>month to date</Text>
               </View>
-            </View>
-            <View style={[styles.budgetBarBg, { backgroundColor: c.surfaceAlt }]}>
-              <Animated.View
-                style={[
-                  styles.budgetBarFill,
-                  {
-                    backgroundColor: budgetColor,
-                    width: budgetBarWidth.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: ['0%', '100%'],
-                    }),
-                  },
-                ]}
-              />
-            </View>
-            <View style={styles.budgetBottom}>
-              <Text style={[styles.budgetSpent, { color: c.textSecondary }]}>${totalSpent.toLocaleString()} spent</Text>
+              <View style={[styles.spendingDivider, { backgroundColor: c.border }]} />
+              <View style={styles.spendingItem}>
+                <Text style={[styles.spendingAmount, { color: c.text }]}>
+                  ${spentThisYear.toLocaleString()}
+                </Text>
+                <Text style={[styles.spendingPeriod, { color: c.textTertiary }]}>year to date</Text>
+              </View>
             </View>
           </PressableCard>
         </AnimatedCard>

@@ -120,57 +120,39 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     shadowRadius: 12,
     elevation: 2,
   },
-  budgetTop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 14,
-  },
   budgetLabel: {
     fontSize: 14,
     fontWeight: '500' as const,
     color: c.textSecondary,
     lineHeight: 19,
+    marginBottom: 14,
   },
-  budgetRightCol: {
-    alignItems: 'flex-end',
-  },
-  budgetHighlight: {
-    fontSize: 20,
-    fontWeight: '700' as const,
-    lineHeight: 24,
-    letterSpacing: -0.3,
-  },
-  budgetRightSub: {
-    fontSize: 11,
-    color: c.textTertiary,
-    lineHeight: 15,
-    marginTop: 1,
-  },
-  budgetBarBg: {
-    height: 6,
-    backgroundColor: c.surfaceAlt,
-    borderRadius: 3,
-    overflow: 'hidden',
-  },
-  budgetBarFill: {
-    height: '100%',
-    borderRadius: 3,
-  },
-  budgetBottom: {
+  spendingRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
+    alignItems: 'center',
   },
-  budgetSpent: {
-    fontSize: 12,
-    color: c.textSecondary,
-    lineHeight: 16,
+  spendingItem: {
+    flex: 1,
+    alignItems: 'center',
   },
-  budgetTotal: {
+  spendingAmount: {
+    fontSize: 22,
+    fontWeight: '700' as const,
+    color: c.text,
+    letterSpacing: -0.3,
+    lineHeight: 28,
+  },
+  spendingPeriod: {
     fontSize: 12,
     color: c.textTertiary,
+    marginTop: 2,
     lineHeight: 16,
+  },
+  spendingDivider: {
+    width: 1,
+    height: 36,
+    backgroundColor: c.border,
+    marginHorizontal: 12,
   },
   section: {
     marginBottom: 24,

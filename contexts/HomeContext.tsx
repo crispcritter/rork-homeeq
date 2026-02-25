@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import createContextHook from '@nkzw/create-context-hook';
 import { Appliance, MaintenanceTask, BudgetItem, HomeProfile, TrustedPro, PrivateNote, ReviewRating, ProServiceCategory, HouseholdMember } from '../types';
 import { RecommendedGroup, RecommendedItem, recommendedGroups as defaultRecommendedGroups } from '../mocks/recommendedItems';
-import { STORAGE_KEYS, loadFromStorage, loadMonthlyBudget, resetAllData } from './storage';
+import { STORAGE_KEYS, loadFromStorage, loadMonthlyBudget, resetAllData, saveToStorage, saveMonthlyBudget } from './storage';
 import { DEFAULT_PROFILE } from '@/constants/defaultProfile';
 import { parseLocalDate } from '@/utils/dates';
 
@@ -75,7 +74,7 @@ export const [HomeProvider, useHome] = createContextHook(() => {
     const currentItems = (queryClient.getQueryData<TItem[]>(queryKey) ?? []);
     const updated = updater(currentItems);
     try {
-      await AsyncStorage.setItem(storageKey, JSON.stringify(updated));
+      await saveToStorage(storageKey, updated);
       queryClient.setQueryData(queryKey, updated);
     } catch (error) {
       console.error(`[HomeContext] Failed to persist ${storageKey}:`, error);
@@ -319,7 +318,7 @@ export const [HomeProvider, useHome] = createContextHook(() => {
 
   const setMonthlyBudget = useCallback(async (amount: number) => {
     try {
-      await AsyncStorage.setItem(STORAGE_KEYS.monthlyBudget, amount.toString());
+      await saveMonthlyBudget(amount);
       queryClient.setQueryData(['monthlyBudget'], amount);
     } catch (error) {
       console.error('[HomeContext] Failed to persist monthlyBudget:', error);
@@ -328,7 +327,7 @@ export const [HomeProvider, useHome] = createContextHook(() => {
 
   const updateHomeProfile = useCallback(async (profile: HomeProfile) => {
     try {
-      await AsyncStorage.setItem(STORAGE_KEYS.homeProfile, JSON.stringify(profile));
+      await saveToStorage(STORAGE_KEYS.homeProfile, profile);
       queryClient.setQueryData(['homeProfile'], profile);
     } catch (error) {
       console.error('[HomeContext] Failed to persist homeProfile:', error);
@@ -357,7 +356,7 @@ export const [HomeProvider, useHome] = createContextHook(() => {
 
   const updateRecommendedGroups = useCallback(async (groups: RecommendedGroup[]) => {
     try {
-      await AsyncStorage.setItem(STORAGE_KEYS.recommendedItems, JSON.stringify(groups));
+      await saveToStorage(STORAGE_KEYS.recommendedItems, groups);
       queryClient.setQueryData(['recommendedGroups'], groups);
     } catch (error) {
       console.error('[HomeContext] Failed to persist recommendedGroups:', error);

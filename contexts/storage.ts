@@ -76,5 +76,19 @@ export async function loadMonthlyBudget(): Promise<number> {
 }
 
 export async function saveToStorage(key: string, value: unknown): Promise<void> {
-  await AsyncStorage.setItem(key, JSON.stringify(value));
+  try {
+    await AsyncStorage.setItem(key, JSON.stringify(value));
+  } catch (e) {
+    console.error(`[Storage] saveToStorage error for key "${key}":`, e);
+    throw e;
+  }
+}
+
+export async function saveMonthlyBudget(amount: number): Promise<void> {
+  try {
+    await AsyncStorage.setItem(STORAGE_KEYS.monthlyBudget, amount.toString());
+  } catch (e) {
+    console.error('[Storage] saveMonthlyBudget error:', e);
+    throw e;
+  }
 }

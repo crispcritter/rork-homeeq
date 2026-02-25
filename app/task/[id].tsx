@@ -10,6 +10,9 @@ import {
   KeyboardAvoidingView,
   Platform,
   Switch,
+  LayoutAnimation,
+  Linking as RNLinking,
+  Image,
 } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import {
@@ -43,6 +46,9 @@ import {
   Bell,
   CalendarCheck,
   BellRing,
+  ChevronDown,
+  Play,
+  Youtube,
 } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
 import { TaskPriority } from '@/types';
@@ -51,11 +57,83 @@ import formStyles from '@/constants/formStyles';
 import { formatLongDate, formatRelativeDate } from '@/utils/dates';
 import { lightImpact } from '@/utils/haptics';
 import { isCalendarAvailable, isRemindersAvailable } from '@/utils/calendar';
-import { Linking, ActivityIndicator } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 import LinkPreview from '@/components/LinkPreview';
 import ApplianceChipSelector from '@/components/ApplianceChipSelector';
 import { useTaskDetail } from '@/hooks/useTaskDetail';
 import createStyles from '@/styles/taskDetail';
+
+interface CollapsibleProps {
+  title: string;
+  icon: React.ReactNode;
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+  rightElement?: React.ReactNode;
+  colors: typeof import('@/constants/colors').LightColors;
+}
+
+function CollapsibleSection({ title, icon, children, defaultOpen = true, rightElement, colors: c }: CollapsibleProps) {
+  const [isOpen, setIsOpen] = useState<boolean>(defaultOpen);
+  const rotateAnim = useRef(new Animated.Value(defaultOpen ? 1 : 0)).current;
+
+  const toggle = useCallback(() => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setIsOpen((prev) => !prev);
+    Animated.timing(rotateAnim, {
+      toValue: isOpen ? 0 : 1,
+      duration: 250,
+      useNativeDriver: true,
+    }).start();
+  }, [isOpen, rotateAnim]);
+
+  const rotation = rotateAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['-90deg', '0deg'],
+  });
+
+  return (
+    <View style={{
+      backgroundColor: c.surface,
+      borderRadius: 14,
+      marginBottom: 16,
+      shadowColor: c.cardShadow,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 1,
+      shadowRadius: 6,
+      elevation: 1,
+      overflow: 'hidden',
+    }}>
+      <TouchableOpacity
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          padding: 16,
+          gap: 6,
+        }}
+        onPress={toggle}
+        activeOpacity={0.6}
+      >
+        {icon}
+        <Text style={{ fontSize: 15, fontWeight: '600' as const, color: c.text, lineHeight: 20, flex: 1 }}>{title}</Text>
+        {rightElement && isOpen ? rightElement : null}
+        <Animated.View style={{ transform: [{ rotate: rotation }] }}>
+          <ChevronDown size={16} color={c.textSecondary} />
+        </Animated.View>
+      </TouchableOpacity>
+      {isOpen && (
+        <View style={{ paddingHorizontal: 16, paddingBottom: 16, paddingTop: 0 }}>
+          {children}
+        </View>
+      )}
+    </View>
+  );
+}
+
+interface YouTubeVideoCard {
+  query: string;
+  label: string;
+}
+
 
 export default function TaskDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -177,7 +255,7 @@ export default function TaskDetailScreen() {
   const handleOpenLink = useCallback(() => {
     if (!task?.productLink) return;
     console.log('[TaskDetail] Opening product link:', task.productLink);
-    Linking.openURL(task.productLink).catch((err) => {
+    RNLinking.openURL(task.productLink).catch((err) => {
       console.error('[TaskDetail] Failed to open link:', err);
       Alert.alert('Error', 'Could not open this link. Please check the URL.');
     });
@@ -196,11 +274,42 @@ export default function TaskDetailScreen() {
   const handleSearchAmazon = useCallback(() => {
     console.log('[TaskDetail] Opening Amazon search:', amazonSearchUrl);
     lightImpact();
-    Linking.openURL(amazonSearchUrl).catch((err) => {
+    RNLinking.openURL(amazonSearchUrl).catch((err) => {
       console.error('[TaskDetail] Failed to open Amazon:', err);
       Alert.alert('Error', 'Could not open Amazon. Please try again.');
     });
   }, [amazonSearchUrl]);
+
+  const youtubeVideos = useMemo<YouTubeVideoCard[]>(() => {
+    if (!task) return [];
+    const items: YouTubeVideoCard[] = [];
+    const appName = appliance?.name ?? '';
+    const appBrand = appliance?.brand ?? '';
+    const appModel = appliance?.model ?? '';
+
+    const primary = ['How to', task.title, appBrand, appName].filter(Boolean).join(' ');
+    items.push({ query: primary, label: `How to ${task.title}` });
+
+    if (appBrand && appModel) {
+      const specific = [appBrand, appModel, task.title, 'tutorial'].filter(Boolean).join(' ');
+      items.push({ query: specific, label: `${appBrand} ${appModel} guide` });
+    }
+
+    const diy = ['DIY', task.title, appName, 'step by step'].filter(Boolean).join(' ');
+    items.push({ query: diy, label: `DIY ${task.title} walkthrough` });
+
+    return items;
+  }, [task, appliance]);
+
+  const handleOpenYouTube = useCallback((query: string) => {
+    const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+    console.log('[TaskDetail] Opening YouTube search:', url);
+    lightImpact();
+    RNLinking.openURL(url).catch((err) => {
+      console.error('[TaskDetail] Failed to open YouTube:', err);
+      Alert.alert('Error', 'Could not open YouTube. Please try again.');
+    });
+  }, []);
 
   const toggleNoteInput = useCallback(() => {
     if (showNoteInput) {
@@ -583,24 +692,17 @@ export default function TaskDetailScreen() {
           )}
         </View>
 
-        <View style={styles.linkSection}>
-          <View style={styles.linkSectionHeader}>
-            <View style={styles.linkTitleRow}>
-              <Link size={16} color={c.textSecondary} />
-              <Text style={styles.linkSectionTitle}>Product Link</Text>
-            </View>
-            {!showLinkInput && (
-              <TouchableOpacity style={styles.addLinkBtn} onPress={toggleLinkInput} activeOpacity={0.7}>
-                {task.productLink ? <Pencil size={14} color={c.primary} /> : <Plus size={16} color={c.primary} />}
-              </TouchableOpacity>
-            )}
-            {showLinkInput && (
-              <TouchableOpacity style={styles.addLinkBtn} onPress={toggleLinkInput} activeOpacity={0.7}>
-                <X size={16} color={c.textSecondary} />
-              </TouchableOpacity>
-            )}
-          </View>
-
+        <CollapsibleSection
+          title="Product Link"
+          icon={<Link size={16} color={c.textSecondary} />}
+          colors={c}
+          rightElement={
+            <TouchableOpacity style={styles.addLinkBtn} onPress={toggleLinkInput} activeOpacity={0.7}>
+              {showLinkInput ? <X size={16} color={c.textSecondary} /> : task.productLink ? <Pencil size={14} color={c.primary} /> : <Plus size={16} color={c.primary} />}
+            </TouchableOpacity>
+          }
+        >
+          <View testID="link-section-content">
           {showLinkInput && (
             <Animated.View style={[styles.linkInputWrap, { maxHeight: linkInputAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 100] }) }]}>
               <View style={styles.linkInputCard}>
@@ -646,7 +748,59 @@ export default function TaskDetailScreen() {
             <Text style={styles.amazonSearchText}>Search on Amazon</Text>
             <ExternalLink size={12} color={c.textTertiary} style={{ marginLeft: 'auto' }} />
           </TouchableOpacity>
-        </View>
+          </View>
+        </CollapsibleSection>
+
+        <CollapsibleSection
+          title="How-To Videos"
+          icon={<Youtube size={16} color="#FF0000" />}
+          colors={c}
+          defaultOpen={false}
+        >
+          <View style={styles.youtubeList}>
+            {youtubeVideos.map((video, idx) => (
+              <TouchableOpacity
+                key={`yt-${idx}`}
+                style={styles.youtubeCard}
+                onPress={() => handleOpenYouTube(video.query)}
+                activeOpacity={0.7}
+                testID={`youtube-card-${idx}`}
+              >
+                <View style={styles.youtubeThumbnail}>
+                  <Image
+                    source={{ uri: `https://img.youtube.com/vi/default/hqdefault.jpg` }}
+                    style={styles.youtubeThumbnailBg}
+                    resizeMode="cover"
+                  />
+                  <View style={styles.youtubePlayOverlay}>
+                    <View style={styles.youtubePlayBtn}>
+                      <Play size={18} color="#FFFFFF" fill="#FFFFFF" />
+                    </View>
+                  </View>
+                  <View style={styles.youtubeRedBar} />
+                </View>
+                <View style={styles.youtubeCardInfo}>
+                  <Text style={styles.youtubeCardTitle} numberOfLines={2}>{video.label}</Text>
+                  <Text style={styles.youtubeCardSub} numberOfLines={1}>{video.query}</Text>
+                  <View style={styles.youtubeSearchRow}>
+                    <Search size={11} color={c.textTertiary} />
+                    <Text style={styles.youtubeSearchHint}>Tap to search YouTube</Text>
+                  </View>
+                </View>
+                <ExternalLink size={14} color={c.textTertiary} />
+              </TouchableOpacity>
+            ))}
+          </View>
+          <TouchableOpacity
+            style={styles.youtubeFullSearchBtn}
+            onPress={() => handleOpenYouTube(youtubeVideos[0]?.query ?? task.title)}
+            activeOpacity={0.7}
+          >
+            <Youtube size={16} color="#FF0000" />
+            <Text style={styles.youtubeFullSearchText}>Search all on YouTube</Text>
+            <ExternalLink size={12} color={c.textTertiary} style={{ marginLeft: 'auto' }} />
+          </TouchableOpacity>
+        </CollapsibleSection>
 
         {appliance && (
           <TouchableOpacity style={styles.applianceCard} onPress={handleNavigateToAppliance} activeOpacity={0.7}>
@@ -664,19 +818,18 @@ export default function TaskDetailScreen() {
           </TouchableOpacity>
         )}
 
-        <View style={styles.proSection}>
-          <View style={styles.proSectionHeader}>
-            <View style={styles.proTitleRow}>
-              <UserCheck size={16} color={c.textSecondary} />
-              <Text style={styles.proSectionTitle}>Trusted Pro</Text>
-            </View>
-            {linkedPro && (
+        <CollapsibleSection
+          title="Trusted Pro"
+          icon={<UserCheck size={16} color={c.textSecondary} />}
+          colors={c}
+          rightElement={
+            linkedPro ? (
               <TouchableOpacity style={styles.proRemoveBtn} onPress={handleRemovePro} activeOpacity={0.7} hitSlop={8}>
                 <XCircle size={16} color={c.textTertiary} />
               </TouchableOpacity>
-            )}
-          </View>
-
+            ) : undefined
+          }
+        >
           {linkedPro ? (
             <TouchableOpacity style={styles.proCard} onPress={handleNavigateToPro} activeOpacity={0.7} testID="task-linked-pro">
               <View style={styles.proAvatarWrap}>
@@ -750,14 +903,14 @@ export default function TaskDetailScreen() {
               </View>
             </View>
           )}
-        </View>
+        </CollapsibleSection>
 
         {!isArchived && (
-          <View style={styles.calendarSection}>
-            <View style={styles.calendarSectionHeader}>
-              <CalendarPlus size={16} color={c.textSecondary} />
-              <Text style={styles.calendarSectionTitle}>Calendar & Reminders</Text>
-            </View>
+          <CollapsibleSection
+            title="Calendar & Reminders"
+            icon={<CalendarPlus size={16} color={c.textSecondary} />}
+            colors={c}
+          >
 
             {isCalendarAvailable() ? (
               <View style={styles.calendarRow}>
@@ -836,19 +989,19 @@ export default function TaskDetailScreen() {
                 Calendar integration is available on mobile devices
               </Text>
             )}
-          </View>
+          </CollapsibleSection>
         )}
 
-        <View style={styles.notesSection}>
-          <View style={styles.notesSectionHeader}>
-            <View style={styles.notesTitleRow}>
-              <StickyNote size={16} color={c.textSecondary} />
-              <Text style={styles.notesSectionTitle}>Notes ({task.notes?.length ?? 0})</Text>
-            </View>
+        <CollapsibleSection
+          title={`Notes (${task.notes?.length ?? 0})`}
+          icon={<StickyNote size={16} color={c.textSecondary} />}
+          colors={c}
+          rightElement={
             <TouchableOpacity style={styles.addNoteBtn} onPress={toggleNoteInput} activeOpacity={0.7}>
               {showNoteInput ? <X size={16} color={c.textSecondary} /> : <Pencil size={14} color={c.primary} />}
             </TouchableOpacity>
-          </View>
+          }
+        >
 
           {showNoteInput && (
             <Animated.View style={[styles.noteInputWrap, { maxHeight: noteInputHeight }]}>
@@ -890,7 +1043,7 @@ export default function TaskDetailScreen() {
               </View>
             ))
           )}
-        </View>
+        </CollapsibleSection>
 
         <View style={styles.actionsSection}>
           {!isCompleted && !isArchived && (

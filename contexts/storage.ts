@@ -24,13 +24,11 @@ export function initializeData(): Promise<void> {
       const initialized = await AsyncStorage.getItem(STORAGE_KEYS.initialized);
       if (!initialized) {
         console.log('[Storage] Seeding initial data...');
-        await Promise.all([
-          AsyncStorage.setItem(STORAGE_KEYS.appliances, JSON.stringify(sampleAppliances)),
-          AsyncStorage.setItem(STORAGE_KEYS.tasks, JSON.stringify(sampleTasks)),
-          AsyncStorage.setItem(STORAGE_KEYS.budgetItems, JSON.stringify(sampleBudgetItems)),
-          AsyncStorage.setItem(STORAGE_KEYS.monthlyBudget, '1500'),
-          AsyncStorage.setItem(STORAGE_KEYS.initialized, 'true'),
-        ]);
+        await AsyncStorage.setItem(STORAGE_KEYS.appliances, JSON.stringify(sampleAppliances));
+        await AsyncStorage.setItem(STORAGE_KEYS.tasks, JSON.stringify(sampleTasks));
+        await AsyncStorage.setItem(STORAGE_KEYS.budgetItems, JSON.stringify(sampleBudgetItems));
+        await AsyncStorage.setItem(STORAGE_KEYS.monthlyBudget, '1500');
+        await AsyncStorage.setItem(STORAGE_KEYS.initialized, 'true');
         console.log('[Storage] Initial data seeded');
       }
       initRetryCount = 0;

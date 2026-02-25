@@ -63,9 +63,14 @@ export default function AppliancesScreen() {
       a.category.toLowerCase().includes(search.toLowerCase())
   );
 
-  const getLinkedProName = useCallback((applianceId: string): string => {
-    const pro = trustedPros.find((p) => (p.linkedApplianceIds ?? []).includes(applianceId));
-    return pro?.name ?? '';
+  const proNameByApplianceId = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const pro of trustedPros) {
+      for (const id of pro.linkedApplianceIds ?? []) {
+        map.set(id, pro.name);
+      }
+    }
+    return map;
   }, [trustedPros]);
 
   const buildItemRows = useCallback((items: Appliance[]): string[][] => {
@@ -89,10 +94,10 @@ export default function AppliancesScreen() {
       item.serialNumber || '',
       item.category || '',
       item.notes || '',
-      getLinkedProName(item.id),
+      proNameByApplianceId.get(item.id) ?? '',
     ]);
     return [headers, ...rows];
-  }, [getLinkedProName]);
+  }, [proNameByApplianceId]);
 
   const getCSV = useCallback((): string => {
     return rowsToCSV(buildItemRows(appliances));

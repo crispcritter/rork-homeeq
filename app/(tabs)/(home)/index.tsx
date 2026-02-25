@@ -202,7 +202,6 @@ export default function DashboardScreen() {
             </View>
             <View style={styles.budgetBottom}>
               <Text style={[styles.budgetSpent, { color: c.textSecondary }]}>${totalSpent.toLocaleString()} spent</Text>
-              <Text style={[styles.budgetTotal, { color: c.textTertiary }]}>of ${monthlyBudget.toLocaleString()}</Text>
             </View>
           </PressableCard>
         </AnimatedCard>

@@ -55,7 +55,13 @@ export function formatWeekEnding(saturday: Date): string {
 }
 
 export function getWarrantyStatus(expiryDate: ISODateString | string, colors: { danger: string; warning: string; success: string; textTertiary: string }): WarrantyStatus {
+  if (!expiryDate || typeof expiryDate !== 'string' || expiryDate.trim() === '') {
+    return { label: 'Unknown', color: colors.textTertiary, daysLeft: 0 };
+  }
   const expiry = parseLocalDate(expiryDate);
+  if (isNaN(expiry.getTime())) {
+    return { label: 'Unknown', color: colors.textTertiary, daysLeft: 0 };
+  }
   const now = new Date();
   const diffDays = Math.ceil((expiry.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
   if (diffDays < 0) return { label: 'Expired', color: colors.danger, daysLeft: diffDays };

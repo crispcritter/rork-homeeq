@@ -113,11 +113,6 @@ export interface BudgetItem {
   taxDeductible?: boolean;
 }
 
-export interface Budget {
-  monthlyLimit: number;
-  items: BudgetItem[];
-}
-
 export type HomeType = 'single-family' | 'townhouse' | 'condo' | 'apartment' | 'duplex' | 'mobile-home' | 'other';
 export type FoundationType = 'slab' | 'basement' | 'crawlspace' | 'pier-and-beam' | 'other';
 export type HeatingCoolingType = 'central-ac' | 'heat-pump' | 'window-units' | 'radiant' | 'forced-air' | 'other';

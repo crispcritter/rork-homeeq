@@ -221,7 +221,7 @@ export default function DashboardScreen() {
               const appliance = task.applianceId ? appliances.find((a) => a.id === task.applianceId) : null;
               return (
                 <AnimatedCard key={task.id} index={4 + idx}>
-                  <PressableCard style={[styles.taskCard, { backgroundColor: c.surface, shadowColor: c.cardShadow }]} onPress={() => handlePress('/(tabs)/schedule')}>
+                  <PressableCard style={[styles.taskCard, { backgroundColor: c.surface, shadowColor: c.cardShadow }]} onPress={() => handlePress(`/task/${task.id}`)}>
                     <View
                       style={[
                         styles.priorityIndicator,

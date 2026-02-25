@@ -68,14 +68,21 @@ export default function ApplianceDetailScreen() {
   const router = useRouter();
   const { colors: c } = useTheme();
   const styles = useMemo(() => createApplianceStyles(c), [c]);
-  const { getApplianceById, tasks, deleteAppliance, budgetItems, updateAppliance, addTask, trustedPros, linkApplianceToPro, unlinkApplianceFromPro } = useHome();
+  const { getApplianceById, tasks, deleteAppliance, budgetItems, updateAppliance, addTask, trustedPros, linkApplianceToPro, unlinkApplianceFromPro, sectionsDefaultOpen } = useHome();
 
   const appliance = getApplianceById(id ?? '');
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
   const [showProPicker, setShowProPicker] = useState(false);
   const screenWidth = Dimensions.get('window').width;
 
-  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
+  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    if (!sectionsDefaultOpen) {
+      const keys = ['details', 'replace', 'purchase', 'notes', 'manual', 'app', 'pro', 'maintenance', 'expenses'];
+      keys.forEach((k) => { initial[k] = true; });
+    }
+    return initial;
+  });
   const [showAppPassword, setShowAppPassword] = useState(false);
 
   const toggleSection = useCallback((key: string) => {

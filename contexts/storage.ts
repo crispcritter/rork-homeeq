@@ -14,6 +14,7 @@ export const STORAGE_KEYS = {
   recommendedItems: 'home_recommended_items',
   trustedPros: 'home_trusted_pros',
   schemaVersion: 'home_schema_version',
+  sectionsDefaultOpen: 'home_sections_default_open',
 } as const;
 
 export const CURRENT_SCHEMA_VERSION = 2;

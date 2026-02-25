@@ -51,6 +51,7 @@ import {
   Youtube,
 } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useHome } from '@/contexts/HomeContext';
 import { TaskPriority } from '@/types';
 import { PRIORITIES } from '@/constants/priorities';
 import formStyles from '@/constants/formStyles';
@@ -72,8 +73,9 @@ interface CollapsibleProps {
   colors: typeof import('@/constants/colors').LightColors;
 }
 
-function CollapsibleSection({ title, icon, children, defaultOpen = true, rightElement, colors: c }: CollapsibleProps) {
-  const [isOpen, setIsOpen] = useState<boolean>(defaultOpen);
+function CollapsibleSection({ title, icon, children, defaultOpen, rightElement, colors: c, globalDefault }: CollapsibleProps & { globalDefault?: boolean }) {
+  const resolvedDefault = defaultOpen !== undefined ? defaultOpen : (globalDefault ?? true);
+  const [isOpen, setIsOpen] = useState<boolean>(resolvedDefault);
   const rotateAnim = useRef(new Animated.Value(defaultOpen ? 1 : 0)).current;
 
   const toggle = useCallback(() => {
@@ -139,6 +141,7 @@ export default function TaskDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { colors: c } = useTheme();
+  const { sectionsDefaultOpen } = useHome();
   const styles = useMemo(() => createStyles(c), [c]);
   const {
     task,
@@ -696,6 +699,7 @@ export default function TaskDetailScreen() {
           title="Product Link"
           icon={<Link size={16} color={c.textSecondary} />}
           colors={c}
+          globalDefault={sectionsDefaultOpen}
           rightElement={
             <TouchableOpacity style={styles.addLinkBtn} onPress={toggleLinkInput} activeOpacity={0.7}>
               {showLinkInput ? <X size={16} color={c.textSecondary} /> : task.productLink ? <Pencil size={14} color={c.primary} /> : <Plus size={16} color={c.primary} />}
@@ -756,6 +760,7 @@ export default function TaskDetailScreen() {
           icon={<Youtube size={16} color="#FF0000" />}
           colors={c}
           defaultOpen={false}
+          globalDefault={sectionsDefaultOpen}
         >
           <View style={styles.youtubeList}>
             {youtubeVideos.map((video, idx) => (
@@ -822,6 +827,7 @@ export default function TaskDetailScreen() {
           title="Trusted Pro"
           icon={<UserCheck size={16} color={c.textSecondary} />}
           colors={c}
+          globalDefault={sectionsDefaultOpen}
           rightElement={
             linkedPro ? (
               <TouchableOpacity style={styles.proRemoveBtn} onPress={handleRemovePro} activeOpacity={0.7} hitSlop={8}>
@@ -910,6 +916,7 @@ export default function TaskDetailScreen() {
             title="Calendar & Reminders"
             icon={<CalendarPlus size={16} color={c.textSecondary} />}
             colors={c}
+            globalDefault={sectionsDefaultOpen}
           >
 
             {isCalendarAvailable() ? (
@@ -996,6 +1003,7 @@ export default function TaskDetailScreen() {
           title={`Notes (${task.notes?.length ?? 0})`}
           icon={<StickyNote size={16} color={c.textSecondary} />}
           colors={c}
+          globalDefault={sectionsDefaultOpen}
           rightElement={
             <TouchableOpacity style={styles.addNoteBtn} onPress={toggleNoteInput} activeOpacity={0.7}>
               {showNoteInput ? <X size={16} color={c.textSecondary} /> : <Pencil size={14} color={c.primary} />}

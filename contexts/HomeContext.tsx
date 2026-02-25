@@ -4,6 +4,7 @@ import createContextHook from '@nkzw/create-context-hook';
 import { Appliance, MaintenanceTask, BudgetItem, HomeProfile, TrustedPro, PrivateNote, ReviewRating, ProServiceCategory, HouseholdMember, toISODateString, toISOTimestamp } from '../types';
 import { RecommendedGroup, RecommendedItem, recommendedGroups as defaultRecommendedGroups } from '../mocks/recommendedItems';
 import { STORAGE_KEYS, loadFromStorage, loadMonthlyBudget, resetAllData, saveToStorage, saveMonthlyBudget } from './storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DEFAULT_PROFILE } from '@/constants/defaultProfile';
 import { parseLocalDate } from '@/utils/dates';
 
@@ -45,6 +46,20 @@ export const [HomeProvider, useHome] = createContextHook(() => {
     queryFn: () => loadFromStorage<TrustedPro[]>(STORAGE_KEYS.trustedPros, []),
   });
 
+  const sectionsDefaultOpenQuery = useQuery({
+    queryKey: ['sectionsDefaultOpen'],
+    queryFn: async () => {
+      try {
+        const stored = await AsyncStorage.getItem(STORAGE_KEYS.sectionsDefaultOpen);
+        if (stored === null) return true;
+        return stored === 'true';
+      } catch (e) {
+        console.error('[HomeContext] Failed to load sectionsDefaultOpen:', e);
+        return true;
+      }
+    },
+  });
+
   const appliances = appliancesQuery.data ?? [];
   const tasks = tasksQuery.data ?? [];
   const budgetItems = budgetItemsQuery.data ?? [];
@@ -52,8 +67,9 @@ export const [HomeProvider, useHome] = createContextHook(() => {
   const homeProfile = homeProfileQuery.data ?? DEFAULT_PROFILE;
   const customRecommendedGroups = recommendedGroupsQuery.data ?? defaultRecommendedGroups;
   const trustedPros = trustedProsQuery.data ?? [];
-  const isLoading = appliancesQuery.isLoading || tasksQuery.isLoading || budgetItemsQuery.isLoading || monthlyBudgetQuery.isLoading || homeProfileQuery.isLoading || recommendedGroupsQuery.isLoading || trustedProsQuery.isLoading;
-  const isError = appliancesQuery.isError || tasksQuery.isError || budgetItemsQuery.isError || monthlyBudgetQuery.isError || homeProfileQuery.isError || recommendedGroupsQuery.isError || trustedProsQuery.isError;
+  const sectionsDefaultOpen = sectionsDefaultOpenQuery.data ?? true;
+  const isLoading = appliancesQuery.isLoading || tasksQuery.isLoading || budgetItemsQuery.isLoading || monthlyBudgetQuery.isLoading || homeProfileQuery.isLoading || recommendedGroupsQuery.isLoading || trustedProsQuery.isLoading || sectionsDefaultOpenQuery.isLoading;
+  const isError = appliancesQuery.isError || tasksQuery.isError || budgetItemsQuery.isError || monthlyBudgetQuery.isError || homeProfileQuery.isError || recommendedGroupsQuery.isError || trustedProsQuery.isError || sectionsDefaultOpenQuery.isError;
   const errors = useMemo(() => {
     const entries: { key: string; error: Error }[] = [];
     if (appliancesQuery.error) entries.push({ key: 'appliances', error: appliancesQuery.error });
@@ -63,8 +79,9 @@ export const [HomeProvider, useHome] = createContextHook(() => {
     if (homeProfileQuery.error) entries.push({ key: 'homeProfile', error: homeProfileQuery.error });
     if (recommendedGroupsQuery.error) entries.push({ key: 'recommendedGroups', error: recommendedGroupsQuery.error });
     if (trustedProsQuery.error) entries.push({ key: 'trustedPros', error: trustedProsQuery.error });
+    if (sectionsDefaultOpenQuery.error) entries.push({ key: 'sectionsDefaultOpen', error: sectionsDefaultOpenQuery.error });
     return entries;
-  }, [appliancesQuery.error, tasksQuery.error, budgetItemsQuery.error, monthlyBudgetQuery.error, homeProfileQuery.error, recommendedGroupsQuery.error, trustedProsQuery.error]);
+  }, [appliancesQuery.error, tasksQuery.error, budgetItemsQuery.error, monthlyBudgetQuery.error, homeProfileQuery.error, recommendedGroupsQuery.error, trustedProsQuery.error, sectionsDefaultOpenQuery.error]);
 
   const listMutate = useCallback(async <TItem extends { id: string }>(
     storageKey: string,
@@ -316,6 +333,16 @@ export const [HomeProvider, useHome] = createContextHook(() => {
     );
   }, [listMutate]);
 
+  const setSectionsDefaultOpen = useCallback(async (open: boolean) => {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEYS.sectionsDefaultOpen, open.toString());
+      queryClient.setQueryData(['sectionsDefaultOpen'], open);
+      console.log('[HomeContext] Sections default open set to:', open);
+    } catch (error) {
+      console.error('[HomeContext] Failed to persist sectionsDefaultOpen:', error);
+    }
+  }, [queryClient]);
+
   const setMonthlyBudget = useCallback(async (amount: number) => {
     try {
       await saveMonthlyBudget(amount);
@@ -442,19 +469,20 @@ export const [HomeProvider, useHome] = createContextHook(() => {
       queryClient.setQueryData(['homeProfile'], DEFAULT_PROFILE);
       queryClient.setQueryData(['recommendedGroups'], defaultRecommendedGroups);
       queryClient.setQueryData(['trustedPros'], []);
+      queryClient.setQueryData(['sectionsDefaultOpen'], true);
       console.log('[HomeContext] Cache optimistically cleared before reset');
     },
     onSuccess: async () => {
       const { initializeData } = await import('./storage');
       await initializeData();
       console.log('[HomeContext] Re-seeding complete after reset');
-      const queryKeys = ['appliances', 'tasks', 'budgetItems', 'monthlyBudget', 'homeProfile', 'recommendedGroups', 'trustedPros'];
+      const queryKeys = ['appliances', 'tasks', 'budgetItems', 'monthlyBudget', 'homeProfile', 'recommendedGroups', 'trustedPros', 'sectionsDefaultOpen'];
       queryKeys.forEach((key) => queryClient.invalidateQueries({ queryKey: [key] }));
       console.log('[HomeContext] All queries invalidated after re-seed');
     },
     onError: (error) => {
       console.error('[HomeContext] Reset failed, refetching to restore state:', error);
-      const queryKeys = ['appliances', 'tasks', 'budgetItems', 'monthlyBudget', 'homeProfile', 'recommendedGroups', 'trustedPros'];
+      const queryKeys = ['appliances', 'tasks', 'budgetItems', 'monthlyBudget', 'homeProfile', 'recommendedGroups', 'trustedPros', 'sectionsDefaultOpen'];
       queryKeys.forEach((key) => queryClient.invalidateQueries({ queryKey: [key] }));
     },
   });
@@ -544,12 +572,12 @@ export const [HomeProvider, useHome] = createContextHook(() => {
   );
 
   const refreshAll = useCallback(() => {
-    const queryKeys = ['appliances', 'tasks', 'budgetItems', 'monthlyBudget', 'homeProfile', 'recommendedGroups', 'trustedPros'];
+    const queryKeys = ['appliances', 'tasks', 'budgetItems', 'monthlyBudget', 'homeProfile', 'recommendedGroups', 'trustedPros', 'sectionsDefaultOpen'];
     console.log('[HomeContext] Pull-to-refresh: invalidating all queries');
     return Promise.all(queryKeys.map((key) => queryClient.invalidateQueries({ queryKey: [key] })));
   }, [queryClient]);
 
-  const isRefreshing = appliancesQuery.isRefetching || tasksQuery.isRefetching || budgetItemsQuery.isRefetching || monthlyBudgetQuery.isRefetching || homeProfileQuery.isRefetching || recommendedGroupsQuery.isRefetching || trustedProsQuery.isRefetching;
+  const isRefreshing = appliancesQuery.isRefetching || tasksQuery.isRefetching || budgetItemsQuery.isRefetching || monthlyBudgetQuery.isRefetching || homeProfileQuery.isRefetching || recommendedGroupsQuery.isRefetching || trustedProsQuery.isRefetching || sectionsDefaultOpenQuery.isRefetching;
 
   return {
     appliances,
@@ -608,5 +636,7 @@ export const [HomeProvider, useHome] = createContextHook(() => {
     addHouseholdMember,
     removeHouseholdMember,
     updateHouseholdMember,
+    sectionsDefaultOpen,
+    setSectionsDefaultOpen,
   };
 });

@@ -349,25 +349,25 @@ export const [HomeProvider, useHome] = createContextHook(() => {
     }
   }, [queryClient]);
 
-  const addRecommendedItem = useCallback((groupKey: string, item: RecommendedItem) => {
+  const addRecommendedItem = useCallback(async (groupKey: string, item: RecommendedItem) => {
     const groups = queryClient.getQueryData<RecommendedGroup[]>(['recommendedGroups']) ?? defaultRecommendedGroups;
     const updated = groups.map((g) =>
       g.key === groupKey ? { ...g, items: [...g.items, item] } : g
     );
     console.log('[HomeContext] Adding recommended item:', item.name, 'to group:', groupKey);
-    updateRecommendedGroups(updated);
+    await updateRecommendedGroups(updated);
   }, [queryClient, updateRecommendedGroups]);
 
-  const removeRecommendedItem = useCallback((groupKey: string, itemId: string) => {
+  const removeRecommendedItem = useCallback(async (groupKey: string, itemId: string) => {
     const groups = queryClient.getQueryData<RecommendedGroup[]>(['recommendedGroups']) ?? defaultRecommendedGroups;
     const updated = groups.map((g) =>
       g.key === groupKey ? { ...g, items: g.items.filter((i) => i.id !== itemId) } : g
     );
     console.log('[HomeContext] Removing recommended item:', itemId, 'from group:', groupKey);
-    updateRecommendedGroups(updated);
+    await updateRecommendedGroups(updated);
   }, [queryClient, updateRecommendedGroups]);
 
-  const duplicateRecommendedItem = useCallback((groupKey: string, itemId: string) => {
+  const duplicateRecommendedItem = useCallback(async (groupKey: string, itemId: string) => {
     const groups = queryClient.getQueryData<RecommendedGroup[]>(['recommendedGroups']) ?? defaultRecommendedGroups;
     const updated = groups.map((g) => {
       if (g.key !== groupKey) return g;
@@ -385,10 +385,10 @@ export const [HomeProvider, useHome] = createContextHook(() => {
       return { ...g, items: newItems };
     });
     console.log('[HomeContext] Duplicating recommended item:', itemId, 'in group:', groupKey);
-    updateRecommendedGroups(updated);
+    await updateRecommendedGroups(updated);
   }, [queryClient, updateRecommendedGroups]);
 
-  const syncRecommendedItem = useCallback((groupKey: string, itemId: string) => {
+  const syncRecommendedItem = useCallback(async (groupKey: string, itemId: string) => {
     const groups = queryClient.getQueryData<RecommendedGroup[]>(['recommendedGroups']) ?? defaultRecommendedGroups;
     const currentAppliances = queryClient.getQueryData<Appliance[]>(['appliances']) ?? [];
     const group = groups.find((g) => g.key === groupKey);
@@ -415,7 +415,7 @@ export const [HomeProvider, useHome] = createContextHook(() => {
         : g
     );
     console.log('[HomeContext] Syncing recommended item:', item.name, 'with appliance:', matchingAppliance.name);
-    updateRecommendedGroups(updatedGroups);
+    await updateRecommendedGroups(updatedGroups);
   }, [queryClient, updateRecommendedGroups]);
 
   const resetDataMutation = useMutation({

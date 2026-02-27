@@ -1,5 +1,7 @@
 const GOOGLE_PLACES_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY ?? '';
 
+console.log('[GooglePlaces] API key loaded:', GOOGLE_PLACES_API_KEY ? `${GOOGLE_PLACES_API_KEY.substring(0, 8)}...` : '(EMPTY)');
+
 export interface PlaceResult {
   id: string;
   name: string;
@@ -40,6 +42,11 @@ export async function searchPlaces(
   const radiusMeters = Math.round(radiusMiles * 1609.34);
 
   console.log('[GooglePlaces] Searching:', textQuery, 'radius:', radiusMeters, 'm');
+  console.log('[GooglePlaces] API key at call time:', GOOGLE_PLACES_API_KEY ? `${GOOGLE_PLACES_API_KEY.substring(0, 8)}...` : '(EMPTY)');
+
+  if (!GOOGLE_PLACES_API_KEY) {
+    throw new Error('Google Places API key is not configured. Check EXPO_PUBLIC_GOOGLE_PLACES_API_KEY.');
+  }
 
   const fieldMask = [
     'places.id',
@@ -77,7 +84,10 @@ export async function searchPlaces(
     if (!response.ok) {
       const errorText = await response.text();
       console.error('[GooglePlaces] API error:', response.status, errorText);
-      throw new Error(`Google Places API error: ${response.status}`);
+      if (response.status === 403) {
+        throw new Error('API key is restricted or invalid. Check your Google Cloud Console API key settings.');
+      }
+      throw new Error(`Google Places API error: ${response.status} - ${errorText}`);
     }
 
     const data: PlaceApiResponse = await response.json();

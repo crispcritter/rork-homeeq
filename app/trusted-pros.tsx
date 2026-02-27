@@ -268,7 +268,7 @@ export default function TrustedProsScreen() {
 
   const findMaxHeight = findSectionAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, 800],
+    outputRange: [0, 5000],
   });
 
   const findOpacity = findSectionAnim.interpolate({

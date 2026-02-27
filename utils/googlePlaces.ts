@@ -69,6 +69,8 @@ export async function searchPlaces(
         'Content-Type': 'application/json',
         'X-Goog-Api-Key': GOOGLE_PLACES_API_KEY,
         'X-Goog-FieldMask': fieldMask,
+        'X-Ios-Bundle-Identifier': 'app.rork.home-care-tracker-uuwkqsu',
+        'X-Android-Package': 'app.rork.home_care_tracker_uuwkqsu',
       },
       body: JSON.stringify({
         textQuery,

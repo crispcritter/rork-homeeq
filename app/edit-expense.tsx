@@ -34,7 +34,7 @@ import {
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import { BudgetCategory, ExpenseProvider, TrustedPro, toISODateString, asISODateString } from '@/types';
-import formStyles from '@/constants/formStyles';
+import createFormStyles from '@/constants/formStyles';
 import ApplianceChipSelector from '@/components/ApplianceChipSelector';
 import { successNotification, lightImpact } from '@/utils/haptics';
 
@@ -53,6 +53,7 @@ export default function EditExpenseScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { colors: c } = useTheme();
   const styles = useMemo(() => createExpenseStyles(c), [c]);
+  const formStyles = useMemo(() => createFormStyles(c), [c]);
   const { budgetItems, updateBudgetItem, appliances, trustedPros } = useHome();
 
   const expense = useMemo(() => budgetItems.find((i) => i.id === id), [budgetItems, id]);

@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { Stack } from 'expo-router';
 import { useTheme } from '@/contexts/ThemeContext';
-import { LightColors, DarkColors, ColorScheme } from '@/constants/colors';
+import { ColorScheme, palettes, PALETTE_OPTIONS } from '@/constants/colors';
 
 interface SwatchProps {
   name: string;
@@ -18,7 +18,7 @@ interface SwatchProps {
 
 function Swatch({ name, color, textOnColor }: SwatchProps) {
   const { colors: c } = useTheme();
-  const isTransparent = color.startsWith('rgba');
+  const _isTransparent = color.startsWith('rgba');
   const labelColor = textOnColor ?? (isLight(color) ? '#2D2926' : '#FFFFFF');
 
   return (
@@ -152,7 +152,9 @@ function PaletteSection({ label, scheme }: { label: string; scheme: ColorScheme 
 }
 
 export default function ColorGuideScreen() {
-  const { colors: c, isDark } = useTheme();
+  const { colors: c, isDark, paletteId } = useTheme();
+  const activePalette = palettes[paletteId];
+  const paletteLabel = PALETTE_OPTIONS.find((p) => p.id === paletteId)?.label ?? paletteId;
 
   return (
     <View style={[styles.container, { backgroundColor: c.background }]}>
@@ -163,19 +165,19 @@ export default function ColorGuideScreen() {
       >
         <Text style={[styles.pageTitle, { color: c.text }]}>Color Palette</Text>
         <Text style={[styles.pageSubtitle, { color: c.textSecondary }]}>
-          All colors used throughout the application
+          {paletteLabel} palette — {isDark ? 'Dark' : 'Light'} mode active
         </Text>
 
         <PaletteSection
-          label={isDark ? 'Dark Mode (Active)' : 'Light Mode (Active)'}
-          scheme={isDark ? DarkColors : LightColors}
+          label={`${paletteLabel} — ${isDark ? 'Dark' : 'Light'} (Active)`}
+          scheme={isDark ? activePalette.dark : activePalette.light}
         />
 
         <View style={[styles.divider, { backgroundColor: c.border }]} />
 
         <PaletteSection
-          label={isDark ? 'Light Mode' : 'Dark Mode'}
-          scheme={isDark ? LightColors : DarkColors}
+          label={`${paletteLabel} — ${isDark ? 'Light' : 'Dark'}`}
+          scheme={isDark ? activePalette.light : activePalette.dark}
         />
 
         <View style={{ height: 40 }} />

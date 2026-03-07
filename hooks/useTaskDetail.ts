@@ -1,8 +1,9 @@
 import { useMemo, useCallback, useState } from 'react';
-import { Alert, Platform } from 'react-native';
+import { Alert } from 'react-native';
 import { useHome } from '@/contexts/HomeContext';
 import { TaskPriority, TrustedPro, ISODateString, asISODateString } from '@/types';
 import { successNotification, mediumImpact, lightImpact } from '@/utils/haptics';
+import { isValidDateString } from '@/utils/dates';
 import {
   addTaskToCalendar,
   addTaskToReminders,
@@ -282,6 +283,10 @@ export function useTaskDetail(taskId: string | undefined) {
     }
     if (!edits.dueDate.trim()) {
       Alert.alert('Missing Info', 'Please enter a due date.');
+      return false;
+    }
+    if (!isValidDateString(edits.dueDate.trim())) {
+      Alert.alert('Invalid Date', 'Please enter a valid date in YYYY-MM-DD format (e.g. 2025-06-15)');
       return false;
     }
 

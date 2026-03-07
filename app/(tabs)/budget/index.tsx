@@ -9,7 +9,6 @@ import {
 import { useRouter } from 'expo-router';
 import { parseLocalDate } from '@/utils/dates';
 import {
-  TrendingDown,
   Receipt,
   Camera,
   UserCheck,
@@ -129,14 +128,6 @@ export default function BudgetScreen() {
           </View>
 
           <View style={styles.heroStats}>
-            <View style={styles.heroStat}>
-              <View style={[styles.heroStatIcon, { backgroundColor: c.dangerLight }]}>
-                <TrendingDown size={14} color={c.danger} />
-              </View>
-              <Text style={styles.heroStatLabel}>This Month</Text>
-              <Text style={styles.heroStatValue}>${spentThisMonth.toLocaleString()}</Text>
-            </View>
-            <View style={styles.heroStatDivider} />
             <View style={styles.heroStat}>
               <View style={[styles.heroStatIcon, { backgroundColor: c.primaryLight }]}>
                 <Receipt size={14} color={c.primary} />

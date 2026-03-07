@@ -1,8 +1,7 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   TextInput,
   TouchableOpacity,
@@ -13,18 +12,19 @@ import {
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useHome } from '@/contexts/HomeContext';
-import Colors from '@/constants/colors';
 import { useTheme } from '@/contexts/ThemeContext';
 import { TaskPriority, asISODateString } from '@/types';
 import { PRIORITIES } from '@/constants/priorities';
-import formStyles from '@/constants/formStyles';
+import createFormStyles from '@/constants/formStyles';
 import ApplianceChipSelector from '@/components/ApplianceChipSelector';
 import { successNotification } from '@/utils/haptics';
+import { isValidDateString } from '@/utils/dates';
 
 export default function AddTaskScreen() {
   const router = useRouter();
   const { colors: c } = useTheme();
   const { addTask, appliances } = useHome();
+  const formStyles = useMemo(() => createFormStyles(c), [c]);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -43,6 +43,10 @@ export default function AddTaskScreen() {
     }
     if (!dueDate.trim()) {
       Alert.alert('Just a moment', 'Please enter a due date');
+      return;
+    }
+    if (!isValidDateString(dueDate.trim())) {
+      Alert.alert('Invalid Date', 'Please enter a valid date in YYYY-MM-DD format (e.g. 2025-06-15)');
       return;
     }
 

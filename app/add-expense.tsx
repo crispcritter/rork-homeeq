@@ -32,12 +32,13 @@ import {
   StickyNote,
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
-import { LightColors } from '@/constants/colors';
+
 import { BudgetCategory, ExpenseProvider, TrustedPro, toISODateString, toISOTimestamp, asISODateString } from '@/types';
 import { Switch } from 'react-native';
-import formStyles from '@/constants/formStyles';
+import createFormStyles from '@/constants/formStyles';
 import ApplianceChipSelector from '@/components/ApplianceChipSelector';
 import { successNotification, lightImpact } from '@/utils/haptics';
+import { isValidDateString } from '@/utils/dates';
 
 const CATEGORY_KEYS: { key: BudgetCategory; label: string }[] = [
   { key: 'maintenance', label: 'Maintenance' },
@@ -53,7 +54,8 @@ export default function AddExpenseScreen() {
   const router = useRouter();
   const { colors: c } = useTheme();
   const styles = useMemo(() => createExpenseStyles(c), [c]);
-  const { addBudgetItem, appliances, trustedPros, addTrustedPro } = useHome();
+  const formStyles = useMemo(() => createFormStyles(c), [c]);
+  const { addBudgetItem, appliances, trustedPros, addTrustedPro, updateTrustedPro } = useHome();
 
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
@@ -152,6 +154,10 @@ export default function AddExpenseScreen() {
       Alert.alert('Just a moment', 'Please enter a valid amount');
       return;
     }
+    if (!isValidDateString(date)) {
+      Alert.alert('Invalid Date', 'Please enter a valid date in YYYY-MM-DD format (e.g. 2025-06-15)');
+      return;
+    }
 
     successNotification();
 
@@ -172,7 +178,18 @@ export default function AddExpenseScreen() {
       if (selectedTrustedProId) {
         const existingPro = trustedPros.find((p) => p.id === selectedTrustedProId);
         if (existingPro) {
-          console.log('[AddExpense] Linking expense to existing Trusted Pro:', existingPro.name);
+          const updatedPro = {
+            ...existingPro,
+            expenseIds: [...(existingPro.expenseIds ?? []), expenseId],
+            phone: providerPhone.trim() || existingPro.phone,
+            email: providerEmail.trim() || existingPro.email,
+            website: providerWebsite.trim() || existingPro.website,
+            address: providerAddress.trim() || existingPro.address,
+            specialty: providerSpecialty.trim() || existingPro.specialty,
+            notes: providerNotes.trim() || existingPro.notes,
+          };
+          updateTrustedPro(updatedPro);
+          console.log('[AddExpense] Linked expense to existing Trusted Pro:', existingPro.name);
         }
       } else {
         const newPro: TrustedPro = {
@@ -213,7 +230,7 @@ export default function AddExpenseScreen() {
     receiptImages, providerName, providerPhone, providerEmail,
     providerWebsite, providerAddress, providerSpecialty, providerNotes,
     paymentMethod, invoiceNumber, expenseNotes, taxDeductible, selectedTrustedProId,
-    trustedPros, addBudgetItem, addTrustedPro, router,
+    trustedPros, addBudgetItem, addTrustedPro, updateTrustedPro, router,
   ]);
 
   return (

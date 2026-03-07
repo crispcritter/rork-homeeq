@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useMemo } from 'react';
+import React, { useState, useCallback, useRef, useMemo, useEffect } from 'react';
 import {
   View,
   Text,
@@ -40,7 +40,7 @@ import { SERVICE_CATEGORY_OPTIONS, RADIUS_OPTIONS } from '@/constants/serviceCat
 import StarRating from '@/components/StarRating';
 import { useProviderDetail } from '@/hooks/useProviderDetail';
 import { formatRating } from '@/utils/ratings';
-import { lightImpact, successNotification } from '@/utils/haptics';
+import { lightImpact } from '@/utils/haptics';
 import createStyles from '@/styles/providerDetail';
 
 export default function ProviderDetailScreen() {
@@ -97,6 +97,13 @@ export default function ProviderDetailScreen() {
 
   const [selectedServiceCats, setSelectedServiceCats] = useState<ProServiceCategory[]>(pro?.serviceCategories ?? []);
   const [selectedRadius, setSelectedRadius] = useState<number>(pro?.serviceRadius ?? 20);
+
+  useEffect(() => {
+    if (pro) {
+      setSelectedServiceCats(pro.serviceCategories ?? []);
+      setSelectedRadius(pro.serviceRadius ?? 20);
+    }
+  }, [pro]);
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
 

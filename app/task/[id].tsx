@@ -12,7 +12,6 @@ import {
   Switch,
   LayoutAnimation,
   Linking as RNLinking,
-  Image,
 } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import {
@@ -54,7 +53,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { useHome } from '@/contexts/HomeContext';
 import { TaskPriority } from '@/types';
 import { PRIORITIES } from '@/constants/priorities';
-import formStyles from '@/constants/formStyles';
+import createFormStyles from '@/constants/formStyles';
 import { formatLongDate, formatRelativeDate } from '@/utils/dates';
 import { lightImpact } from '@/utils/haptics';
 import { isCalendarAvailable, isRemindersAvailable } from '@/utils/calendar';
@@ -143,6 +142,7 @@ export default function TaskDetailScreen() {
   const { colors: c } = useTheme();
   const { sectionsDefaultOpen } = useHome();
   const styles = useMemo(() => createStyles(c), [c]);
+  const formStyles = useMemo(() => createFormStyles(c), [c]);
   const {
     task,
     appliance,
@@ -255,7 +255,7 @@ export default function TaskDetailScreen() {
     });
   }, [linkValue, handleSaveLink, linkInputAnim]);
 
-  const handleOpenLink = useCallback(() => {
+  const _handleOpenLink = useCallback(() => {
     if (!task?.productLink) return;
     console.log('[TaskDetail] Opening product link:', task.productLink);
     RNLinking.openURL(task.productLink).catch((err) => {
@@ -788,11 +788,9 @@ export default function TaskDetailScreen() {
                 testID={`youtube-card-${idx}`}
               >
                 <View style={styles.youtubeThumbnail}>
-                  <Image
-                    source={{ uri: `https://img.youtube.com/vi/default/hqdefault.jpg` }}
-                    style={styles.youtubeThumbnailBg}
-                    resizeMode="cover"
-                  />
+                  <View style={[styles.youtubeThumbnailBg, { backgroundColor: c.surfaceAlt, justifyContent: 'center', alignItems: 'center' }]}>
+                    <Youtube size={24} color="#FF0000" />
+                  </View>
                   <View style={styles.youtubePlayOverlay}>
                     <View style={styles.youtubePlayBtn}>
                       <Play size={18} color="#FFFFFF" fill="#FFFFFF" />

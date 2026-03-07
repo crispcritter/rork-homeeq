@@ -1,10 +1,10 @@
 import { StyleSheet } from 'react-native';
-import Colors from '@/constants/colors';
+import { ColorScheme } from '@/constants/colors';
 
-const formStyles = StyleSheet.create({
+const createFormStyles = (c: ColorScheme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: c.background,
   },
   content: {
     paddingHorizontal: 20,
@@ -16,7 +16,7 @@ const formStyles = StyleSheet.create({
   sectionLabel: {
     fontSize: 13,
     fontWeight: '600' as const,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     textTransform: 'uppercase' as const,
     letterSpacing: 0.8,
     marginBottom: 8,
@@ -24,10 +24,10 @@ const formStyles = StyleSheet.create({
     lineHeight: 17,
   },
   card: {
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderRadius: 16,
-    overflow: 'hidden',
-    shadowColor: Colors.cardShadow,
+    overflow: 'hidden' as const,
+    shadowColor: c.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 8,
@@ -43,27 +43,27 @@ const formStyles = StyleSheet.create({
   inputLabel: {
     fontSize: 12,
     fontWeight: '500' as const,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     marginBottom: 4,
     lineHeight: 16,
   },
   textInput: {
     fontSize: 16,
     fontWeight: '500' as const,
-    color: Colors.text,
+    color: c.text,
     padding: 0,
     margin: 0,
     lineHeight: 22,
   },
   divider: {
     height: 1,
-    backgroundColor: Colors.borderLight,
+    backgroundColor: c.borderLight,
     marginLeft: 16,
   },
   switchRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: 'row' as const,
+    justifyContent: 'space-between' as const,
+    alignItems: 'center' as const,
     paddingHorizontal: 16,
     paddingVertical: 14,
   },
@@ -74,12 +74,12 @@ const formStyles = StyleSheet.create({
   switchLabel: {
     fontSize: 15,
     fontWeight: '600' as const,
-    color: Colors.text,
+    color: c.text,
     lineHeight: 20,
   },
   switchSubtitle: {
     fontSize: 12,
-    color: Colors.textTertiary,
+    color: c.textTertiary,
     marginTop: 2,
     lineHeight: 16,
   },
@@ -90,35 +90,35 @@ const formStyles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 16,
     borderRadius: 14,
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: c.border,
   },
   priorityLabel: {
     fontSize: 15,
     fontWeight: '600' as const,
-    color: Colors.text,
+    color: c.text,
     marginBottom: 2,
     lineHeight: 20,
   },
   priorityDesc: {
     fontSize: 12,
-    color: Colors.textTertiary,
+    color: c.textTertiary,
     lineHeight: 16,
   },
   saveBtn: {
-    backgroundColor: Colors.primary,
+    backgroundColor: c.primary,
     borderRadius: 14,
     paddingVertical: 16,
-    alignItems: 'center',
+    alignItems: 'center' as const,
     marginTop: 4,
   },
   saveBtnText: {
     fontSize: 16,
     fontWeight: '700' as const,
-    color: Colors.white,
+    color: c.white,
     lineHeight: 22,
   },
 });
 
-export default formStyles;
+export default createFormStyles;

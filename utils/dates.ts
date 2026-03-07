@@ -54,6 +54,14 @@ export function formatWeekEnding(saturday: Date): string {
   return `Week ending ${saturday.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
 }
 
+export function isValidDateString(dateStr: string): boolean {
+  const match = /^\d{4}-\d{2}-\d{2}$/.test(dateStr);
+  if (!match) return false;
+  const [year, month, day] = dateStr.split('-').map(Number);
+  const date = new Date(year, month - 1, day);
+  return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
+}
+
 export function getWarrantyStatus(expiryDate: ISODateString | string, colors: { danger: string; warning: string; success: string; textTertiary: string }): WarrantyStatus {
   if (!expiryDate || typeof expiryDate !== 'string' || expiryDate.trim() === '') {
     return { label: 'Unknown', color: colors.textTertiary, daysLeft: 0 };

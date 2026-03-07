@@ -1,10 +1,11 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
 import { HomeProvider } from "../contexts/HomeContext";
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
+import SplashAnimation from "@/components/SplashAnimation";
 
 
 let GestureHandlerRootView: React.ComponentType<{ style?: any; children: React.ReactNode }> = ({ children, style }) => (
@@ -87,8 +88,14 @@ function RootLayoutNav() {
 }
 
 export default function RootLayout() {
+  const [showSplash, setShowSplash] = useState<boolean>(true);
+
   useEffect(() => {
     void SplashScreen.hideAsync();
+  }, []);
+
+  const handleSplashFinish = useCallback(() => {
+    setShowSplash(false);
   }, []);
 
   return (
@@ -97,6 +104,7 @@ export default function RootLayout() {
         <ThemeProvider>
           <HomeProvider>
             <RootLayoutNav />
+            {showSplash && <SplashAnimation onFinish={handleSplashFinish} />}
           </HomeProvider>
         </ThemeProvider>
       </GestureHandlerRootView>

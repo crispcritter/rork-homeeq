@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
   },
   titleBold: {
     fontWeight: '700' as const,
-    color: '#C4826D',
+    color: '#5A8A60',
   },
   line: {
     height: 1.5,

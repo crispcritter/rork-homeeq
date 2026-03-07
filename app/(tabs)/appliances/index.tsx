@@ -16,12 +16,12 @@ import {
   MapPin,
   Shield,
   ChevronRight,
-  ArrowUpDown,
   Check,
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import { ColorScheme } from '@/constants/colors';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useRefresh } from '@/hooks/useRefresh';
 import PressableCard from '@/components/PressableCard';
 import FloatingActionButton from '@/components/FloatingActionButton';
 import ScreenHeader from '@/components/ScreenHeader';
@@ -59,16 +59,11 @@ export default function AppliancesScreen() {
     duplicateRecommendedItem,
     syncRecommendedItem,
     trustedPros,
-    refreshAll,
-    isRefreshing,
   } = useHome();
 
-  const onRefresh = useCallback(async () => {
-    await refreshAll();
-  }, [refreshAll]);
+  const { onRefresh, isRefreshing } = useRefresh();
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('name');
-  const [showSortMenu, setShowSortMenu] = useState(false);
 
   const filtered = useMemo(() => {
     const list = appliances.filter(

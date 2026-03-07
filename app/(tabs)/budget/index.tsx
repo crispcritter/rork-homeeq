@@ -20,6 +20,7 @@ import {
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useRefresh } from '@/hooks/useRefresh';
 import { categoryLabels, BUDGET_CATEGORY_COLORS } from '@/constants/categories';
 import FloatingActionButton from '@/components/FloatingActionButton';
 import ScreenHeader from '@/components/ScreenHeader';
@@ -61,11 +62,8 @@ export default function BudgetScreen() {
   const router = useRouter();
   const { colors: c } = useTheme();
   const styles = useMemo(() => createStyles(c), [c]);
-  const { trustedPros, refreshAll, isRefreshing } = useHome();
-
-  const onRefresh = useCallback(async () => {
-    await refreshAll();
-  }, [refreshAll]);
+  const { trustedPros } = useHome();
+  const { onRefresh, isRefreshing } = useRefresh();
   const {
     budgetItems,
     spentThisMonth,

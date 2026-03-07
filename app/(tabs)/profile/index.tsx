@@ -11,7 +11,6 @@ import {
   Platform,
   Image,
   ActionSheetIOS,
-  Alert as RNAlert,
   Animated,
   LayoutAnimation,
   UIManager,
@@ -35,7 +34,6 @@ import {
   ChevronDown,
   RotateCcw,
   Camera,
-  ExternalLink,
   Link,
   X,
   Search,
@@ -44,17 +42,17 @@ import {
   Mail,
   MessageSquare,
   Trash2,
-  Crown,
   User,
   Palette,
 } from 'lucide-react-native';
 import { Alert, Linking, Modal } from 'react-native';
-import { useRouter } from 'expo-router';
+
 import { useHome } from '@/contexts/HomeContext';
 import Colors from '@/constants/colors';
-import { useTheme, ThemeMode } from '@/contexts/ThemeContext';
-import { ColorScheme, PALETTE_OPTIONS, PaletteId } from '@/constants/colors';
-import { Settings, Moon, Sun, Smartphone, ChevronsUpDown } from 'lucide-react-native';
+import { useTheme } from '@/contexts/ThemeContext';
+import DatePickerField from '@/components/DatePickerField';
+import { ColorScheme, PALETTE_OPTIONS } from '@/constants/colors';
+import { Moon, Sun, Smartphone, ChevronsUpDown } from 'lucide-react-native';
 import { successNotification } from '@/utils/haptics';
 import PickerModal from '@/components/PickerModal';
 import LinkPreview from '@/components/LinkPreview';
@@ -190,8 +188,7 @@ const getRoleLabel = (role: HouseholdRole): string => {
 
 export default function ProfileScreen() {
   const { homeProfile, updateHomeProfile, resetData, isResetting, addHouseholdMember, removeHouseholdMember, sectionsDefaultOpen, setSectionsDefaultOpen } = useHome();
-  const { colors: c, themeMode, setThemeMode, isDark, paletteId, setPalette } = useTheme();
-  const router = useRouter();
+  const { colors: c, themeMode, setThemeMode, paletteId, setPalette } = useTheme();
   const [form, setForm] = useState<ProfileFormState>(() => profileToForm(homeProfile));
   const [activePicker, setActivePicker] = useState<string | null>(null);
   const [showZillowModal, setShowZillowModal] = useState<boolean>(false);
@@ -393,13 +390,13 @@ export default function ProfileScreen() {
                 <Calendar size={18} color={c.primary} />
               </View>
               <View style={styles.inputContent}>
-                <Text style={[styles.inputLabel, { color: c.textSecondary }]}>Purchase date</Text>
-                <TextInput
-                  style={[styles.textInput, { color: c.text }]}
-                  value={form.purchaseDate}
-                  onChangeText={(v) => updateField('purchaseDate', asISODateString(v))}
-                  placeholder="e.g. March 2020"
-                  placeholderTextColor={c.textTertiary}
+                <DatePickerField
+                  label="Purchase date"
+                  value={form.purchaseDate ?? ''}
+                  onChange={(v) => updateField('purchaseDate', asISODateString(v))}
+                  placeholder="Select purchase date"
+                  colors={c}
+                  testID="profile-purchase-date"
                 />
               </View>
             </View>

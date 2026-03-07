@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useRef, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import { useRouter } from 'expo-router';
 import { AlertTriangle, ChevronRight, Plus, Clock, Star, CirclePlus, Wrench, DollarSign, Search, CalendarDays, Calendar } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useRefresh } from '@/hooks/useRefresh';
 import PressableCard from '@/components/PressableCard';
 import AnimatedCard from '@/components/AnimatedCard';
 import { formatRelativeDate } from '@/utils/dates';
@@ -41,13 +42,9 @@ export default function DashboardScreen() {
     isLoading,
     homeProfile,
     trustedPros,
-    refreshAll,
-    isRefreshing,
   } = useHome();
 
-  const onRefresh = useCallback(async () => {
-    await refreshAll();
-  }, [refreshAll]);
+  const { onRefresh, isRefreshing } = useRefresh();
 
   const { spentThisMonth, spentThisYear } = useBudgetSummary();
   const fadeAnim = useRef(new Animated.Value(0)).current;

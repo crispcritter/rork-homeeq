@@ -23,6 +23,7 @@ import {
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useRefresh } from '@/hooks/useRefresh';
 import { ColorScheme } from '@/constants/colors';
 import PressableCard from '@/components/PressableCard';
 import FloatingActionButton from '@/components/FloatingActionButton';
@@ -113,11 +114,8 @@ export default function ScheduleScreen() {
   const router = useRouter();
   const { colors: c } = useTheme();
   const styles = useMemo(() => createStyles(c), [c]);
-  const { tasks, appliances, completeTask, trustedPros, refreshAll, isRefreshing } = useHome();
-
-  const onRefresh = useCallback(async () => {
-    await refreshAll();
-  }, [refreshAll]);
+  const { tasks, appliances, completeTask, trustedPros } = useHome();
+  const { onRefresh, isRefreshing } = useRefresh();
   const params = useLocalSearchParams<{ filter?: string }>();
   const [filter, setFilter] = useState<FilterType>(() => {
     const validFilters: FilterType[] = ['all', 'upcoming', 'overdue', 'completed', 'archived'];

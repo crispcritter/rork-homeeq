@@ -15,6 +15,7 @@ import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { Camera, X, Sparkles, ChevronRight, ScanLine, Hash, Receipt, Plus, Star, ImagePlus, BookOpen, Upload, Search, ExternalLink, Smartphone } from 'lucide-react-native';
 import Colors from '@/constants/colors';
+import { PAYMENT_METHODS } from '@/constants/expenseOptions';
 import { Appliance, ApplianceCategory, PurchaseData, AppliancePhoto, ManualInfo, AppInfo, asISODateString, toISODateString } from '@/types';
 import { successNotification } from '@/utils/haptics';
 import DatePickerField from '@/components/DatePickerField';
@@ -50,7 +51,7 @@ export default function ApplianceForm({ mode, initialData, onSave }: ApplianceFo
   const [receiptImageUri, setReceiptImageUri] = useState<string | null>(initialData?.purchaseData?.receiptImageUrl ?? null);
   const [manual, setManual] = useState<ManualInfo | undefined>(initialData?.manual);
   const [hasWarranty, setHasWarranty] = useState<boolean>(initialData?.hasWarranty ?? (initialData?.warrantyExpiry ? true : false));
-
+  const [showPaymentPicker, setShowPaymentPicker] = useState(false);
 
   const [appUsername, setAppUsername] = useState(initialData?.appInfo?.username ?? '');
   const [appPassword, setAppPassword] = useState(initialData?.appInfo?.password ?? '');
@@ -335,7 +336,30 @@ export default function ApplianceForm({ mode, initialData, onSave }: ApplianceFo
             <View style={styles.divider} />
             <View style={styles.inputRow}><View style={styles.inputContent}><Text style={styles.inputLabel}>Retailer / Store</Text><TextInput style={styles.textInput} placeholder="e.g. Home Depot, Best Buy" placeholderTextColor={Colors.textTertiary} value={retailer} onChangeText={setRetailer} testID={`${testIdPrefix}input-retailer`} /></View></View>
             <View style={styles.divider} />
-            <View style={styles.inputRow}><View style={styles.inputContent}><Text style={styles.inputLabel}>Payment method</Text><TextInput style={styles.textInput} placeholder="e.g. Visa ending 4321" placeholderTextColor={Colors.textTertiary} value={paymentMethod} onChangeText={setPaymentMethod} testID={`${testIdPrefix}input-payment-method`} /></View></View>
+            <View style={styles.inputRow}>
+              <View style={styles.inputContent}>
+                <Text style={styles.inputLabel}>Payment method</Text>
+                <Text style={[styles.textInput, !paymentMethod && { color: Colors.textTertiary }]}>
+                  {paymentMethod || 'Select'}
+                </Text>
+              </View>
+            </View>
+            {showPaymentPicker && (
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, paddingHorizontal: 16, paddingBottom: 14 }}>
+                {PAYMENT_METHODS.map((method) => (
+                  <TouchableOpacity
+                    key={method}
+                    style={[{ paddingHorizontal: 14, paddingVertical: 8, borderRadius: 18, backgroundColor: Colors.surfaceAlt, borderWidth: 1, borderColor: Colors.borderLight }, paymentMethod === method && { backgroundColor: Colors.primary, borderColor: Colors.primary }]}
+                    onPress={() => { setPaymentMethod(method); setShowPaymentPicker(false); }}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={[{ fontSize: 13, fontWeight: '500' as const, color: Colors.textSecondary }, paymentMethod === method && { color: Colors.white }]}>
+                      {method}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
             <View style={styles.divider} />
             <View style={styles.inputRow}><View style={styles.inputContent}><Text style={styles.inputLabel}>Order / Receipt number</Text><TextInput style={styles.textInput} placeholder="Transaction or order ID" placeholderTextColor={Colors.textTertiary} value={orderNumber} onChangeText={setOrderNumber} testID={`${testIdPrefix}input-order-number`} /></View></View>
           </View>

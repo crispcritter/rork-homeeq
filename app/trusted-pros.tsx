@@ -24,7 +24,6 @@ import {
   ChevronRight,
   Search,
   X,
-  Star,
   SlidersHorizontal,
   MapPinned,
   Link2,
@@ -281,21 +280,7 @@ export default function TrustedProsScreen() {
     outputRange: ['0deg', '180deg'],
   });
 
-  const renderStars = useCallback((rating: number) => {
-    const stars = [];
-    const fullStars = Math.floor(rating);
-    const hasHalf = rating - fullStars >= 0.5;
-    for (let i = 0; i < 5; i++) {
-      if (i < fullStars) {
-        stars.push(<Star key={i} size={12} color="#F5A623" fill="#F5A623" />);
-      } else if (i === fullStars && hasHalf) {
-        stars.push(<Star key={i} size={12} color="#F5A623" fill="#F5A623" style={{ opacity: 0.5 }} />);
-      } else {
-        stars.push(<Star key={i} size={12} color="#DDD" />);
-      }
-    }
-    return stars;
-  }, []);
+
 
   return (
     <View style={styles.container}>
@@ -480,9 +465,7 @@ export default function TrustedProsScreen() {
                               <Text style={styles.resultName} numberOfLines={2}>{place.name}</Text>
                               {place.rating !== null && (
                                 <View style={styles.resultRatingRow}>
-                                  <View style={styles.starsRow}>
-                                    {renderStars(place.rating)}
-                                  </View>
+                                  <StarRating rating={place.rating} size={12} />
                                   <Text style={styles.resultRatingText}>{place.rating.toFixed(1)}</Text>
                                   {place.userRatingCount !== null && (
                                     <Text style={styles.resultReviewCount}>

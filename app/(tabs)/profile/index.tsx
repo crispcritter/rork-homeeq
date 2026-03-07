@@ -191,7 +191,7 @@ const getRoleLabel = (role: HouseholdRole): string => {
 export default function ProfileScreen() {
   const { homeProfile, updateHomeProfile, resetData, isResetting, addHouseholdMember, removeHouseholdMember, sectionsDefaultOpen, setSectionsDefaultOpen } = useHome();
   const { colors: c, themeMode, setThemeMode, paletteId, setPalette } = useTheme();
-  const { user, isAuthenticated, signOut, syncStatus, lastSyncedAt, pushToCloud } = useAuth();
+  const { user, isAuthenticated, signOut, syncStatus, lastSyncedAt, pushToCloud, household, createHousehold, generateInvite, removeMember, leaveHousehold, refreshHousehold } = useAuth();
   const navRouter = useRouter();
   const [form, setForm] = useState<ProfileFormState>(() => profileToForm(homeProfile));
   const [activePicker, setActivePicker] = useState<string | null>(null);
@@ -303,6 +303,109 @@ export default function ProfileScreen() {
   const handleManualSync = useCallback(() => {
     void pushToCloud();
   }, [pushToCloud]);
+
+  const doCreateHousehold = useCallback(async (name: string) => {
+    try {
+      await createHousehold(name);
+      await pushToCloud();
+      Alert.alert('Household Created', `"${name}" is ready. You can now invite members.`);
+    } catch (e: any) {
+      Alert.alert('Error', e?.message ?? 'Failed to create household.');
+    }
+  }, [createHousehold, pushToCloud]);
+
+  const handleCreateHousehold = useCallback(() => {
+    const homeName = form.nickname || 'My Home';
+    if (Platform.OS === 'ios' && Alert.prompt) {
+      Alert.prompt(
+        'Create Household',
+        'Give your household a name so members know what they\'re joining.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Create',
+            onPress: (name?: string) => {
+              void doCreateHousehold((name ?? '').trim() || homeName);
+            },
+          },
+        ],
+        'plain-text',
+        homeName
+      );
+    } else {
+      void doCreateHousehold(homeName);
+    }
+  }, [form.nickname, doCreateHousehold]);
+
+  const handleInviteMember = useCallback(async () => {
+    try {
+      const result = await generateInvite();
+      const scheme = 'rork-app';
+      const inviteLink = `${scheme}://join/${result.code}`;
+      const message = `Join my household "${result.householdName}" on HomeEQ! Open this link to join: ${inviteLink}`;
+
+      if (Platform.OS === 'web') {
+        Alert.alert('Invite Code', `Share this code with your household member:\n\n${result.code}\n\nThey can enter it in the app to join.`);
+      } else {
+        const { Share } = require('react-native');
+        await Share.share({ message });
+      }
+    } catch (e: any) {
+      Alert.alert('Error', e?.message ?? 'Failed to generate invite.');
+    }
+  }, [generateInvite]);
+
+  const handleRemoveMember = useCallback((memberId: string, memberEmail: string) => {
+    Alert.alert(
+      'Remove Member',
+      `Remove ${memberEmail} from your household? They will lose access to all shared data.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Remove',
+          style: 'destructive',
+          onPress: () => {
+            void (async () => {
+              try {
+                await removeMember(memberId);
+              } catch (e: any) {
+                Alert.alert('Error', e?.message ?? 'Failed to remove member.');
+              }
+            })();
+          },
+        },
+      ]
+    );
+  }, [removeMember]);
+
+  const handleLeaveHousehold = useCallback(() => {
+    Alert.alert(
+      'Leave Household',
+      'You will lose access to all shared data. Your personal local data will remain.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Leave',
+          style: 'destructive',
+          onPress: () => {
+            void (async () => {
+              try {
+                await leaveHousehold();
+              } catch (e: any) {
+                Alert.alert('Error', e?.message ?? 'Failed to leave household.');
+              }
+            })();
+          },
+        },
+      ]
+    );
+  }, [leaveHousehold]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      void refreshHousehold();
+    }
+  }, [isAuthenticated, refreshHousehold]);
 
   const syncStatusLabel = syncStatus === 'synced'
     ? `Last synced ${lastSyncedAt ? new Date(lastSyncedAt).toLocaleString() : 'recently'}`
@@ -918,15 +1021,6 @@ export default function ProfileScreen() {
                     </TouchableOpacity>
                   </View>
                 </View>
-                <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
-                <TouchableOpacity style={styles.inputRow} onPress={handleSignOut} activeOpacity={0.7}>
-                  <View style={[styles.inputIcon, { backgroundColor: c.dangerLight }]}>
-                    <LogOut size={18} color={c.danger} />
-                  </View>
-                  <View style={styles.inputContent}>
-                    <Text style={{ fontSize: 16, fontWeight: '500' as const, color: c.danger }}>Sign Out</Text>
-                  </View>
-                </TouchableOpacity>
               </>
             ) : (
               <TouchableOpacity
@@ -946,6 +1040,118 @@ export default function ProfileScreen() {
               </TouchableOpacity>
             )}
           </View>
+
+          {isAuthenticated && (
+            <View style={[styles.card, { backgroundColor: c.surface, marginTop: 12 }]}>
+              <View style={styles.inputRow}>
+                <View style={[styles.inputIcon, { backgroundColor: c.primaryLight }]}>
+                  <Users size={18} color={c.primary} />
+                </View>
+                <View style={styles.inputContent}>
+                  <Text style={[styles.inputLabel, { color: c.textSecondary }]}>Household</Text>
+                  <Text style={{ fontSize: 15, fontWeight: '600' as const, color: c.text }}>
+                    {household ? household.name : 'Not set up'}
+                  </Text>
+                  {household && (
+                    <Text style={{ fontSize: 12, color: c.textTertiary, marginTop: 2 }}>
+                      {household.members.length} {household.members.length === 1 ? 'member' : 'members'}
+                      {household.isOwner ? ' · You are the owner' : ` · Owned by ${household.ownerEmail}`}
+                    </Text>
+                  )}
+                </View>
+              </View>
+
+              {household ? (
+                <>
+                  {household.members.map((member) => (
+                    <View key={member.userId}>
+                      <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
+                      <View style={[styles.inputRow, { paddingVertical: 10 }]}>
+                        <View style={[styles.householdAvatar, { backgroundColor: member.role === 'owner' ? c.primaryLight : c.surfaceAlt }]}>
+                          <User size={14} color={member.role === 'owner' ? c.primary : c.textSecondary} />
+                        </View>
+                        <View style={{ flex: 1 }}>
+                          <Text style={{ fontSize: 14, fontWeight: '500' as const, color: c.text }}>{member.email}</Text>
+                          <Text style={{ fontSize: 12, color: c.textTertiary, marginTop: 1 }}>
+                            {member.role === 'owner' ? 'Owner' : getRoleLabel(member.role as HouseholdRole)} · Joined {new Date(member.joinedAt).toLocaleDateString()}
+                          </Text>
+                        </View>
+                        {household.isOwner && member.userId !== user?.id && (
+                          <TouchableOpacity
+                            onPress={() => handleRemoveMember(member.userId, member.email)}
+                            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                            activeOpacity={0.7}
+                          >
+                            <X size={16} color={c.danger} />
+                          </TouchableOpacity>
+                        )}
+                      </View>
+                    </View>
+                  ))}
+
+                  <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
+                  <TouchableOpacity
+                    style={styles.inputRow}
+                    onPress={() => void handleInviteMember()}
+                    activeOpacity={0.7}
+                    testID="invite-household-member-real"
+                  >
+                    <View style={[styles.householdInviteIconContainer, { backgroundColor: c.primaryLight }]}>
+                      <UserPlus size={14} color={c.primary} />
+                    </View>
+                    <Text style={{ fontSize: 15, fontWeight: '600' as const, color: c.primary }}>Invite Member</Text>
+                  </TouchableOpacity>
+
+                  {!household.isOwner && (
+                    <>
+                      <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
+                      <TouchableOpacity
+                        style={styles.inputRow}
+                        onPress={handleLeaveHousehold}
+                        activeOpacity={0.7}
+                      >
+                        <View style={[styles.inputIcon, { backgroundColor: c.dangerLight }]}>
+                          <LogOut size={16} color={c.danger} />
+                        </View>
+                        <Text style={{ fontSize: 15, fontWeight: '500' as const, color: c.danger }}>Leave Household</Text>
+                      </TouchableOpacity>
+                    </>
+                  )}
+                </>
+              ) : (
+                <>
+                  <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
+                  <TouchableOpacity
+                    style={styles.inputRow}
+                    onPress={handleCreateHousehold}
+                    activeOpacity={0.7}
+                    testID="create-household-button"
+                  >
+                    <View style={[styles.householdInviteIconContainer, { backgroundColor: c.primaryLight }]}>
+                      <UserPlus size={14} color={c.primary} />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={{ fontSize: 15, fontWeight: '600' as const, color: c.primary }}>Create Household</Text>
+                      <Text style={{ fontSize: 12, color: c.textTertiary, marginTop: 2 }}>Share your home data with family members</Text>
+                    </View>
+                  </TouchableOpacity>
+                </>
+              )}
+            </View>
+          )}
+
+          {isAuthenticated && (
+            <View style={[styles.card, { backgroundColor: c.surface, marginTop: 12 }]}>
+              <TouchableOpacity style={styles.inputRow} onPress={handleSignOut} activeOpacity={0.7}>
+                <View style={[styles.inputIcon, { backgroundColor: c.dangerLight }]}>
+                  <LogOut size={18} color={c.danger} />
+                </View>
+                <View style={styles.inputContent}>
+                  <Text style={{ fontSize: 16, fontWeight: '500' as const, color: c.danger }}>Sign Out</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
 
         <View style={styles.section}>

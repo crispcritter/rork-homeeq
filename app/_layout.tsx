@@ -89,6 +89,10 @@ function RootLayoutNav() {
         name="sign-in"
         options={{ presentation: "modal", title: "Sign In", headerShown: false }}
       />
+      <Stack.Screen
+        name="join-household"
+        options={{ presentation: "modal", title: "Join Household", headerShown: false }}
+      />
     </Stack>
   );
 }

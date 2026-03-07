@@ -15,23 +15,39 @@ const syncDataSchema = z.object({
 
 export type SyncData = z.infer<typeof syncDataSchema>;
 
-function syncKey(userId: string): string {
-  return `sync:${userId}`;
+function syncKey(scopeId: string): string {
+  return `sync:${scopeId}`;
 }
 
-function syncMetaKey(userId: string): string {
-  return `sync_meta:${userId}`;
+function syncMetaKey(scopeId: string): string {
+  return `sync_meta:${scopeId}`;
+}
+
+function userHouseholdKey(userId: string): string {
+  return `user_household:${userId}`;
+}
+
+function getSyncScope(userId: string): string {
+  const householdId = dbGet<string>(userHouseholdKey(userId));
+  if (householdId) {
+    console.log("[Sync] Using household scope:", householdId, "for user:", userId);
+    return `household:${householdId}`;
+  }
+  return userId;
 }
 
 export const syncRouter = createTRPCRouter({
   pull: protectedProcedure.query(({ ctx }) => {
     const userId = ctx.user.id;
-    const data = dbGet<SyncData>(syncKey(userId));
-    const meta = dbGet<{ updatedAt: string }>(syncMetaKey(userId));
+    const scope = getSyncScope(userId);
+    const data = dbGet<SyncData>(syncKey(scope));
+    const meta = dbGet<{ updatedAt: string; updatedBy?: string }>(syncMetaKey(scope));
 
     console.log(
       "[Sync] Pull for user:",
       userId,
+      "| scope:",
+      scope,
       "| has data:",
       !!data,
       "| updatedAt:",
@@ -41,6 +57,7 @@ export const syncRouter = createTRPCRouter({
     return {
       data: data ?? null,
       updatedAt: meta?.updatedAt ?? null,
+      updatedBy: meta?.updatedBy ?? null,
     };
   }),
 
@@ -48,14 +65,17 @@ export const syncRouter = createTRPCRouter({
     .input(syncDataSchema)
     .mutation(({ ctx, input }) => {
       const userId = ctx.user.id;
+      const scope = getSyncScope(userId);
       const now = new Date().toISOString();
 
-      dbSet(syncKey(userId), input);
-      dbSet(syncMetaKey(userId), { updatedAt: now });
+      dbSet(syncKey(scope), input);
+      dbSet(syncMetaKey(scope), { updatedAt: now, updatedBy: ctx.user.email });
 
       console.log(
         "[Sync] Push for user:",
         userId,
+        "| scope:",
+        scope,
         "| appliances:",
         input.appliances.length,
         "| tasks:",
@@ -71,11 +91,13 @@ export const syncRouter = createTRPCRouter({
 
   status: protectedProcedure.query(({ ctx }) => {
     const userId = ctx.user.id;
-    const meta = dbGet<{ updatedAt: string }>(syncMetaKey(userId));
+    const scope = getSyncScope(userId);
+    const meta = dbGet<{ updatedAt: string; updatedBy?: string }>(syncMetaKey(scope));
 
     return {
-      hasCloudData: !!dbGet(syncKey(userId)),
+      hasCloudData: !!dbGet(syncKey(scope)),
       lastSyncedAt: meta?.updatedAt ?? null,
+      scope,
     };
   }),
 });

@@ -10,6 +10,23 @@ export interface AuthUser {
   createdAt: string;
 }
 
+export interface HouseholdMemberInfo {
+  userId: string;
+  email: string;
+  role: string;
+  joinedAt: string;
+}
+
+export interface HouseholdInfo {
+  id: string;
+  name: string;
+  ownerId: string;
+  ownerEmail: string;
+  createdAt: string;
+  members: HouseholdMemberInfo[];
+  isOwner: boolean;
+}
+
 export type SyncStatus = 'idle' | 'syncing' | 'synced' | 'error' | 'offline';
 
 export const [AuthProvider, useAuth] = createContextHook(() => {
@@ -18,6 +35,8 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
   const [lastSyncedAt, setLastSyncedAt] = useState<string | null>(null);
+  const [household, setHousehold] = useState<HouseholdInfo | null>(null);
+  const [pendingInviteCode, setPendingInviteCode] = useState<string | null>(null);
   const mountedRef = useRef<boolean>(true);
 
   useEffect(() => {
@@ -25,6 +44,20 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
     return () => {
       mountedRef.current = false;
     };
+  }, []);
+
+  const fetchHousehold = useCallback(async () => {
+    try {
+      const result = await trpcClient.household.get.query();
+      if (mountedRef.current) {
+        setHousehold(result as HouseholdInfo | null);
+      }
+      console.log('[Auth] Household fetched:', result ? result.name : 'none');
+      return result;
+    } catch (e) {
+      console.warn('[Auth] Failed to fetch household:', e);
+      return null;
+    }
   }, []);
 
   useEffect(() => {
@@ -43,6 +76,7 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
         if (!cancelled && mountedRef.current) {
           setUser(me);
           console.log('[Auth] Session restored for:', me.email);
+          void fetchHousehold();
         }
       } catch {
         console.log('[Auth] Stored session invalid, clearing token');
@@ -61,6 +95,7 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
     return () => {
       cancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loginMutation = useMutation({
@@ -73,6 +108,7 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
       await SecureStore.setItemAsync(AUTH_TOKEN_KEY, data.token);
       setUser(data.user);
       console.log('[Auth] Login successful:', data.user.email);
+      void fetchHousehold();
     },
     onError: (error) => {
       console.error('[Auth] Login failed:', error.message);
@@ -103,9 +139,53 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
     }
     await SecureStore.deleteItemAsync(AUTH_TOKEN_KEY).catch(() => {});
     setUser(null);
+    setHousehold(null);
     setSyncStatus('idle');
     setLastSyncedAt(null);
     console.log('[Auth] User signed out');
+  }, []);
+
+  const createHousehold = useCallback(async (name: string) => {
+    const result = await trpcClient.household.create.mutate({ name });
+    console.log('[Auth] Household created:', result.name);
+    await fetchHousehold();
+    return result;
+  }, [fetchHousehold]);
+
+  const generateInvite = useCallback(async () => {
+    const result = await trpcClient.household.generateInvite.mutate();
+    console.log('[Auth] Invite generated:', result.code);
+    return result;
+  }, []);
+
+  const getInviteInfo = useCallback(async (code: string) => {
+    const result = await trpcClient.household.getInviteInfo.query({ code });
+    return result;
+  }, []);
+
+  const joinHousehold = useCallback(async (code: string, role?: string) => {
+    const result = await trpcClient.household.join.mutate({ code, role });
+    console.log('[Auth] Joined household:', result.householdName);
+    await fetchHousehold();
+    return result;
+  }, [fetchHousehold]);
+
+  const removeMember = useCallback(async (memberId: string) => {
+    await trpcClient.household.removeMember.mutate({ memberId });
+    console.log('[Auth] Removed member:', memberId);
+    await fetchHousehold();
+  }, [fetchHousehold]);
+
+  const leaveHousehold = useCallback(async () => {
+    await trpcClient.household.leave.mutate();
+    console.log('[Auth] Left household');
+    setHousehold(null);
+  }, []);
+
+  const deleteHousehold = useCallback(async () => {
+    await trpcClient.household.delete.mutate();
+    console.log('[Auth] Deleted household');
+    setHousehold(null);
   }, []);
 
   const pushToCloud = useCallback(async () => {
@@ -225,6 +305,11 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
     console.log('[Auth] Cloud data applied and queries invalidated');
   }, [queryClient]);
 
+  const refreshHousehold = useCallback(async () => {
+    if (!user) return;
+    await fetchHousehold();
+  }, [user, fetchHousehold]);
+
   return useMemo(() => ({
     user,
     isAuthenticated: !!user,
@@ -237,5 +322,16 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
     pushToCloud,
     pullFromCloud,
     applyCloudData,
-  }), [user, isLoading, loginMutation, registerMutation, signOut, syncStatus, lastSyncedAt, pushToCloud, pullFromCloud, applyCloudData]);
+    household,
+    createHousehold,
+    generateInvite,
+    getInviteInfo,
+    joinHousehold,
+    removeMember,
+    leaveHousehold,
+    deleteHousehold,
+    refreshHousehold,
+    pendingInviteCode,
+    setPendingInviteCode,
+  }), [user, isLoading, loginMutation, registerMutation, signOut, syncStatus, lastSyncedAt, pushToCloud, pullFromCloud, applyCloudData, household, createHousehold, generateInvite, getInviteInfo, joinHousehold, removeMember, leaveHousehold, deleteHousehold, refreshHousehold, pendingInviteCode]);
 });

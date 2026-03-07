@@ -17,8 +17,8 @@ import { TaskPriority, asISODateString } from '@/types';
 import { PRIORITIES } from '@/constants/priorities';
 import createFormStyles from '@/constants/formStyles';
 import ApplianceChipSelector from '@/components/ApplianceChipSelector';
+import DatePickerField from '@/components/DatePickerField';
 import { successNotification } from '@/utils/haptics';
-import { isValidDateString } from '@/utils/dates';
 
 export default function AddTaskScreen() {
   const router = useRouter();
@@ -45,10 +45,7 @@ export default function AddTaskScreen() {
       Alert.alert('Just a moment', 'Please enter a due date');
       return;
     }
-    if (!isValidDateString(dueDate.trim())) {
-      Alert.alert('Invalid Date', 'Please enter a valid date in YYYY-MM-DD format (e.g. 2025-06-15)');
-      return;
-    }
+
 
     successNotification();
 
@@ -110,13 +107,12 @@ export default function AddTaskScreen() {
             <View style={formStyles.divider} />
             <View style={formStyles.inputRow}>
               <View style={formStyles.inputContent}>
-                <Text style={formStyles.inputLabel}>When is it due?</Text>
-                <TextInput
-                  style={formStyles.textInput}
-                  placeholder="YYYY-MM-DD"
-                  placeholderTextColor={c.textTertiary}
+                <DatePickerField
+                  label="When is it due?"
                   value={dueDate}
-                  onChangeText={setDueDate}
+                  onChange={setDueDate}
+                  placeholder="Select due date"
+                  colors={c}
                   testID="task-due-date"
                 />
               </View>

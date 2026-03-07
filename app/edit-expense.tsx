@@ -36,6 +36,7 @@ import { useHome } from '@/contexts/HomeContext';
 import { BudgetCategory, ExpenseProvider, TrustedPro, toISODateString, asISODateString } from '@/types';
 import createFormStyles from '@/constants/formStyles';
 import ApplianceChipSelector from '@/components/ApplianceChipSelector';
+import DatePickerField from '@/components/DatePickerField';
 import { successNotification, lightImpact } from '@/utils/haptics';
 
 const CATEGORY_KEYS: { key: BudgetCategory; label: string }[] = [
@@ -257,13 +258,12 @@ export default function EditExpenseScreen() {
             <View style={formStyles.divider} />
             <View style={formStyles.inputRow}>
               <View style={formStyles.inputContent}>
-                <Text style={formStyles.inputLabel}>Date</Text>
-                <TextInput
-                  style={formStyles.textInput}
-                  placeholder="YYYY-MM-DD"
-                  placeholderTextColor={c.textTertiary}
+                <DatePickerField
+                  label="Date"
                   value={date}
-                  onChangeText={setDate}
+                  onChange={setDate}
+                  placeholder="Select date"
+                  colors={c}
                   testID="edit-expense-date"
                 />
               </View>

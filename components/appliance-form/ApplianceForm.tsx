@@ -17,6 +17,7 @@ import { Camera, X, Sparkles, ChevronRight, ScanLine, Hash, Receipt, Plus, Star,
 import Colors from '@/constants/colors';
 import { Appliance, ApplianceCategory, PurchaseData, AppliancePhoto, ManualInfo, AppInfo, asISODateString, toISODateString } from '@/types';
 import { successNotification } from '@/utils/haptics';
+import DatePickerField from '@/components/DatePickerField';
 import { CATEGORIES } from '@/components/appliance-form/constants';
 import { formStyles as styles } from '@/components/appliance-form/styles';
 import { useApplianceAnalysis } from '@/components/appliance-form/useApplianceAnalysis';
@@ -275,7 +276,7 @@ export default function ApplianceForm({ mode, initialData, onSave }: ApplianceFo
           <View style={styles.card}>
             <View style={styles.inputRow}><View style={styles.inputContent}><Text style={styles.inputLabel}>Where is it?</Text><TextInput style={styles.textInput} placeholder="e.g. Basement, Kitchen, Garage" placeholderTextColor={Colors.textTertiary} value={location} onChangeText={setLocation} testID={`${testIdPrefix}input-location`} /></View></View>
             <View style={styles.divider} />
-            <View style={styles.inputRow}><View style={styles.inputContent}><Text style={styles.inputLabel}>Purchase date</Text><TextInput style={styles.textInput} placeholder="YYYY-MM-DD" placeholderTextColor={Colors.textTertiary} value={purchaseDate} onChangeText={setPurchaseDate} testID={`${testIdPrefix}input-purchase-date`} /></View></View>
+            <View style={styles.inputRow}><View style={styles.inputContent}><DatePickerField label="Purchase date" value={purchaseDate} onChange={setPurchaseDate} placeholder="Select purchase date" colors={Colors} testID={`${testIdPrefix}input-purchase-date`} /></View></View>
             <View style={styles.divider} />
             <View style={styles.warrantyToggleRow}>
               <View style={styles.warrantyToggleLabel}>
@@ -294,7 +295,7 @@ export default function ApplianceForm({ mode, initialData, onSave }: ApplianceFo
             {hasWarranty && (
               <>
                 <View style={styles.divider} />
-                <View style={styles.inputRow}><View style={styles.inputContent}><Text style={styles.inputLabel}>Warranty expires</Text><TextInput style={styles.textInput} placeholder="YYYY-MM-DD" placeholderTextColor={Colors.textTertiary} value={warrantyExpiry} onChangeText={setWarrantyExpiry} testID={`${testIdPrefix}input-warranty`} /></View></View>
+                <View style={styles.inputRow}><View style={styles.inputContent}><DatePickerField label="Warranty expires" value={warrantyExpiry} onChange={setWarrantyExpiry} placeholder="Select expiry date" colors={Colors} testID={`${testIdPrefix}input-warranty`} /></View></View>
               </>
             )}
           </View>

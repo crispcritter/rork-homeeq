@@ -37,8 +37,8 @@ import { BudgetCategory, ExpenseProvider, TrustedPro, toISODateString, toISOTime
 import { Switch } from 'react-native';
 import createFormStyles from '@/constants/formStyles';
 import ApplianceChipSelector from '@/components/ApplianceChipSelector';
+import DatePickerField from '@/components/DatePickerField';
 import { successNotification, lightImpact } from '@/utils/haptics';
-import { isValidDateString } from '@/utils/dates';
 
 const CATEGORY_KEYS: { key: BudgetCategory; label: string }[] = [
   { key: 'maintenance', label: 'Maintenance' },
@@ -154,10 +154,7 @@ export default function AddExpenseScreen() {
       Alert.alert('Just a moment', 'Please enter a valid amount');
       return;
     }
-    if (!isValidDateString(date)) {
-      Alert.alert('Invalid Date', 'Please enter a valid date in YYYY-MM-DD format (e.g. 2025-06-15)');
-      return;
-    }
+
 
     successNotification();
 
@@ -274,13 +271,12 @@ export default function AddExpenseScreen() {
             <View style={formStyles.divider} />
             <View style={formStyles.inputRow}>
               <View style={formStyles.inputContent}>
-                <Text style={formStyles.inputLabel}>Date</Text>
-                <TextInput
-                  style={formStyles.textInput}
-                  placeholder="YYYY-MM-DD"
-                  placeholderTextColor={c.textTertiary}
+                <DatePickerField
+                  label="Date"
                   value={date}
-                  onChangeText={setDate}
+                  onChange={setDate}
+                  placeholder="Select date"
+                  colors={c}
                   testID="expense-date"
                 />
               </View>

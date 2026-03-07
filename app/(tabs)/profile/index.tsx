@@ -347,8 +347,8 @@ export default function ProfileScreen() {
       if (Platform.OS === 'web') {
         Alert.alert('Invite Code', `Share this code with your household member:\n\n${result.code}\n\nThey can enter it in the app to join.`);
       } else {
-        const { Share } = require('react-native');
-        await Share.share({ message });
+        const RNShare = require('react-native').Share;
+        await RNShare.share({ message });
       }
     } catch (e: any) {
       Alert.alert('Error', e?.message ?? 'Failed to generate invite.');

@@ -39,9 +39,6 @@ import {
   Search,
   Users,
   UserPlus,
-  Mail,
-  MessageSquare,
-  Trash2,
   User,
   Palette,
 } from 'lucide-react-native';
@@ -75,9 +72,7 @@ import {
   HeatingCoolingType,
   WaterHeaterType,
   GarageType,
-  HouseholdMember,
   HouseholdRole,
-  toISOTimestamp,
   asISODateString,
 } from '@/types';
 import { numericToString, stringToNumeric } from '@/utils/numeric';
@@ -189,7 +184,7 @@ const getRoleLabel = (role: HouseholdRole): string => {
 };
 
 export default function ProfileScreen() {
-  const { homeProfile, updateHomeProfile, resetData, isResetting, addHouseholdMember, removeHouseholdMember, sectionsDefaultOpen, setSectionsDefaultOpen } = useHome();
+  const { homeProfile, updateHomeProfile, resetData, isResetting, sectionsDefaultOpen, setSectionsDefaultOpen } = useHome();
   const { colors: c, themeMode, setThemeMode, paletteId, setPalette } = useTheme();
   const { user, isAuthenticated, signOut, syncStatus, lastSyncedAt, pushToCloud, household, createHousehold, generateInvite, removeMember, leaveHousehold, refreshHousehold } = useAuth();
   const navRouter = useRouter();
@@ -197,11 +192,7 @@ export default function ProfileScreen() {
   const [activePicker, setActivePicker] = useState<string | null>(null);
   const [showZillowModal, setShowZillowModal] = useState<boolean>(false);
   const [zillowInput, setZillowInput] = useState<string>(form.zillowLink ?? '');
-  const [showInviteModal, setShowInviteModal] = useState<boolean>(false);
-  const [inviteName, setInviteName] = useState<string>('');
-  const [inviteContact, setInviteContact] = useState<string>('');
-  const [inviteRole, setInviteRole] = useState<HouseholdRole>('spouse');
-  const [inviteMethod, setInviteMethod] = useState<'email' | 'sms'>('email');
+
 
   useEffect(() => {
     setForm(profileToForm(homeProfile));
@@ -878,87 +869,6 @@ export default function ProfileScreen() {
           </View>
         </CollapsibleSection>
 
-        <CollapsibleSection title="Household" themeColors={c} globalDefault={sectionsDefaultOpen}>
-          <View style={[styles.card, { backgroundColor: c.surface }]}>
-            {(form.householdMembers ?? []).length === 0 ? (
-              <View style={styles.householdEmpty}>
-                <View style={[styles.householdEmptyIcon, { backgroundColor: c.surfaceAlt }]}>
-                  <Users size={28} color={c.textTertiary} />
-                </View>
-                <Text style={[styles.householdEmptyTitle, { color: c.text }]}>No household members yet</Text>
-                <Text style={[styles.householdEmptySubtitle, { color: c.textTertiary }]}>Invite your spouse, partner, or family members to collaborate</Text>
-              </View>
-            ) : (
-              (form.householdMembers ?? []).map((member, idx) => (
-                <View key={member.id}>
-                  {idx > 0 && <View style={[styles.divider, { backgroundColor: c.borderLight }]} />}
-                  <View style={styles.householdMemberRow}>
-                    <View style={[styles.householdAvatar, { backgroundColor: c.primaryLight }]}>
-                      <User size={18} color={c.primary} />
-                    </View>
-                    <View style={styles.householdMemberInfo}>
-                      <Text style={[styles.householdMemberName, { color: c.text }]}>{member.name}</Text>
-                      <View style={styles.householdMemberMeta}>
-                        <View style={[styles.householdRoleBadge, { backgroundColor: c.primaryLight }]}>
-                          <Text style={[styles.householdRoleBadgeText, { color: c.primary }]}>{getRoleLabel(member.role)}</Text>
-                        </View>
-                        {member.status === 'pending' && (
-                          <View style={[styles.householdPendingBadge, { backgroundColor: c.warningLight }]}>
-                            <Text style={[styles.householdPendingText, { color: c.warning }]}>Pending</Text>
-                          </View>
-                        )}
-                      </View>
-                      {(member.email || member.phone) && (
-                        <Text style={[styles.householdMemberContact, { color: c.textTertiary }]}>
-                          {member.email || member.phone}
-                        </Text>
-                      )}
-                    </View>
-                    <TouchableOpacity
-                      onPress={() => {
-                        Alert.alert(
-                          'Remove Member',
-                          `Remove ${member.name} from your household?`,
-                          [
-                            { text: 'Cancel', style: 'cancel' },
-                            {
-                              text: 'Remove',
-                              style: 'destructive',
-                              onPress: () => removeHouseholdMember(member.id),
-                            },
-                          ]
-                        );
-                      }}
-                      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                      style={styles.householdRemoveButton}
-                    >
-                      <Trash2 size={16} color={c.danger} />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              ))
-            )}
-          </View>
-          <TouchableOpacity
-            style={[styles.householdInviteButton, { backgroundColor: c.surface }]}
-            onPress={() => {
-              setInviteName('');
-              setInviteContact('');
-              setInviteRole('spouse');
-              setInviteMethod('email');
-              setShowInviteModal(true);
-            }}
-            activeOpacity={0.7}
-            testID="invite-household-member"
-          >
-            <View style={[styles.householdInviteIconContainer, { backgroundColor: c.primaryLight }]}>
-              <UserPlus size={16} color={c.primary} />
-            </View>
-            <Text style={[styles.householdInviteText, { color: c.text }]}>Invite a Household Member</Text>
-            <ChevronDown size={16} color={c.textTertiary} style={{ transform: [{ rotate: '-90deg' }] }} />
-          </TouchableOpacity>
-        </CollapsibleSection>
-
         <CollapsibleSection title="Notes" themeColors={c} globalDefault={sectionsDefaultOpen}>
           <View style={[styles.card, { backgroundColor: c.surface }]}>
             <View style={styles.notesRow}>
@@ -1379,179 +1289,6 @@ export default function ProfileScreen() {
         onSelect={(v) => updateField('garageType', v as GarageType)}
         onClose={() => setActivePicker(null)}
       />
-
-      <Modal
-        visible={showInviteModal}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setShowInviteModal(false)}
-      >
-        <KeyboardAvoidingView
-          style={styles.modalOverlay}
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        >
-          <TouchableOpacity
-            style={styles.modalDismissArea}
-            activeOpacity={1}
-            onPress={() => setShowInviteModal(false)}
-          />
-          <View style={[styles.modalContent, { backgroundColor: c.surface }]}>
-            <View style={styles.modalHeader}>
-              <Text style={[styles.modalTitle, { color: c.text }]}>Invite Member</Text>
-              <TouchableOpacity
-                onPress={() => setShowInviteModal(false)}
-                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              >
-                <X size={22} color={c.textSecondary} />
-              </TouchableOpacity>
-            </View>
-            <Text style={[styles.modalDescription, { color: c.textSecondary }]}>
-              Add a household member and send them an invitation to join.
-            </Text>
-
-            <View style={[styles.modalInputContainer, { backgroundColor: c.background }]}>
-              <User size={18} color={c.textTertiary} />
-              <TextInput
-                style={[styles.modalInput, { color: c.text }]}
-                value={inviteName}
-                onChangeText={setInviteName}
-                placeholder="Name"
-                placeholderTextColor={c.textTertiary}
-                testID="invite-name-input"
-              />
-            </View>
-
-            <View style={styles.inviteMethodToggle}>
-              <TouchableOpacity
-                style={[
-                  styles.inviteMethodButton,
-                  inviteMethod === 'email' && styles.inviteMethodButtonActive,
-                ]}
-                onPress={() => setInviteMethod('email')}
-                activeOpacity={0.7}
-              >
-                <Mail size={14} color={inviteMethod === 'email' ? c.white : c.textSecondary} />
-                <Text style={[
-                  styles.inviteMethodText,
-                  inviteMethod === 'email' && styles.inviteMethodTextActive,
-                ]}>Email</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.inviteMethodButton,
-                  inviteMethod === 'sms' && styles.inviteMethodButtonActive,
-                ]}
-                onPress={() => setInviteMethod('sms')}
-                activeOpacity={0.7}
-              >
-                <MessageSquare size={14} color={inviteMethod === 'sms' ? c.white : c.textSecondary} />
-                <Text style={[
-                  styles.inviteMethodText,
-                  inviteMethod === 'sms' && styles.inviteMethodTextActive,
-                ]}>Text Message</Text>
-              </TouchableOpacity>
-            </View>
-
-            <View style={[styles.modalInputContainer, { backgroundColor: c.background }]}>
-              {inviteMethod === 'email' ? (
-                <Mail size={18} color={c.textTertiary} />
-              ) : (
-                <MessageSquare size={18} color={c.textTertiary} />
-              )}
-              <TextInput
-                style={[styles.modalInput, { color: c.text }]}
-                value={inviteContact}
-                onChangeText={setInviteContact}
-                placeholder={inviteMethod === 'email' ? 'Email address' : 'Phone number'}
-                placeholderTextColor={c.textTertiary}
-                keyboardType={inviteMethod === 'email' ? 'email-address' : 'phone-pad'}
-                autoCapitalize="none"
-                testID="invite-contact-input"
-              />
-            </View>
-
-            <Text style={[styles.inviteRoleLabel, { color: c.textSecondary }]}>Role</Text>
-            <View style={styles.inviteRoleRow}>
-              {ROLE_OPTIONS.map((opt) => (
-                <TouchableOpacity
-                  key={opt.value}
-                  style={[
-                    styles.inviteRoleChip,
-                    inviteRole === opt.value && styles.inviteRoleChipActive,
-                  ]}
-                  onPress={() => setInviteRole(opt.value)}
-                  activeOpacity={0.7}
-                >
-                  <Text style={[
-                    styles.inviteRoleChipText,
-                    inviteRole === opt.value && styles.inviteRoleChipTextActive,
-                  ]}>{opt.label}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            <View style={styles.modalActions}>
-              <View />
-              <TouchableOpacity
-                style={[
-                  styles.modalSaveButton,
-                  { backgroundColor: c.primary },
-                  (!inviteName.trim() || !inviteContact.trim()) && styles.modalSaveButtonDisabled,
-                ]}
-                disabled={!inviteName.trim() || !inviteContact.trim()}
-                onPress={() => {
-                  const name = inviteName.trim();
-                  const contact = inviteContact.trim();
-                  if (!name || !contact) return;
-
-                  const member: HouseholdMember = {
-                    id: `member-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-                    name,
-                    email: inviteMethod === 'email' ? contact : undefined,
-                    phone: inviteMethod === 'sms' ? contact : undefined,
-                    role: inviteRole,
-                    invitedAt: toISOTimestamp(new Date()),
-                    status: 'pending',
-                  };
-
-                  void addHouseholdMember(member);
-                  console.log('[Profile] Household member added:', name);
-
-                  const homeName = form.nickname || 'our home';
-                  const appStoreUrl = 'https://apps.apple.com/app/homeeq/id0000000000';
-                  const message = `Hey ${name}! I'd like to invite you to help manage ${homeName} together on HomeEQ. Download the app to get started and stay on top of our home maintenance, budget, and more!\n\n${appStoreUrl}`;
-
-                  setShowInviteModal(false);
-                  successNotification();
-
-                  if (inviteMethod === 'email') {
-                    const subject = encodeURIComponent(`Join me on our home management app`);
-                    const body = encodeURIComponent(message);
-                    const emailUrl = `mailto:${contact}?subject=${subject}&body=${body}`;
-                    console.log('[Profile] Opening email:', emailUrl);
-                    Linking.openURL(emailUrl).catch(() => {
-                      Alert.alert('Member Added', `${name} was added to your household. You can send the invitation manually.`);
-                    });
-                  } else {
-                    const smsBody = encodeURIComponent(message);
-                    const smsUrl = Platform.OS === 'ios'
-                      ? `sms:${contact}&body=${smsBody}`
-                      : `sms:${contact}?body=${smsBody}`;
-                    console.log('[Profile] Opening SMS:', smsUrl);
-                    Linking.openURL(smsUrl).catch(() => {
-                      Alert.alert('Member Added', `${name} was added to your household. You can send the invitation manually.`);
-                    });
-                  }
-                }}
-                activeOpacity={0.7}
-                testID="send-invite-button"
-              >
-                <Text style={styles.modalSaveText}>Add & Invite</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </KeyboardAvoidingView>
-      </Modal>
 
       <Modal
         visible={showZillowModal}

@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { View, Animated, StyleSheet, Dimensions } from 'react-native';
 import { Home } from 'lucide-react-native';
 
-const { height } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 interface SplashAnimationProps {
   onFinish: () => void;
@@ -17,8 +17,19 @@ export default function SplashAnimation({ onFinish }: SplashAnimationProps) {
   const lineWidth = useRef(new Animated.Value(0)).current;
   const containerOpacity = useRef(new Animated.Value(1)).current;
   const containerScale = useRef(new Animated.Value(1)).current;
+  const blob1Opacity = useRef(new Animated.Value(0)).current;
+  const blob2Opacity = useRef(new Animated.Value(0)).current;
+  const blob1Scale = useRef(new Animated.Value(0.8)).current;
+  const blob2Scale = useRef(new Animated.Value(0.8)).current;
 
   useEffect(() => {
+    Animated.parallel([
+      Animated.timing(blob1Opacity, { toValue: 1, duration: 800, useNativeDriver: true }),
+      Animated.timing(blob2Opacity, { toValue: 1, duration: 900, useNativeDriver: true }),
+      Animated.spring(blob1Scale, { toValue: 1, tension: 20, friction: 8, useNativeDriver: true }),
+      Animated.spring(blob2Scale, { toValue: 1, tension: 18, friction: 9, useNativeDriver: true }),
+    ]).start();
+
     const anim = Animated.sequence([
       Animated.parallel([
         Animated.spring(iconScale, {
@@ -94,7 +105,24 @@ export default function SplashAnimation({ onFinish }: SplashAnimationProps) {
         },
       ]}
     >
-      <View style={styles.topAccent} />
+      <Animated.View
+        style={[
+          styles.blob1,
+          {
+            opacity: blob1Opacity,
+            transform: [{ scale: blob1Scale }],
+          },
+        ]}
+      />
+      <Animated.View
+        style={[
+          styles.blob2,
+          {
+            opacity: blob2Opacity,
+            transform: [{ scale: blob2Scale }],
+          },
+        ]}
+      />
 
       <View style={styles.content}>
         <Animated.View
@@ -107,7 +135,7 @@ export default function SplashAnimation({ onFinish }: SplashAnimationProps) {
           ]}
         >
           <View style={styles.iconCircle}>
-            <Home size={36} color="#FFFFFF" strokeWidth={1.8} />
+            <Home size={34} color="#5A8A60" strokeWidth={1.8} />
           </View>
         </Animated.View>
 
@@ -141,41 +169,49 @@ export default function SplashAnimation({ onFinish }: SplashAnimationProps) {
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: '#2D2926',
+    backgroundColor: '#FAF8F5',
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 100,
+    overflow: 'hidden' as const,
   },
-  topAccent: {
+  blob1: {
     position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: height * 0.38,
-    backgroundColor: '#5A8A60',
-    borderBottomLeftRadius: 60,
-    borderBottomRightRadius: 60,
+    top: -height * 0.12,
+    right: -width * 0.25,
+    width: width * 0.9,
+    height: width * 0.9,
+    borderRadius: width * 0.45,
+    backgroundColor: 'rgba(90, 138, 96, 0.07)',
+  },
+  blob2: {
+    position: 'absolute',
+    bottom: -height * 0.08,
+    left: -width * 0.3,
+    width: width * 0.8,
+    height: width * 0.8,
+    borderRadius: width * 0.4,
+    backgroundColor: 'rgba(90, 138, 96, 0.05)',
   },
   content: {
     alignItems: 'center',
-    marginTop: -height * 0.06,
   },
   iconWrap: {
     marginBottom: 24,
   },
   iconCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 24,
-    backgroundColor: 'rgba(255,255,255,0.18)',
-    borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.3)',
+    width: 78,
+    height: 78,
+    borderRadius: 22,
+    backgroundColor: 'rgba(90, 138, 96, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(90, 138, 96, 0.18)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   title: {
     fontSize: 38,
-    color: '#FFFFFF',
+    color: '#2D2926',
     fontWeight: '300' as const,
     letterSpacing: 1,
   },
@@ -184,15 +220,15 @@ const styles = StyleSheet.create({
     color: '#C4826D',
   },
   line: {
-    height: 2,
+    height: 1.5,
     backgroundColor: '#C4826D',
     borderRadius: 1,
     marginTop: 12,
     marginBottom: 12,
   },
   subtitle: {
-    fontSize: 15,
-    color: 'rgba(255,255,255,0.7)',
+    fontSize: 13,
+    color: '#7A7067',
     fontWeight: '400' as const,
     letterSpacing: 1.5,
     textTransform: 'uppercase' as const,
@@ -200,8 +236,8 @@ const styles = StyleSheet.create({
   footer: {
     position: 'absolute',
     bottom: 60,
-    fontSize: 12,
-    color: 'rgba(255,255,255,0.35)',
+    fontSize: 11,
+    color: '#AEA69D',
     letterSpacing: 2,
     textTransform: 'uppercase' as const,
   },

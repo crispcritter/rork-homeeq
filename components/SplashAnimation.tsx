@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 13,
-    color: '#7A7067',
+    color: '#5A8A60',
     fontWeight: '400' as const,
     letterSpacing: 1.5,
     textTransform: 'uppercase' as const,

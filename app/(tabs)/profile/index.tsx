@@ -45,14 +45,16 @@ import {
   User,
   Palette,
 } from 'lucide-react-native';
-import { Alert, Linking, Modal } from 'react-native';
+import { Alert, Linking, Modal, ActivityIndicator } from 'react-native';
+import { useRouter } from 'expo-router';
 
 import { useHome } from '@/contexts/HomeContext';
 import Colors from '@/constants/colors';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useAuth } from '@/contexts/AuthContext';
 import DatePickerField from '@/components/DatePickerField';
 import { ColorScheme, PALETTE_OPTIONS } from '@/constants/colors';
-import { Moon, Sun, Smartphone, ChevronsUpDown } from 'lucide-react-native';
+import { Moon, Sun, Smartphone, ChevronsUpDown, Cloud, LogOut, LogIn, RefreshCw, CheckCircle } from 'lucide-react-native';
 import { successNotification } from '@/utils/haptics';
 import PickerModal from '@/components/PickerModal';
 import LinkPreview from '@/components/LinkPreview';
@@ -189,6 +191,8 @@ const getRoleLabel = (role: HouseholdRole): string => {
 export default function ProfileScreen() {
   const { homeProfile, updateHomeProfile, resetData, isResetting, addHouseholdMember, removeHouseholdMember, sectionsDefaultOpen, setSectionsDefaultOpen } = useHome();
   const { colors: c, themeMode, setThemeMode, paletteId, setPalette } = useTheme();
+  const { user, isAuthenticated, signOut, syncStatus, lastSyncedAt, pushToCloud } = useAuth();
+  const navRouter = useRouter();
   const [form, setForm] = useState<ProfileFormState>(() => profileToForm(homeProfile));
   const [activePicker, setActivePicker] = useState<string | null>(null);
   const [showZillowModal, setShowZillowModal] = useState<boolean>(false);
@@ -258,8 +262,8 @@ export default function ProfileScreen() {
           destructiveButtonIndex: destructiveIndex,
         },
         (buttonIndex) => {
-          if (buttonIndex === 0) takePhoto();
-          else if (buttonIndex === 1) pickImage();
+          if (buttonIndex === 0) void takePhoto();
+          else if (buttonIndex === 1) void pickImage();
           else if (buttonIndex === 2 && form.profileImage) updateField('profileImage', undefined);
         }
       );
@@ -276,12 +280,37 @@ export default function ProfileScreen() {
   }, [form.profileImage, takePhoto, pickImage, updateField]);
 
   const handleSave = useCallback(() => {
-    updateHomeProfile(formToProfile(form));
+    void updateHomeProfile(formToProfile(form));
     successNotification();
     Alert.alert('Saved', 'Your home profile has been updated.');
   }, [form, updateHomeProfile]);
 
+  const handleSignOut = useCallback(() => {
+    Alert.alert(
+      'Sign Out',
+      'You will no longer sync data to the cloud. Your local data will remain on this device.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Sign Out',
+          style: 'destructive',
+          onPress: () => void signOut(),
+        },
+      ]
+    );
+  }, [signOut]);
 
+  const handleManualSync = useCallback(() => {
+    void pushToCloud();
+  }, [pushToCloud]);
+
+  const syncStatusLabel = syncStatus === 'synced'
+    ? `Last synced ${lastSyncedAt ? new Date(lastSyncedAt).toLocaleString() : 'recently'}`
+    : syncStatus === 'syncing'
+    ? 'Syncing...'
+    : syncStatus === 'error'
+    ? 'Sync failed'
+    : 'Not synced';
 
   return (
     <KeyboardAvoidingView
@@ -849,6 +878,78 @@ export default function ProfileScreen() {
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
+            <Text style={[styles.sectionLabel, { color: c.textSecondary }]}>Cloud & Account</Text>
+          </View>
+          <View style={[styles.card, { backgroundColor: c.surface }]}>
+            {isAuthenticated ? (
+              <>
+                <View style={styles.inputRow}>
+                  <View style={[styles.inputIcon, { backgroundColor: c.primaryLight }]}>
+                    <Cloud size={18} color={c.primary} />
+                  </View>
+                  <View style={styles.inputContent}>
+                    <Text style={[styles.inputLabel, { color: c.textSecondary }]}>Signed in as</Text>
+                    <Text style={[styles.textInput, { color: c.text }]}>{user?.email}</Text>
+                  </View>
+                </View>
+                <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
+                <View style={styles.inputRow}>
+                  <View style={[styles.inputIcon, { backgroundColor: syncStatus === 'synced' ? c.successLight : syncStatus === 'error' ? c.dangerLight : c.primaryLight }]}>
+                    {syncStatus === 'syncing' ? (
+                      <ActivityIndicator size="small" color={c.primary} />
+                    ) : syncStatus === 'synced' ? (
+                      <CheckCircle size={18} color={c.success} />
+                    ) : (
+                      <RefreshCw size={18} color={syncStatus === 'error' ? c.danger : c.primary} />
+                    )}
+                  </View>
+                  <View style={[styles.inputContent, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }]}>
+                    <View style={{ flex: 1 }}>
+                      <Text style={[styles.inputLabel, { color: c.textSecondary }]}>Sync status</Text>
+                      <Text style={{ fontSize: 14, fontWeight: '500' as const, color: c.text }}>{syncStatusLabel}</Text>
+                    </View>
+                    <TouchableOpacity
+                      onPress={handleManualSync}
+                      style={[styles.syncNowButton, { backgroundColor: c.primaryLight }]}
+                      activeOpacity={0.7}
+                      disabled={syncStatus === 'syncing'}
+                    >
+                      <Text style={[styles.syncNowText, { color: c.primary }]}>Sync Now</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
+                <TouchableOpacity style={styles.inputRow} onPress={handleSignOut} activeOpacity={0.7}>
+                  <View style={[styles.inputIcon, { backgroundColor: c.dangerLight }]}>
+                    <LogOut size={18} color={c.danger} />
+                  </View>
+                  <View style={styles.inputContent}>
+                    <Text style={{ fontSize: 16, fontWeight: '500' as const, color: c.danger }}>Sign Out</Text>
+                  </View>
+                </TouchableOpacity>
+              </>
+            ) : (
+              <TouchableOpacity
+                style={styles.inputRow}
+                onPress={() => navRouter.push('/sign-in')}
+                activeOpacity={0.7}
+                testID="sign-in-button"
+              >
+                <View style={[styles.inputIcon, { backgroundColor: c.primaryLight }]}>
+                  <LogIn size={18} color={c.primary} />
+                </View>
+                <View style={styles.inputContent}>
+                  <Text style={{ fontSize: 16, fontWeight: '600' as const, color: c.primary }}>Sign In</Text>
+                  <Text style={[styles.inputLabel, { color: c.textSecondary, marginBottom: 0, marginTop: 2 }]}>Sync your data across devices</Text>
+                </View>
+                <ChevronDown size={16} color={c.textTertiary} style={{ transform: [{ rotate: '-90deg' }] }} />
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
             <Text style={[styles.sectionLabel, { color: c.textSecondary }]}>Settings</Text>
           </View>
           <View style={[styles.card, { backgroundColor: c.surface }]}>
@@ -938,7 +1039,7 @@ export default function ProfileScreen() {
               <Switch
                 value={!sectionsDefaultOpen}
                 onValueChange={(v) => {
-                  setSectionsDefaultOpen(!v);
+                  void setSectionsDefaultOpen(!v);
                   successNotification();
                 }}
                 trackColor={{ false: c.surfaceAlt, true: c.primaryLight }}
@@ -968,7 +1069,7 @@ export default function ProfileScreen() {
                       paletteId === option.id && { borderColor: c.primary },
                     ]}
                     onPress={() => {
-                      setPalette(option.id);
+                      void setPalette(option.id);
                       successNotification();
                     }}
                     activeOpacity={0.7}
@@ -1207,7 +1308,7 @@ export default function ProfileScreen() {
                     status: 'pending',
                   };
 
-                  addHouseholdMember(member);
+                  void addHouseholdMember(member);
                   console.log('[Profile] Household member added:', name);
 
                   const homeName = form.nickname || 'our home';
@@ -2013,6 +2114,15 @@ const styles = StyleSheet.create({
   },
   paletteLabel: {
     fontSize: 12,
+    fontWeight: '600' as const,
+  },
+  syncNowButton: {
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  syncNowText: {
+    fontSize: 13,
     fontWeight: '600' as const,
   },
 });

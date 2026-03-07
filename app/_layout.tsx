@@ -5,6 +5,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
 import { HomeProvider } from "../contexts/HomeContext";
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { trpc, trpcClient } from "@/lib/trpc";
 import SplashAnimation from "@/components/SplashAnimation";
 
 
@@ -83,6 +85,10 @@ function RootLayoutNav() {
         name="color-guide"
         options={{ title: "Color Guide" }}
       />
+      <Stack.Screen
+        name="sign-in"
+        options={{ presentation: "modal", title: "Sign In", headerShown: false }}
+      />
     </Stack>
   );
 }
@@ -99,15 +105,19 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <ThemeProvider>
-          <HomeProvider>
-            <RootLayoutNav />
-            {showSplash && <SplashAnimation onFinish={handleSplashFinish} />}
-          </HomeProvider>
-        </ThemeProvider>
-      </GestureHandlerRootView>
-    </QueryClientProvider>
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <AuthProvider>
+            <ThemeProvider>
+              <HomeProvider>
+                <RootLayoutNav />
+                {showSplash && <SplashAnimation onFinish={handleSplashFinish} />}
+              </HomeProvider>
+            </ThemeProvider>
+          </AuthProvider>
+        </GestureHandlerRootView>
+      </QueryClientProvider>
+    </trpc.Provider>
   );
 }

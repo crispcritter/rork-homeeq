@@ -190,6 +190,11 @@ export type GarageType = 'none' | 'attached-1' | 'attached-2' | 'attached-3' | '
 export type RoofType = 'asphalt-shingle' | 'metal' | 'tile' | 'slate' | 'flat' | 'wood-shake' | 'other';
 export type WaterHeaterType = 'tank-gas' | 'tank-electric' | 'tankless-gas' | 'tankless-electric' | 'heat-pump' | 'other';
 
+/**
+ * `yearBuilt` is `null` when the year is unknown (e.g. user hasn't entered it
+ * yet or the data source didn't provide it). Downstream code that derives the
+ * home's age MUST use {@link getHomeAge} which returns `null` for unknown years.
+ */
 export interface HomeProfile {
   id: string;
   nickname: string;
@@ -217,6 +222,25 @@ export interface HomeProfile {
   notes: string;
   profileImage?: string;
   zillowLink?: string;
+}
+
+export function validateYearBuilt(value: unknown): number | null {
+  if (value === null || value === undefined) return null;
+  const num = typeof value === 'string' ? Number(value) : value;
+  if (typeof num !== 'number' || !Number.isFinite(num)) return null;
+  const year = Math.floor(num);
+  if (year < 1600 || year > new Date().getFullYear()) {
+    console.warn(`validateYearBuilt: value ${num} out of range, returning null`);
+    return null;
+  }
+  return year;
+}
+
+export function getHomeAge(yearBuilt: number | null): number | null {
+  if (yearBuilt === null) return null;
+  const currentYear = new Date().getFullYear();
+  const age = currentYear - yearBuilt;
+  return age >= 0 ? age : null;
 }
 
 export interface ReviewRating {

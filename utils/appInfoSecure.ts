@@ -1,5 +1,10 @@
 import * as SecureStore from 'expo-secure-store';
 
+// SecureStore has no enumeration API — there is no way to list all stored keys.
+// If an appliance is deleted without calling deleteAppPassword (e.g. a bug in
+// the delete flow), its SecureStore entry becomes an orphan that cannot be
+// discovered or cleaned up. Callers that delete appliances must ensure they
+// also call deleteAppPassword for the same ID.
 const APP_PW_PREFIX = 'appinfo_pw_';
 const SECURE_STORE_MAX_KEY_BYTES = 2048;
 

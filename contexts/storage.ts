@@ -173,7 +173,8 @@ async function runMigrations(): Promise<void> {
         await migrationFn();
         console.log(`[Storage] Migration to v${v} complete`);
       } catch (e) {
-        console.error(`[Storage] Migration to v${v} failed:`, e);
+        console.error(`[Storage] Migration to v${v} failed, halting at v${v - 1}:`, e);
+        break;
       }
     }
     try {

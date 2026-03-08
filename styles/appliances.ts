@@ -1,0 +1,175 @@
+import { StyleSheet } from 'react-native';
+import { ColorScheme } from '@/constants/colors';
+
+const createStyles = (c: ColorScheme) => StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: c.background,
+  },
+  searchRow: {
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: 4,
+  },
+  sortRow: {
+    paddingBottom: 8,
+  },
+  sortScrollContent: {
+    paddingHorizontal: 20,
+    gap: 8,
+    paddingVertical: 4,
+  },
+  sortChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: c.border,
+    backgroundColor: c.surface,
+  },
+  sortChipText: {
+    fontSize: 13,
+    color: c.textSecondary,
+    fontWeight: '500',
+    lineHeight: 17,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: c.surfaceAlt,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    height: 44,
+    gap: 10,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 15,
+    color: c.text,
+    lineHeight: 20,
+  },
+  list: {
+    paddingHorizontal: 20,
+  },
+  card: {
+    backgroundColor: c.surface,
+    borderRadius: 16,
+    marginBottom: 10,
+    padding: 14,
+    shadowColor: c.cardShadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 1,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  cardRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+  },
+  cardImage: {
+    width: 56,
+    height: 56,
+    borderRadius: 14,
+  },
+  cardImagePlaceholder: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cardImageText: {
+    fontSize: 22,
+    fontWeight: '700',
+  },
+  cardInfo: {
+    flex: 1,
+  },
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: c.text,
+    marginBottom: 2,
+    lineHeight: 22,
+  },
+  cardBrand: {
+    fontSize: 13,
+    color: c.textSecondary,
+    marginBottom: 6,
+    lineHeight: 17,
+  },
+  cardChips: {
+    flexDirection: 'row',
+    gap: 6,
+  },
+  chip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: c.surfaceAlt,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  warrantyChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  chipText: {
+    fontSize: 11,
+    fontWeight: '500',
+    color: c.textSecondary,
+    lineHeight: 15,
+  },
+  emptyState: {
+    alignItems: 'center',
+    paddingVertical: 60,
+    paddingHorizontal: 20,
+  },
+  emptyIconWrap: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: c.primaryLight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  emptyTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: c.text,
+    marginBottom: 6,
+    textAlign: 'center',
+    lineHeight: 26,
+  },
+  emptySubtitle: {
+    fontSize: 15,
+    color: c.textSecondary,
+    marginBottom: 20,
+    textAlign: 'center',
+    lineHeight: 21,
+  },
+  emptyBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: c.primary,
+    paddingHorizontal: 22,
+    paddingVertical: 13,
+    borderRadius: 14,
+  },
+  emptyBtnText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: c.white,
+    lineHeight: 20,
+  },
+});
+
+export default createStyles;

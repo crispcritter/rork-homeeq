@@ -149,8 +149,8 @@ export default function DashboardScreen() {
               onPress={() => handlePress('/(tabs)/pros')}
               testID="find-pro-quick"
             >
-              <View style={[styles.quickActionIcon, { backgroundColor: '#EDE8F5' }]}>
-                <Search size={18} color="#7B61A8" />
+              <View style={[styles.quickActionIcon, { backgroundColor: c.accentLight }]}>
+                <Search size={18} color={c.accent} />
               </View>
               <Text style={styles.quickActionLabel}>Find a pro</Text>
             </PressableCard>
@@ -254,7 +254,7 @@ export default function DashboardScreen() {
           {trustedPros.length === 0 ? (
             <PressableCard style={[styles.emptyProviderCard, { backgroundColor: c.surface, shadowColor: c.cardShadow }]} onPress={() => handlePress('/(tabs)/pros')}>
               <View style={styles.emptyProviderIcon}>
-                <Search size={20} color="#7B61A8" />
+                <Search size={20} color={c.accent} />
               </View>
               <Text style={[styles.emptyProviderTitle, { color: c.text }]}>No pros saved yet</Text>
               <Text style={[styles.emptyProviderSub, { color: c.textSecondary }]}>Add providers when logging expenses to build your list</Text>

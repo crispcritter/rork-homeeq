@@ -23,6 +23,7 @@ export async function setAppPassword(applianceId: string, password: string): Pro
     console.log('[AppInfoSecure] Saved password for appliance:', applianceId);
   } catch (e) {
     console.error('[AppInfoSecure] Failed to save password for', applianceId, e);
+    throw e;
   }
 }
 

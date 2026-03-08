@@ -30,6 +30,17 @@ export function isValidRating(value: number): boolean {
   return !isNaN(value) && value >= 0 && value <= 5;
 }
 
+export type NonNegativeInt = number & { readonly __brand: 'NonNegativeInt' };
+
+export function toNonNegativeInt(value: number): NonNegativeInt {
+  const floored = Math.max(0, Math.floor(value));
+  if (!Number.isFinite(floored)) {
+    console.warn(`toNonNegativeInt: non-finite input ${value}, returning 0`);
+    return 0 as NonNegativeInt;
+  }
+  return floored as NonNegativeInt;
+}
+
 export function intervalToDays(interval: number, unit: RecurringUnit): number {
   switch (unit) {
     case 'days':
@@ -211,7 +222,7 @@ export interface HomeProfile {
 export interface ReviewRating {
   source: 'google' | 'yelp' | 'angies_list' | 'bbb' | 'homeadvisor' | 'thumbtack';
   rating: Rating;
-  reviewCount?: number;
+  reviewCount?: NonNegativeInt;
   url?: string;
 }
 

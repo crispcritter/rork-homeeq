@@ -1,7 +1,7 @@
-import { useMemo, useCallback, useState } from 'react';
+import { useMemo, useCallback } from 'react';
 import { Alert, Linking } from 'react-native';
 import { useHome } from '@/contexts/HomeContext';
-import { ReviewRating, ProServiceCategory } from '@/types';
+import { ReviewRating, ProServiceCategory, toNonNegativeInt } from '@/types';
 import { lightImpact, successNotification } from '@/utils/haptics';
 import { getAverageRating } from '@/utils/ratings';
 import { toRating, isValidRating } from '@/types';
@@ -166,7 +166,7 @@ export function useProviderDetail(providerId: string | undefined) {
     const newRating: ReviewRating = {
       source: rating.source,
       rating: toRating(val),
-      reviewCount: rating.reviewCount ? parseInt(rating.reviewCount, 10) : undefined,
+      reviewCount: rating.reviewCount ? toNonNegativeInt(parseInt(rating.reviewCount, 10)) : undefined,
       url: rating.url.trim() || undefined,
     };
     updateProRatings(pro.id, [...filtered, newRating]);

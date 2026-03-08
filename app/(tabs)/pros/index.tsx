@@ -230,12 +230,19 @@ export default function TrustedProsScreen() {
       );
     }
 
-    return result.sort((a, b) => {
-      const aRating = a.ratings?.length ? a.ratings.reduce((s, r) => s + r.rating, 0) / a.ratings.length : 0;
-      const bRating = b.ratings?.length ? b.ratings.reduce((s, r) => s + r.rating, 0) / b.ratings.length : 0;
-      if (bRating !== aRating) return bRating - aRating;
-      return b.expenseIds.length - a.expenseIds.length;
-    });
+    return result
+      .map((pro) => ({
+        ...pro,
+        _avgRating: pro.ratings?.length
+          ? pro.ratings.reduce((s, r) => s + r.rating, 0) / pro.ratings.length
+          : null,
+      }))
+      .sort((a, b) => {
+        const aR = a._avgRating ?? 0;
+        const bR = b._avgRating ?? 0;
+        if (bR !== aR) return bR - aR;
+        return b.expenseIds.length - a.expenseIds.length;
+      });
   }, [trustedPros, searchQuery, selectedCategory, maxRadius, appliances]);
 
   const activeFilterCount = useMemo(() => {
@@ -707,9 +714,7 @@ export default function TrustedProsScreen() {
           </View>
         ) : (
           filteredPros.map((pro) => {
-            const avgRating = pro.ratings?.length
-              ? pro.ratings.reduce((s, r) => s + r.rating, 0) / pro.ratings.length
-              : null;
+            const avgRating = pro._avgRating;
             const linkedCount = pro.linkedApplianceIds?.length ?? 0;
 
             return (

@@ -41,9 +41,11 @@ export function formatMonthYear(dateStr: ISODateString | string): string {
   return parseLocalDate(dateStr).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 }
 
+export type WarrantyColorKey = 'danger' | 'warning' | 'success' | 'textTertiary';
+
 export interface WarrantyStatus {
   label: string;
-  color: string;
+  colorKey: WarrantyColorKey;
   daysLeft: number | null;
 }
 
@@ -67,19 +69,19 @@ export function isValidDateString(dateStr: string): boolean {
   return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
 }
 
-export function getWarrantyStatus(expiryDate: ISODateString | string, colors: { danger: string; warning: string; success: string; textTertiary: string }): WarrantyStatus {
+export function getWarrantyStatus(expiryDate: ISODateString | string): WarrantyStatus {
   if (!expiryDate || typeof expiryDate !== 'string' || expiryDate.trim() === '') {
-    return { label: 'Unknown', color: colors.textTertiary, daysLeft: null };
+    return { label: 'Unknown', colorKey: 'textTertiary', daysLeft: null };
   }
   const expiry = parseLocalDate(expiryDate);
   if (isNaN(expiry.getTime())) {
-    return { label: 'Unknown', color: colors.textTertiary, daysLeft: null };
+    return { label: 'Unknown', colorKey: 'textTertiary', daysLeft: null };
   }
   const now = new Date();
   const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const expiryMidnight = new Date(expiry.getFullYear(), expiry.getMonth(), expiry.getDate());
   const diffDays = Math.round((expiryMidnight.getTime() - todayMidnight.getTime()) / (1000 * 60 * 60 * 24));
-  if (diffDays < 0) return { label: 'Expired', color: colors.danger, daysLeft: diffDays };
-  if (diffDays < 90) return { label: 'Expiring Soon', color: colors.warning, daysLeft: diffDays };
-  return { label: 'Covered', color: colors.success, daysLeft: diffDays };
+  if (diffDays < 0) return { label: 'Expired', colorKey: 'danger', daysLeft: diffDays };
+  if (diffDays < 90) return { label: 'Expiring Soon', colorKey: 'warning', daysLeft: diffDays };
+  return { label: 'Covered', colorKey: 'success', daysLeft: diffDays };
 }

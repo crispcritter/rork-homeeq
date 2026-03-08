@@ -93,8 +93,8 @@ export default function AppliancesScreen() {
           return locCmp !== 0 ? locCmp : (a.name || '').localeCompare(b.name || '');
         }
         case 'warranty': {
-          const wA = getWarrantyStatus(a.warrantyExpiry, c);
-          const wB = getWarrantyStatus(b.warrantyExpiry, c);
+          const wA = getWarrantyStatus(a.warrantyExpiry);
+          const wB = getWarrantyStatus(b.warrantyExpiry);
           const order: Record<string, number> = { 'Expiring Soon': 0, 'Covered': 1, 'Expired': 2, 'Unknown': 3 };
           const oA = order[wA.label] ?? 4;
           const oB = order[wB.label] ?? 4;
@@ -105,7 +105,7 @@ export default function AppliancesScreen() {
           return 0;
       }
     });
-  }, [appliances, search, sortBy, c]);
+  }, [appliances, search, sortBy]);
 
   const proNameByApplianceId = useMemo(() => {
     const map = new Map<string, string>();
@@ -252,7 +252,7 @@ export default function AppliancesScreen() {
           </View>
         ) : (
           filtered.map((appliance) => {
-            const warranty = getWarrantyStatus(appliance.warrantyExpiry, c);
+            const warranty = getWarrantyStatus(appliance.warrantyExpiry);
             const avatarColor = CATEGORY_AVATARS[appliance.category] || c.textTertiary;
             return (
               <PressableCard
@@ -279,9 +279,9 @@ export default function AppliancesScreen() {
                           <Text style={styles.chipText}>{appliance.location}</Text>
                         </View>
                       ) : null}
-                      <View style={[styles.warrantyChip, { backgroundColor: warranty.color + '18' }]}>
-                        <Shield size={10} color={warranty.color} />
-                        <Text style={[styles.chipText, { color: warranty.color }]}>{warranty.label}</Text>
+                      <View style={[styles.warrantyChip, { backgroundColor: c[warranty.colorKey] + '18' }]}>
+                        <Shield size={10} color={c[warranty.colorKey]} />
+                        <Text style={[styles.chipText, { color: c[warranty.colorKey] }]}>{warranty.label}</Text>
                       </View>
                     </View>
                   </View>

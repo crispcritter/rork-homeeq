@@ -264,7 +264,7 @@ export default function ApplianceDetailScreen() {
   }
 
   const hasWarranty = appliance.hasWarranty ?? (appliance.warrantyExpiry ? true : false);
-  const warranty = hasWarranty ? getWarrantyStatus(appliance.warrantyExpiry, c) : null;
+  const warranty = hasWarranty ? getWarrantyStatus(appliance.warrantyExpiry) : null;
 
   return (
     <>
@@ -320,8 +320,8 @@ export default function ApplianceDetailScreen() {
           {hasWarranty && warranty && (
             <View style={styles.warrantyCard}>
               <View style={styles.warrantyHeader}>
-                <Shield size={20} color={warranty.color} />
-                <Text style={[styles.warrantyStatus, { color: warranty.color }]}>{warranty.label}</Text>
+                <Shield size={20} color={c[warranty.colorKey]} />
+                <Text style={[styles.warrantyStatus, { color: c[warranty.colorKey] }]}>{warranty.label}</Text>
               </View>
               <Text style={styles.warrantyExpiry}>
                 {warranty.daysLeft == null

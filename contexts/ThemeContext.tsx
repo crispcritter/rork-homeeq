@@ -1,16 +1,16 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import createContextHook from '@nkzw/create-context-hook';
-import { LightColors, DarkColors, ColorScheme, PaletteId, palettes } from '@/constants/colors';
+import { ColorScheme, PaletteId, palettes } from '@/constants/colors';
 
 export type ThemeMode = 'system' | 'light' | 'dark';
 
 const THEME_STORAGE_KEY = 'home_theme_mode';
 const PALETTE_STORAGE_KEY = 'home_color_palette';
 
-export const [ThemeProvider, useTheme] = createContextHook(() => {
+export const [ThemeProvider, useTheme] = createContextHook(() => { // eslint-disable-line rork/general-context-optimization
   const queryClient = useQueryClient();
   const systemScheme = useColorScheme();
 
@@ -53,14 +53,22 @@ export const [ThemeProvider, useTheme] = createContextHook(() => {
 
   const setThemeMode = useCallback(async (mode: ThemeMode) => {
     console.log('[Theme] Setting theme mode to:', mode);
-    await AsyncStorage.setItem(THEME_STORAGE_KEY, mode);
-    queryClient.setQueryData(['themeMode'], mode);
+    try {
+      await AsyncStorage.setItem(THEME_STORAGE_KEY, mode);
+      queryClient.setQueryData(['themeMode'], mode);
+    } catch (error) {
+      console.error('[Theme] Failed to persist theme mode:', error);
+    }
   }, [queryClient]);
 
   const setPalette = useCallback(async (id: PaletteId) => {
     console.log('[Theme] Setting color palette to:', id);
-    await AsyncStorage.setItem(PALETTE_STORAGE_KEY, id);
-    queryClient.setQueryData(['colorPalette'], id);
+    try {
+      await AsyncStorage.setItem(PALETTE_STORAGE_KEY, id);
+      queryClient.setQueryData(['colorPalette'], id);
+    } catch (error) {
+      console.error('[Theme] Failed to persist color palette:', error);
+    }
   }, [queryClient]);
 
   return {

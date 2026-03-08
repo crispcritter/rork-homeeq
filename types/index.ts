@@ -8,7 +8,14 @@ export function toISOTimestamp(date: Date): ISODateString {
   return date.toISOString() as ISODateString;
 }
 
+const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d+)?Z?)?$/;
+
 export function asISODateString(value: string): ISODateString {
+  if (value === '') return value as ISODateString;
+  if (!ISO_DATE_RE.test(value)) {
+    console.warn(`asISODateString: invalid format "${value}", returning empty string`);
+    return '' as ISODateString;
+  }
   return value as ISODateString;
 }
 

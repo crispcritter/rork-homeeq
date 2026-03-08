@@ -78,8 +78,8 @@ function RootLayoutNav() {
         options={{ title: "Provider" }}
       />
       <Stack.Screen
-        name="trusted-pros"
-        options={{ title: "Trusted Pros" }}
+        name="profile"
+        options={{ title: "Home Profile" }}
       />
       <Stack.Screen
         name="color-guide"

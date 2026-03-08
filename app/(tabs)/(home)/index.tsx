@@ -147,7 +147,7 @@ export default function DashboardScreen() {
           <View style={styles.quickAction}>
             <PressableCard
               style={[styles.quickActionInner, { backgroundColor: c.surface, shadowColor: c.cardShadow }]}
-              onPress={() => handlePress('/trusted-pros')}
+              onPress={() => handlePress('/(tabs)/pros')}
               testID="find-pro-quick"
             >
               <View style={[styles.quickActionIcon, { backgroundColor: '#EDE8F5' }]}>
@@ -248,12 +248,12 @@ export default function DashboardScreen() {
         <AnimatedCard index={7} style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={[styles.sectionTitle, { color: c.text }]}>Trusted pros</Text>
-            <TouchableOpacity onPress={() => handlePress('/trusted-pros')}>
+            <TouchableOpacity onPress={() => handlePress('/(tabs)/pros')}>
               <Text style={styles.seeAllText}>{trustedPros.length > 0 ? 'See all' : 'Find pros'}</Text>
             </TouchableOpacity>
           </View>
           {trustedPros.length === 0 ? (
-            <PressableCard style={[styles.emptyProviderCard, { backgroundColor: c.surface, shadowColor: c.cardShadow }]} onPress={() => handlePress('/trusted-pros')}>
+            <PressableCard style={[styles.emptyProviderCard, { backgroundColor: c.surface, shadowColor: c.cardShadow }]} onPress={() => handlePress('/(tabs)/pros')}>
               <View style={styles.emptyProviderIcon}>
                 <Search size={20} color="#7B61A8" />
               </View>

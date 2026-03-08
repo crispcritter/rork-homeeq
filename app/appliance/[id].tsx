@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState, useRef } from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 import {
   View,
   Text,
@@ -10,7 +10,6 @@ import {
   FlatList,
   Linking,
   ActivityIndicator,
-  Animated,
 } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { Image } from 'expo-image';
@@ -43,7 +42,6 @@ import {
   UserCheck,
   XCircle,
   Phone,
-  RefreshCw,
   ShoppingCart,
   Smartphone,
   User,
@@ -161,7 +159,7 @@ export default function ApplianceDetailScreen() {
   }, [linkedPro, router]);
 
   const handleFindAPro = useCallback(() => {
-    router.push('/trusted-pros' as any);
+    router.push('/(tabs)/pros' as any);
   }, [router]);
 
   const relatedTasks = useMemo(
@@ -659,7 +657,7 @@ export default function ApplianceDetailScreen() {
                       style={styles.appInfoCopyBtn}
                       onPress={() => {
                         lightImpact();
-                        Clipboard.setStringAsync(appliance.appInfo!.username!);
+                        void Clipboard.setStringAsync(appliance.appInfo!.username!);
                       }}
                       activeOpacity={0.7}
                       hitSlop={8}
@@ -696,7 +694,7 @@ export default function ApplianceDetailScreen() {
                         style={styles.appInfoCopyBtn}
                         onPress={() => {
                           lightImpact();
-                          Clipboard.setStringAsync(appliance.appInfo!.password!);
+                          void Clipboard.setStringAsync(appliance.appInfo!.password!);
                         }}
                         activeOpacity={0.7}
                         hitSlop={8}

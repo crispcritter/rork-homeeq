@@ -143,7 +143,7 @@ export default function BudgetScreen() {
               <TouchableOpacity
                 onPress={() => {
                   lightImpact();
-                  router.push('/trusted-pros' as any);
+                  router.push('/(tabs)/pros' as any);
                 }}
                 activeOpacity={0.7}
                 style={styles.seeAllBtn}

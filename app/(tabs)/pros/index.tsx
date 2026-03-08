@@ -165,7 +165,7 @@ export default function TrustedProsScreen() {
       id: `pro-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
       name: place.name,
       specialty: place.types.length > 0
-        ? place.types[0].replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+        ? place.types[0].replace(/_/g, ' ').replace(/\b\w/g, (ch) => ch.toUpperCase())
         : effectiveSearchQuery,
       phone: place.phone ?? undefined,
       email: place.email ?? undefined,
@@ -193,7 +193,7 @@ export default function TrustedProsScreen() {
       result = result.filter((pro) => {
         const nameMatch = pro.name.toLowerCase().includes(q);
         const specialtyMatch = pro.specialty.toLowerCase().includes(q);
-        const categoryMatch = pro.serviceCategories?.some((c) => c.toLowerCase().includes(q)) ?? false;
+        const categoryMatch = pro.serviceCategories?.some((cat) => cat.toLowerCase().includes(q)) ?? false;
         const linkedAppliances = appliances.filter((a) => pro.linkedApplianceIds?.includes(a.id));
         const applianceMatch = linkedAppliances.some(
           (a) => a.name.toLowerCase().includes(q) || a.category.toLowerCase().includes(q)
@@ -280,12 +280,9 @@ export default function TrustedProsScreen() {
     outputRange: ['0deg', '180deg'],
   });
 
-
-
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        {/* Find a Pro Section */}
         <View style={styles.findCard}>
           <TouchableOpacity
             style={styles.findCardHeader}
@@ -414,7 +411,6 @@ export default function TrustedProsScreen() {
                 </Text>
               )}
 
-              {/* Search Results */}
               {placesSearchMutation.isPending && (
                 <View style={styles.loadingWrap}>
                   <ActivityIndicator size="large" color={c.primary} />
@@ -563,7 +559,6 @@ export default function TrustedProsScreen() {
           </Animated.View>
         </View>
 
-        {/* Saved Pros Header */}
         <View style={styles.savedHeader}>
           <View style={styles.savedHeaderLeft}>
             <UserCheck size={18} color="#4A7FBF" />
@@ -574,7 +569,6 @@ export default function TrustedProsScreen() {
           </View>
         </View>
 
-        {/* Search Bar */}
         <View style={styles.searchRow}>
           <View style={styles.searchInputWrap}>
             <Search size={16} color={c.textTertiary} />
@@ -606,7 +600,6 @@ export default function TrustedProsScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Expandable Filters */}
         <Animated.View style={[styles.filtersWrap, { maxHeight: filterMaxHeight, opacity: filterOpacity }]}>
           <View style={styles.filterSection}>
             <View style={styles.filterLabelRow}>
@@ -664,7 +657,6 @@ export default function TrustedProsScreen() {
           </View>
         </Animated.View>
 
-        {/* Active Filter Summary */}
         {activeFilterCount > 0 && (
           <View style={styles.activeFilterSummary}>
             <Text style={styles.activeFilterText}>
@@ -678,7 +670,6 @@ export default function TrustedProsScreen() {
           </View>
         )}
 
-        {/* Results */}
         {filteredPros.length === 0 ? (
           <View style={styles.emptyState}>
             <View style={styles.emptyIconWrap}>
@@ -826,7 +817,6 @@ export default function TrustedProsScreen() {
         <View style={{ height: 40 }} />
       </ScrollView>
 
-      {/* Appliance Picker Modal */}
       <Modal
         visible={showAppliancePicker}
         transparent
@@ -890,4 +880,3 @@ export default function TrustedProsScreen() {
     </View>
   );
 }
-

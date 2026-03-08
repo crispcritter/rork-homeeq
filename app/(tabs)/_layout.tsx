@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { Home, Refrigerator, CalendarCheck, PiggyBank, UserCircle } from "lucide-react-native";
+import { Home, Refrigerator, CalendarCheck, PiggyBank, UserCheck } from "lucide-react-native";
 import React from "react";
 import { useTheme } from "@/contexts/ThemeContext";
 
@@ -53,10 +53,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="pros"
         options={{
-          title: "Profile",
-          tabBarIcon: ({ color, size }) => <UserCircle size={size - 2} color={color} />,
+          title: "Trusted Pros",
+          tabBarIcon: ({ color, size }) => <UserCheck size={size - 2} color={color} />,
         }}
       />
     </Tabs>

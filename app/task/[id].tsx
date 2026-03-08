@@ -355,7 +355,7 @@ export default function TaskDetailScreen() {
   }, [linkedPro, router]);
 
   const handleFindAPro = useCallback(() => {
-    router.push('/trusted-pros' as any);
+    router.push('/(tabs)/pros' as any);
   }, [router]);
 
   if (!task) {

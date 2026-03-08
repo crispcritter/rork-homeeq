@@ -316,7 +316,7 @@ export default function ProviderDetailScreen() {
                         <Text style={styles.ratingReviewCount}>{r.reviewCount.toLocaleString()} reviews</Text>
                       )}
                       {r.url && (
-                        <TouchableOpacity onPress={() => Linking.openURL(r.url!.startsWith('http') ? r.url! : `https://${r.url!}`)} style={styles.ratingLinkBtn}>
+                        <TouchableOpacity onPress={() => Linking.openURL(r.url!.startsWith('http') ? r.url! : `https://${r.url!}`).catch(() => {})} style={styles.ratingLinkBtn}>
                           <ExternalLink size={11} color={c.primary} />
                           <Text style={styles.ratingLinkText}>View</Text>
                         </TouchableOpacity>

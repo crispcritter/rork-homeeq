@@ -506,7 +506,7 @@ export default function TrustedProsScreen() {
                             {place.phone ? (
                               <TouchableOpacity
                                 style={styles.resultDetailRow}
-                                onPress={() => Linking.openURL(`tel:${place.phone}`)}
+                                onPress={() => Linking.openURL(`tel:${place.phone}`).catch(() => {})}
                                 activeOpacity={0.7}
                               >
                                 <Phone size={13} color={c.primary} />
@@ -516,7 +516,7 @@ export default function TrustedProsScreen() {
                             {place.email ? (
                               <TouchableOpacity
                                 style={styles.resultDetailRow}
-                                onPress={() => Linking.openURL(`mailto:${place.email}`)}
+                                onPress={() => Linking.openURL(`mailto:${place.email}`).catch(() => {})}
                                 activeOpacity={0.7}
                               >
                                 <Mail size={13} color={c.primary} />
@@ -526,7 +526,7 @@ export default function TrustedProsScreen() {
                             {place.website ? (
                               <TouchableOpacity
                                 style={styles.resultDetailRow}
-                                onPress={() => Linking.openURL(place.website!)}
+                                onPress={() => Linking.openURL(place.website!).catch(() => {})}
                                 activeOpacity={0.7}
                               >
                                 <Globe size={13} color={c.primary} />

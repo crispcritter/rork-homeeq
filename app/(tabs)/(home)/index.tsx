@@ -35,10 +35,9 @@ export default function DashboardScreen() {
   const { colors: c } = useTheme();
   const styles = useMemo(() => createStyles(c), [c]);
   const {
-    appliances,
     upcomingTasks,
     overdueTasks,
-
+    getApplianceById,
     isLoading,
     homeProfile,
     trustedPros,
@@ -55,7 +54,7 @@ export default function DashboardScreen() {
       duration: 500,
       useNativeDriver: true,
     }).start();
-  }, []);
+  }, [fadeAnim]);
 
   const handlePress = useCallback((route: string) => {
     lightImpact();
@@ -212,7 +211,7 @@ export default function DashboardScreen() {
             </View>
           ) : (
             upcomingTasks.slice(0, 3).map((task, idx) => {
-              const appliance = task.applianceId ? appliances.find((a) => a.id === task.applianceId) : null;
+              const appliance = task.applianceId ? getApplianceById(task.applianceId) : null;
               return (
                 <AnimatedCard key={task.id} index={4 + idx}>
                   <PressableCard style={[styles.taskCard, { backgroundColor: c.surface, shadowColor: c.cardShadow }]} onPress={() => handlePress(`/task/${task.id}`)}>

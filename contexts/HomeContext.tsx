@@ -107,13 +107,13 @@ export const [HomeProvider, useHome] = createContextHook(() => {
   const appliances = useMemo(() => appliancesQuery.data ?? [], [appliancesQuery.data]);
   const tasks = useMemo(() => tasksQuery.data ?? [], [tasksQuery.data]);
   const budgetItems = useMemo(() => budgetItemsQuery.data ?? [], [budgetItemsQuery.data]);
-  const monthlyBudget = monthlyBudgetQuery.data ?? 1500;
-  const homeProfile = homeProfileQuery.data ?? DEFAULT_PROFILE;
-  const customRecommendedGroups = recommendedGroupsQuery.data ?? defaultRecommendedGroups;
+  const monthlyBudget = useMemo(() => monthlyBudgetQuery.data ?? 1500, [monthlyBudgetQuery.data]);
+  const homeProfile = useMemo(() => homeProfileQuery.data ?? DEFAULT_PROFILE, [homeProfileQuery.data]);
+  const customRecommendedGroups = useMemo(() => recommendedGroupsQuery.data ?? defaultRecommendedGroups, [recommendedGroupsQuery.data]);
   const trustedPros = useMemo(() => trustedProsQuery.data ?? [], [trustedProsQuery.data]);
-  const sectionsDefaultOpen = sectionsDefaultOpenQuery.data ?? true;
-  const isLoading = appliancesQuery.isLoading || tasksQuery.isLoading || budgetItemsQuery.isLoading || monthlyBudgetQuery.isLoading || homeProfileQuery.isLoading || recommendedGroupsQuery.isLoading || trustedProsQuery.isLoading || sectionsDefaultOpenQuery.isLoading;
-  const isError = appliancesQuery.isError || tasksQuery.isError || budgetItemsQuery.isError || monthlyBudgetQuery.isError || homeProfileQuery.isError || recommendedGroupsQuery.isError || trustedProsQuery.isError || sectionsDefaultOpenQuery.isError;
+  const sectionsDefaultOpen = useMemo(() => sectionsDefaultOpenQuery.data ?? true, [sectionsDefaultOpenQuery.data]);
+  const isLoading = useMemo(() => appliancesQuery.isLoading || tasksQuery.isLoading || budgetItemsQuery.isLoading || monthlyBudgetQuery.isLoading || homeProfileQuery.isLoading || recommendedGroupsQuery.isLoading || trustedProsQuery.isLoading || sectionsDefaultOpenQuery.isLoading, [appliancesQuery.isLoading, tasksQuery.isLoading, budgetItemsQuery.isLoading, monthlyBudgetQuery.isLoading, homeProfileQuery.isLoading, recommendedGroupsQuery.isLoading, trustedProsQuery.isLoading, sectionsDefaultOpenQuery.isLoading]);
+  const isError = useMemo(() => appliancesQuery.isError || tasksQuery.isError || budgetItemsQuery.isError || monthlyBudgetQuery.isError || homeProfileQuery.isError || recommendedGroupsQuery.isError || trustedProsQuery.isError || sectionsDefaultOpenQuery.isError, [appliancesQuery.isError, tasksQuery.isError, budgetItemsQuery.isError, monthlyBudgetQuery.isError, homeProfileQuery.isError, recommendedGroupsQuery.isError, trustedProsQuery.isError, sectionsDefaultOpenQuery.isError]);
   const errors = useMemo(() => {
     const entries: { key: string; error: Error }[] = [];
     if (appliancesQuery.error) entries.push({ key: 'appliances', error: appliancesQuery.error });
@@ -618,7 +618,7 @@ export const [HomeProvider, useHome] = createContextHook(() => {
     return Promise.all(queryKeys.map((key) => queryClient.invalidateQueries({ queryKey: [key] })));
   }, [queryClient]);
 
-  const isRefreshing = appliancesQuery.isRefetching || tasksQuery.isRefetching || budgetItemsQuery.isRefetching || monthlyBudgetQuery.isRefetching || homeProfileQuery.isRefetching || recommendedGroupsQuery.isRefetching || trustedProsQuery.isRefetching || sectionsDefaultOpenQuery.isRefetching;
+  const isRefreshing = useMemo(() => appliancesQuery.isRefetching || tasksQuery.isRefetching || budgetItemsQuery.isRefetching || monthlyBudgetQuery.isRefetching || homeProfileQuery.isRefetching || recommendedGroupsQuery.isRefetching || trustedProsQuery.isRefetching || sectionsDefaultOpenQuery.isRefetching, [appliancesQuery.isRefetching, tasksQuery.isRefetching, budgetItemsQuery.isRefetching, monthlyBudgetQuery.isRefetching, homeProfileQuery.isRefetching, recommendedGroupsQuery.isRefetching, trustedProsQuery.isRefetching, sectionsDefaultOpenQuery.isRefetching]);
 
   return useMemo(() => ({
     appliances,

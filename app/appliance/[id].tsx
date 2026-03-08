@@ -324,7 +324,9 @@ export default function ApplianceDetailScreen() {
                 <Text style={[styles.warrantyStatus, { color: warranty.color }]}>{warranty.label}</Text>
               </View>
               <Text style={styles.warrantyExpiry}>
-                {warranty.daysLeft > 0
+                {warranty.daysLeft == null
+                  ? 'Unknown'
+                  : warranty.daysLeft > 0
                   ? `${warranty.daysLeft} days remaining`
                   : warranty.daysLeft === 0
                   ? 'Expires today'

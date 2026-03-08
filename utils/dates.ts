@@ -44,7 +44,7 @@ export function formatMonthYear(dateStr: ISODateString | string): string {
 export interface WarrantyStatus {
   label: string;
   color: string;
-  daysLeft: number;
+  daysLeft: number | null;
 }
 
 export function getWeekEndingSaturday(dateStr: ISODateString | string): Date {
@@ -69,11 +69,11 @@ export function isValidDateString(dateStr: string): boolean {
 
 export function getWarrantyStatus(expiryDate: ISODateString | string, colors: { danger: string; warning: string; success: string; textTertiary: string }): WarrantyStatus {
   if (!expiryDate || typeof expiryDate !== 'string' || expiryDate.trim() === '') {
-    return { label: 'Unknown', color: colors.textTertiary, daysLeft: 0 };
+    return { label: 'Unknown', color: colors.textTertiary, daysLeft: null };
   }
   const expiry = parseLocalDate(expiryDate);
   if (isNaN(expiry.getTime())) {
-    return { label: 'Unknown', color: colors.textTertiary, daysLeft: 0 };
+    return { label: 'Unknown', color: colors.textTertiary, daysLeft: null };
   }
   const now = new Date();
   const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());

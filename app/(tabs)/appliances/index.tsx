@@ -99,7 +99,7 @@ export default function AppliancesScreen() {
           const oA = order[wA.label] ?? 4;
           const oB = order[wB.label] ?? 4;
           if (oA !== oB) return oA - oB;
-          return wB.daysLeft - wA.daysLeft;
+          return (wB.daysLeft ?? -Infinity) - (wA.daysLeft ?? -Infinity);
         }
         default:
           return 0;

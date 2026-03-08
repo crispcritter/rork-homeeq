@@ -27,7 +27,7 @@ export function formatRelativeDate(dateStr: ISODateString | string): string {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
-export function formatShortDate(dateStr: ISODateString | string): string {
+export function formatWeekdayShortDate(dateStr: ISODateString | string): string {
   const date = parseLocalDate(dateStr);
   return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 }

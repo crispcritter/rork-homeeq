@@ -29,7 +29,7 @@ import PressableCard from '@/components/PressableCard';
 import FloatingActionButton from '@/components/FloatingActionButton';
 import ScreenHeader from '@/components/ScreenHeader';
 import ExportSection from '@/components/ExportSection';
-import { formatRelativeDate, formatShortDate, getWeekEndingSaturday, formatWeekEnding, parseLocalDate } from '@/utils/dates';
+import { formatRelativeDate, formatWeekdayShortDate, getWeekEndingSaturday, formatWeekEnding, parseLocalDate } from '@/utils/dates';
 import { lightImpact, mediumImpact, successNotification } from '@/utils/haptics';
 import { rowsToCSV, buildHtmlReport } from '@/utils/export';
 import { getPriorityColor, getPriorityBgColor } from '@/constants/priorities';
@@ -329,9 +329,9 @@ export default function ScheduleScreen() {
               <Clock size={11} color={isOverdue ? c.danger : c.textSecondary} />
               <Text style={[styles.taskDateText, isOverdue && { color: c.danger }]}>
                 {isCompleted && task.completedDate
-                  ? `Done ${formatShortDate(task.completedDate)}`
+                  ? `Done ${formatWeekdayShortDate(task.completedDate)}`
                   : isArchived && task.archivedDate
-                  ? `Archived ${formatShortDate(task.archivedDate)}`
+                  ? `Archived ${formatWeekdayShortDate(task.archivedDate)}`
                   : formatRelativeDate(task.dueDate)}
               </Text>
             </View>

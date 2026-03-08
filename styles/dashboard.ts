@@ -282,7 +282,9 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     paddingRight: Spacing.xs,
   },
   providerCard: {
-    width: 148,
+    minWidth: 140,
+    flex: 1,
+    maxWidth: 180,
     backgroundColor: c.surface,
     borderRadius: Radius.card,
     padding: Spacing.lg,

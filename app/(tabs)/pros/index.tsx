@@ -17,6 +17,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { generateId } from '@/utils/id';
+import { AlertTriangle } from 'lucide-react-native';
 import {
   UserCheck,
   Phone,
@@ -55,7 +56,7 @@ export default function TrustedProsScreen() {
   const router = useRouter();
   const { colors: c } = useTheme();
   const styles = useMemo(() => createStyles(c), [c]);
-  const { trustedPros, deleteTrustedPro, addTrustedPro, appliances, homeProfile } = useHome();
+  const { trustedPros, deleteTrustedPro, addTrustedPro, appliances, homeProfile, isError, errors } = useHome();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
@@ -695,7 +696,17 @@ export default function TrustedProsScreen() {
           </View>
         )}
 
-        {filteredPros.length === 0 ? (
+        {isError ? (
+          <View style={styles.emptyState}>
+            <View style={[styles.emptyIconWrap, { backgroundColor: c.danger + '15' }]}>
+              <AlertTriangle size={28} color={c.danger} />
+            </View>
+            <Text style={styles.emptyTitle}>Failed to load pros</Text>
+            <Text style={styles.emptySubtext}>
+              {errors.find((e) => e.key === 'trustedPros')?.error?.message ?? 'Something went wrong loading your Trusted Pros. Please try again.'}
+            </Text>
+          </View>
+        ) : filteredPros.length === 0 ? (
           <View style={styles.emptyState}>
             <View style={styles.emptyIconWrap}>
               {trustedPros.length === 0 ? (

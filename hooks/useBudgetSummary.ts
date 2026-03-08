@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useHome } from '@/contexts/HomeContext';
 import { BUDGET_CATEGORY_COLORS } from '@/constants/categories';
 import { parseLocalDate } from '@/utils/dates';
@@ -9,6 +9,11 @@ export interface CategoryBreakdown {
   amount: number;
   percentage: number;
   color: string;
+}
+
+export interface DateRange {
+  from: Date;
+  to: Date;
 }
 
 export function useBudgetSummary() {
@@ -35,6 +40,45 @@ export function useBudgetSummary() {
       })
       .reduce((sum, item) => sum + signedAmount(item), 0);
   }, [budgetItems, currentYear]);
+
+  const totalSpentAllTime = useMemo(() => {
+    return budgetItems.reduce((sum, item) => sum + signedAmount(item), 0);
+  }, [budgetItems]);
+
+  const spentInRange = useCallback(
+    (range: DateRange): number => {
+      return budgetItems
+        .filter((item) => {
+          const d = parseLocalDate(item.date);
+          return d >= range.from && d <= range.to;
+        })
+        .reduce((sum, item) => sum + signedAmount(item), 0);
+    },
+    [budgetItems]
+  );
+
+  const categoryBreakdownForRange = useCallback(
+    (range: DateRange): CategoryBreakdown[] => {
+      const rangeItems = budgetItems.filter((item) => {
+        const d = parseLocalDate(item.date);
+        return d >= range.from && d <= range.to;
+      });
+      const total = rangeItems.reduce((s, i) => s + signedAmount(i), 0);
+      const breakdown: Record<string, number> = {};
+      rangeItems.forEach((item) => {
+        breakdown[item.category] = (breakdown[item.category] || 0) + signedAmount(item);
+      });
+      return Object.entries(breakdown)
+        .map(([category, amount]) => ({
+          category,
+          amount,
+          percentage: total > 0 ? (amount / total) * 100 : 0,
+          color: BUDGET_CATEGORY_COLORS[category] || '#AEA69D',
+        }))
+        .sort((a, b) => b.amount - a.amount);
+    },
+    [budgetItems]
+  );
 
   const categoryBreakdown = useMemo((): CategoryBreakdown[] => {
     const monthItems = budgetItems.filter((item) => {
@@ -65,7 +109,10 @@ export function useBudgetSummary() {
     budgetItems,
     spentThisMonth,
     spentThisYear,
+    totalSpentAllTime,
+    spentInRange,
     categoryBreakdown,
+    categoryBreakdownForRange,
     recentItems,
   };
 }

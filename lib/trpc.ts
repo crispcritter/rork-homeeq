@@ -36,6 +36,21 @@ export const trpcClient = trpc.createClient({
         }
         return {};
       },
+      fetch(url, options) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15_000);
+        const signal = options?.signal
+          ? options.signal
+          : controller.signal;
+
+        if (options?.signal) {
+          options.signal.addEventListener('abort', () => controller.abort());
+        }
+
+        return fetch(url, { ...options, signal }).finally(() =>
+          clearTimeout(timeoutId)
+        );
+      },
     }),
   ],
 });

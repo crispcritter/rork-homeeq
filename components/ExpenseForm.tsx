@@ -32,7 +32,7 @@ import {
   StickyNote,
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
-import { BudgetCategory, ExpenseProvider, TrustedPro, BudgetItem, toISODateString, toISOTimestamp, asISODateString } from '@/types';
+import { BudgetCategory, BudgetItemType, ExpenseProvider, TrustedPro, BudgetItem, toISODateString, toISOTimestamp, asISODateString } from '@/types';
 import createFormStyles from '@/constants/formStyles';
 import createExpenseStyles from '@/styles/expense';
 import { EXPENSE_CATEGORY_OPTIONS, PAYMENT_METHODS } from '@/constants/expenseOptions';
@@ -63,6 +63,7 @@ export default function ExpenseForm({ mode, existingExpense }: ExpenseFormProps)
   const logPrefix = isEdit ? '[EditExpense]' : '[AddExpense]';
   const testIdPrefix = isEdit ? 'edit-expense' : 'expense';
 
+  const [itemType, setItemType] = useState<BudgetItemType>(existingExpense?.type ?? 'expense');
   const [description, setDescription] = useState(existingExpense?.description ?? '');
   const [amount, setAmount] = useState(existingExpense?.amount?.toString() ?? '');
   const [category, setCategory] = useState<BudgetCategory>(existingExpense?.category ?? 'maintenance');
@@ -228,6 +229,7 @@ export default function ExpenseForm({ mode, existingExpense }: ExpenseFormProps)
 
     const expenseData: BudgetItem = {
       id: expenseId,
+      type: itemType,
       description: description.trim(),
       amount: parseFloat(amount),
       category,
@@ -250,7 +252,7 @@ export default function ExpenseForm({ mode, existingExpense }: ExpenseFormProps)
 
     router.back();
   }, [
-    description, amount, category, date, selectedApplianceId,
+    description, amount, itemType, category, date, selectedApplianceId,
     receiptImages, providerName, providerPhone, providerEmail,
     providerWebsite, providerAddress, providerSpecialty, providerNotes,
     paymentMethod, invoiceNumber, expenseNotes, taxDeductible, selectedTrustedProId,
@@ -264,8 +266,27 @@ export default function ExpenseForm({ mode, existingExpense }: ExpenseFormProps)
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={formStyles.content}>
+        <View style={styles.typeToggleRow}>
+          <TouchableOpacity
+            style={[styles.typeToggleBtn, itemType === 'expense' && styles.typeToggleBtnActive]}
+            onPress={() => { lightImpact(); setItemType('expense'); }}
+            activeOpacity={0.7}
+            testID={`${testIdPrefix}-type-expense`}
+          >
+            <Text style={[styles.typeToggleText, itemType === 'expense' && styles.typeToggleTextActive]}>Expense</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.typeToggleBtn, itemType === 'credit' && styles.typeToggleBtnCredit]}
+            onPress={() => { lightImpact(); setItemType('credit'); }}
+            activeOpacity={0.7}
+            testID={`${testIdPrefix}-type-credit`}
+          >
+            <Text style={[styles.typeToggleText, itemType === 'credit' && styles.typeToggleTextCredit]}>Credit / Refund</Text>
+          </TouchableOpacity>
+        </View>
+
         <View style={styles.amountSection}>
-          <Text style={styles.amountLabel}>How much?</Text>
+          <Text style={styles.amountLabel}>{itemType === 'credit' ? 'Credit amount' : 'How much?'}</Text>
           <View style={styles.amountInputRow}>
             <Text style={styles.amountSign}>$</Text>
             <TextInput

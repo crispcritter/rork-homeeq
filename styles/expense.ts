@@ -27,6 +27,39 @@ const createExpenseStyles = (c: ColorScheme) => StyleSheet.create({
     fontWeight: '600' as const,
     color: c.white,
   },
+  typeToggleRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginBottom: 16,
+  },
+  typeToggleBtn: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 12,
+    backgroundColor: c.surface,
+    borderWidth: 1,
+    borderColor: c.border,
+    alignItems: 'center',
+  },
+  typeToggleBtnActive: {
+    backgroundColor: c.primary,
+    borderColor: c.primary,
+  },
+  typeToggleBtnCredit: {
+    backgroundColor: c.success,
+    borderColor: c.success,
+  },
+  typeToggleText: {
+    fontSize: 14,
+    fontWeight: '600' as const,
+    color: c.textSecondary,
+  },
+  typeToggleTextActive: {
+    color: c.white,
+  },
+  typeToggleTextCredit: {
+    color: c.white,
+  },
   amountSection: {
     alignItems: 'center',
     paddingVertical: 28,

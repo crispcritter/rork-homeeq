@@ -71,6 +71,7 @@ export type TaskPriority = 'low' | 'medium' | 'high';
 export type RecurringUnit = 'days' | 'weeks' | 'months' | 'years';
 export type TaskStatus = 'upcoming' | 'overdue' | 'completed' | 'archived';
 export type BudgetCategory = 'maintenance' | 'repair' | 'upgrade' | 'emergency' | 'inspection';
+export type BudgetItemType = 'expense' | 'credit';
 
 export interface PurchaseData {
   price?: number;
@@ -153,6 +154,7 @@ export interface ExpenseProvider {
 
 export interface BudgetItem {
   id: string;
+  type: BudgetItemType;
   category: BudgetCategory;
   description: string;
   amount: number;
@@ -164,6 +166,10 @@ export interface BudgetItem {
   invoiceNumber?: string;
   notes?: string;
   taxDeductible?: boolean;
+}
+
+export function signedAmount(item: BudgetItem): number {
+  return item.type === 'credit' ? -item.amount : item.amount;
 }
 
 export type HomeType = 'single-family' | 'townhouse' | 'condo' | 'apartment' | 'duplex' | 'mobile-home' | 'other';

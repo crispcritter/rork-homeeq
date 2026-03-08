@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useHome } from '@/contexts/HomeContext';
 import { BUDGET_CATEGORY_COLORS } from '@/constants/categories';
 import { parseLocalDate } from '@/utils/dates';
+import { signedAmount } from '@/types';
 
 export interface CategoryBreakdown {
   category: string;
@@ -23,7 +24,7 @@ export function useBudgetSummary() {
         const d = parseLocalDate(item.date);
         return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
       })
-      .reduce((sum, item) => sum + item.amount, 0);
+      .reduce((sum, item) => sum + signedAmount(item), 0);
   }, [budgetItems, currentMonth, currentYear]);
 
   const spentThisYear = useMemo(() => {
@@ -32,7 +33,7 @@ export function useBudgetSummary() {
         const d = parseLocalDate(item.date);
         return d.getFullYear() === currentYear;
       })
-      .reduce((sum, item) => sum + item.amount, 0);
+      .reduce((sum, item) => sum + signedAmount(item), 0);
   }, [budgetItems, currentYear]);
 
   const categoryBreakdown = useMemo((): CategoryBreakdown[] => {
@@ -40,10 +41,10 @@ export function useBudgetSummary() {
       const d = parseLocalDate(item.date);
       return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
     });
-    const total = monthItems.reduce((s, i) => s + i.amount, 0);
+    const total = monthItems.reduce((s, i) => s + signedAmount(i), 0);
     const breakdown: Record<string, number> = {};
     monthItems.forEach((item) => {
-      breakdown[item.category] = (breakdown[item.category] || 0) + item.amount;
+      breakdown[item.category] = (breakdown[item.category] || 0) + signedAmount(item);
     });
     return Object.entries(breakdown)
       .map(([category, amount]) => ({

@@ -17,7 +17,7 @@ export const STORAGE_KEYS = {
   sectionsDefaultOpen: 'home_sections_default_open',
 } as const;
 
-export const CURRENT_SCHEMA_VERSION = 2;
+export const CURRENT_SCHEMA_VERSION = 3;
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return typeof v === 'object' && v !== null && !Array.isArray(v);
@@ -96,6 +96,27 @@ const migrations: Record<number, MigrationFn> = {
         console.log('[Migration] v2: Converted HomeProfile numeric fields from string to number|null');
       } catch (e) {
         console.error('[Migration] v2 HomeProfile migration failed:', e);
+      }
+    }
+  },
+  3: async () => {
+    const raw = await AsyncStorage.getItem(STORAGE_KEYS.budgetItems);
+    if (raw) {
+      try {
+        const items = JSON.parse(raw) as Record<string, unknown>[];
+        let changed = false;
+        for (const item of items) {
+          if (!item.type || (item.type !== 'expense' && item.type !== 'credit')) {
+            item.type = 'expense';
+            changed = true;
+          }
+        }
+        if (changed) {
+          await AsyncStorage.setItem(STORAGE_KEYS.budgetItems, JSON.stringify(items));
+          console.log('[Migration] v3: Added type field to BudgetItems without one');
+        }
+      } catch (e) {
+        console.error('[Migration] v3 BudgetItem migration failed:', e);
       }
     }
   },

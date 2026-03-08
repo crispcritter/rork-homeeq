@@ -112,7 +112,9 @@ export default function ExpenseDetailScreen() {
               {categoryLabels[expense.category] || expense.category}
             </Text>
           </View>
-          <Text style={styles.heroAmount}>-${expense.amount.toLocaleString()}</Text>
+          <Text style={[styles.heroAmount, { color: expense.type === 'credit' ? c.success : c.danger }]}>
+              {expense.type === 'credit' ? '+' : '-'}${expense.amount.toLocaleString()}
+            </Text>
           <Text style={styles.heroDesc}>{expense.description}</Text>
           <Text style={styles.heroDate}>
             {parseLocalDate(expense.date).toLocaleDateString('en-US', {

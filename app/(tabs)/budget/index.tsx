@@ -270,7 +270,9 @@ export default function BudgetScreen() {
                   )}
                 </View>
                 <View style={styles.expenseRight}>
-                  <Text style={styles.expenseAmount}>-${item.amount}</Text>
+                  <Text style={[styles.expenseAmount, item.type === 'credit' && { color: c.success }]}>
+                    {item.type === 'credit' ? '+' : '-'}${item.amount}
+                  </Text>
                   {item.paymentMethod && (
                     <Text style={styles.expensePayment}>{item.paymentMethod}</Text>
                   )}

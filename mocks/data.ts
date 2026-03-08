@@ -124,9 +124,9 @@ export const sampleTasks: MaintenanceTask[] = [
 ];
 
 export const sampleBudgetItems: BudgetItem[] = [
-  { id: '1', category: 'maintenance', description: 'AC Filter', amount: 25, date: asISODateString('2026-01-15'), applianceId: '1' },
-  { id: '2', category: 'repair', description: 'Dishwasher Seal Replacement', amount: 85, date: asISODateString('2026-01-22'), applianceId: '2' },
-  { id: '3', category: 'inspection', description: 'Annual HVAC Inspection', amount: 175, date: asISODateString('2026-02-01'), applianceId: '1' },
-  { id: '4', category: 'maintenance', description: 'Gutter Guard Install', amount: 320, date: asISODateString('2026-02-10') },
-  { id: '5', category: 'emergency', description: 'Pipe Burst Repair', amount: 450, date: asISODateString('2026-02-14') },
+  { id: '1', type: 'expense', category: 'maintenance', description: 'AC Filter', amount: 25, date: asISODateString('2026-01-15'), applianceId: '1' },
+  { id: '2', type: 'expense', category: 'repair', description: 'Dishwasher Seal Replacement', amount: 85, date: asISODateString('2026-01-22'), applianceId: '2' },
+  { id: '3', type: 'expense', category: 'inspection', description: 'Annual HVAC Inspection', amount: 175, date: asISODateString('2026-02-01'), applianceId: '1' },
+  { id: '4', type: 'expense', category: 'maintenance', description: 'Gutter Guard Install', amount: 320, date: asISODateString('2026-02-10') },
+  { id: '5', type: 'expense', category: 'emergency', description: 'Pipe Burst Repair', amount: 450, date: asISODateString('2026-02-14') },
 ];

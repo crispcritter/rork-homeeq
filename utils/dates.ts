@@ -14,7 +14,9 @@ export function parseLocalDate(dateStr: ISODateString | string): Date {
 export function formatRelativeDate(dateStr: ISODateString | string): string {
   const date = parseLocalDate(dateStr);
   const now = new Date();
-  const diffDays = Math.ceil((date.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+  const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const dateMidnight = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const diffDays = Math.round((dateMidnight.getTime() - todayMidnight.getTime()) / (1000 * 60 * 60 * 24));
   if (diffDays < 0) return `${Math.abs(diffDays)}d overdue`;
   if (diffDays === 0) return 'Today';
   if (diffDays === 1) return 'Tomorrow';
@@ -74,7 +76,9 @@ export function getWarrantyStatus(expiryDate: ISODateString | string, colors: { 
     return { label: 'Unknown', color: colors.textTertiary, daysLeft: 0 };
   }
   const now = new Date();
-  const diffDays = Math.ceil((expiry.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+  const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const expiryMidnight = new Date(expiry.getFullYear(), expiry.getMonth(), expiry.getDate());
+  const diffDays = Math.round((expiryMidnight.getTime() - todayMidnight.getTime()) / (1000 * 60 * 60 * 24));
   if (diffDays < 0) return { label: 'Expired', color: colors.danger, daysLeft: diffDays };
   if (diffDays < 90) return { label: 'Expiring Soon', color: colors.warning, daysLeft: diffDays };
   return { label: 'Covered', color: colors.success, daysLeft: diffDays };

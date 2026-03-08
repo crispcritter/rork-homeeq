@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { ColorScheme } from '@/constants/colors';
-import { Radius, Spacing } from '@/constants/layout';
+import { Radius, Spacing, cardShadowXs, cardShadowSm, cardShadowLg } from '@/constants/layout';
 
 const createStyles = (c: ColorScheme) => StyleSheet.create({
   container: {
@@ -15,11 +15,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     backgroundColor: c.surface,
     borderRadius: Radius.cardXl,
     marginBottom: Spacing.xl,
-    shadowColor: c.cardShadow,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: Spacing.lg,
-    elevation: 3,
+    ...cardShadowLg(c),
     overflow: 'hidden',
   },
   findCardHeader: {
@@ -368,11 +364,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
     gap: Spacing.md,
-    shadowColor: c.cardShadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: Spacing.xs,
-    elevation: 1,
+    ...cardShadowXs(c),
   },
   searchInput: {
     flex: 1,
@@ -548,11 +540,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     borderRadius: Radius.card,
     padding: Spacing.lg,
     marginBottom: Spacing.md,
-    shadowColor: c.cardShadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: Spacing.sm,
-    elevation: 1,
+    ...cardShadowSm(c),
   },
   proTop: {
     flexDirection: 'row',

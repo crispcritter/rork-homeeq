@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { ColorScheme } from '@/constants/colors';
-import { Radius, Spacing } from '@/constants/layout';
+import { Radius, Spacing, cardShadowSubtle, cardShadowXs, cardShadowSm } from '@/constants/layout';
 
 const createStyles = (c: ColorScheme) => StyleSheet.create({
   container: { flex: 1, backgroundColor: c.background },
@@ -35,7 +35,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   statsRow: { flexDirection: 'row', gap: Spacing.md, marginBottom: Spacing.xl },
   statCard: {
     flex: 1, backgroundColor: c.surface, borderRadius: Radius.xl, padding: Spacing.xl, alignItems: 'center',
-    shadowColor: c.cardShadow, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 1, shadowRadius: Spacing.xs, elevation: 1,
+    ...cardShadowXs(c),
   },
   statValue: { fontSize: 16, fontWeight: '800' as const, color: c.text, marginBottom: 2 },
   statLabel: { fontSize: 11, color: c.textTertiary, lineHeight: 15 },
@@ -73,7 +73,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   ratingsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.md },
   ratingCard: {
     backgroundColor: c.surface, borderRadius: Radius.xl, padding: Spacing.xl, width: '48%' as any,
-    shadowColor: c.cardShadow, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 1, shadowRadius: Spacing.xs, elevation: 1,
+    ...cardShadowXs(c),
   },
   ratingCardTop: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs, marginBottom: Spacing.sm },
   ratingSourceDot: { width: 8, height: 8, borderRadius: 4 },
@@ -85,7 +85,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   ratingLinkText: { fontSize: 11, fontWeight: '600' as const, color: c.primary },
   card: {
     backgroundColor: c.surface, borderRadius: Radius.card, overflow: 'hidden',
-    shadowColor: c.cardShadow, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 1, shadowRadius: Spacing.sm, elevation: 1,
+    ...cardShadowSm(c),
   },
   contactRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md, paddingHorizontal: Spacing.lg, paddingVertical: Spacing.xl },
   contactText: { flex: 1, fontSize: 15, color: c.text, lineHeight: 20 },
@@ -95,7 +95,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   divider: { height: 1, backgroundColor: c.borderLight, marginLeft: 44 },
   linkedApplianceCard: {
     flexDirection: 'row', alignItems: 'center', backgroundColor: c.surface, borderRadius: Radius.xl, marginBottom: Spacing.sm,
-    shadowColor: c.cardShadow, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 1, shadowRadius: Spacing.xs, elevation: 1, overflow: 'hidden',
+    ...cardShadowSubtle(c), overflow: 'hidden',
   },
   linkedApplianceMain: { flex: 1, flexDirection: 'row', alignItems: 'center', padding: Spacing.xl },
   applianceDot: { width: 10, height: 10, borderRadius: 5, marginRight: Spacing.md },
@@ -105,7 +105,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   unlinkBtn: { paddingHorizontal: Spacing.xl, paddingVertical: Spacing.xl, justifyContent: 'center', alignItems: 'center' },
   noteCard: {
     backgroundColor: c.surface, borderRadius: Radius.xl, padding: Spacing.xl, marginBottom: Spacing.sm,
-    shadowColor: c.cardShadow, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 1, shadowRadius: Spacing.xs, elevation: 1,
+    ...cardShadowSubtle(c),
   },
   noteText: { fontSize: 14, color: c.text, lineHeight: 20, marginBottom: Spacing.sm },
   noteFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
@@ -123,13 +123,13 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   noteEditSaveText: { fontSize: 13, fontWeight: '600' as const, color: c.white },
   addNoteWrap: {
     flexDirection: 'row', alignItems: 'flex-end', gap: Spacing.sm, backgroundColor: c.surface, borderRadius: Radius.xl, padding: Spacing.md,
-    shadowColor: c.cardShadow, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 1, shadowRadius: Spacing.xs, elevation: 1,
+    ...cardShadowSubtle(c),
   },
   addNoteInput: { flex: 1, fontSize: 14, color: c.text, lineHeight: 20, padding: 0, maxHeight: 80 },
   addNoteBtn: { width: 34, height: 34, borderRadius: Radius.md, backgroundColor: c.primary, justifyContent: 'center', alignItems: 'center' },
   expenseRow: {
     flexDirection: 'row', alignItems: 'center', backgroundColor: c.surface, borderRadius: Radius.xl, padding: Spacing.xl, marginBottom: Spacing.sm,
-    shadowColor: c.cardShadow, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 1, shadowRadius: Spacing.xs, elevation: 1,
+    ...cardShadowSubtle(c),
   },
   expenseDot: { width: 8, height: 8, borderRadius: 4, marginRight: Spacing.md },
   expenseInfo: { flex: 1 },

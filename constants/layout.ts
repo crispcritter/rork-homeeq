@@ -21,3 +21,45 @@ export const Spacing = {
   xxxl: 28,
   xxxxl: 32,
 } as const;
+
+type ShadowColor = { cardShadow: string };
+
+export const cardShadowSubtle = (c: ShadowColor) => ({
+  shadowColor: c.cardShadow,
+  shadowOffset: { width: 0, height: 1 } as const,
+  shadowOpacity: 1,
+  shadowRadius: Spacing.xs,
+  elevation: 1 as const,
+});
+
+export const cardShadowXs = (c: ShadowColor) => ({
+  shadowColor: c.cardShadow,
+  shadowOffset: { width: 0, height: 2 } as const,
+  shadowOpacity: 1,
+  shadowRadius: Spacing.xs,
+  elevation: 1 as const,
+});
+
+export const cardShadowSm = (c: ShadowColor) => ({
+  shadowColor: c.cardShadow,
+  shadowOffset: { width: 0, height: 2 } as const,
+  shadowOpacity: 1,
+  shadowRadius: Spacing.sm,
+  elevation: 1 as const,
+});
+
+export const cardShadowMd = (c: ShadowColor) => ({
+  shadowColor: c.cardShadow,
+  shadowOffset: { width: 0, height: 4 } as const,
+  shadowOpacity: 1,
+  shadowRadius: Spacing.md,
+  elevation: 2 as const,
+});
+
+export const cardShadowLg = (c: ShadowColor) => ({
+  shadowColor: c.cardShadow,
+  shadowOffset: { width: 0, height: 4 } as const,
+  shadowOpacity: 1,
+  shadowRadius: Spacing.lg,
+  elevation: 3 as const,
+});

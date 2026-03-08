@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { ColorScheme } from '@/constants/colors';
-import { Radius, Spacing } from '@/constants/layout';
+import { Radius, Spacing, cardShadowSubtle, cardShadowSm, cardShadowLg } from '@/constants/layout';
 
 const createStyles = (c: ColorScheme) => StyleSheet.create({
   container: {
@@ -15,11 +15,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     borderRadius: Radius.cardXl,
     padding: 22,
     marginBottom: Spacing.xxl,
-    shadowColor: c.cardShadow,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: 16,
-    elevation: 3,
+    ...cardShadowLg(c),
   },
   heroTop: {
     flexDirection: 'row',
@@ -129,11 +125,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     borderRadius: Radius.card,
     padding: Spacing.xl,
     alignItems: 'center',
-    shadowColor: c.cardShadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: Spacing.sm,
-    elevation: 1,
+    ...cardShadowSm(c),
   },
   proAvatar: {
     width: 44,
@@ -194,11 +186,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     backgroundColor: c.surface,
     borderRadius: Radius.card,
     padding: Spacing.lg,
-    shadowColor: c.cardShadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: Spacing.sm,
-    elevation: 1,
+    ...cardShadowSm(c),
   },
   categoryRow: {
     flexDirection: 'row',
@@ -249,11 +237,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     borderRadius: Radius.xl,
     padding: Spacing.xl,
     marginBottom: Spacing.sm,
-    shadowColor: c.cardShadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 1,
-    shadowRadius: Spacing.xs,
-    elevation: 1,
+    ...cardShadowSubtle(c),
   },
   expenseDot: {
     width: 8,
@@ -349,11 +333,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     backgroundColor: c.surface,
     borderRadius: Radius.card,
     padding: Spacing.lg,
-    shadowColor: c.cardShadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: Spacing.sm,
-    elevation: 1,
+    ...cardShadowSm(c),
   },
   exportHeaderLeft: {
     flexDirection: 'row',
@@ -394,11 +374,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     paddingHorizontal: Spacing.md,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: c.cardShadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 1,
-    shadowRadius: Spacing.xs,
-    elevation: 1,
+    ...cardShadowSubtle(c),
   },
   exportGridIcon: {
     width: 48,

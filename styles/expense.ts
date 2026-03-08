@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { ColorScheme } from '@/constants/colors';
-import { Radius, Spacing } from '@/constants/layout';
+import { Radius, Spacing, cardShadowSm, cardShadowMd } from '@/constants/layout';
 
 const createExpenseStyles = (c: ColorScheme) => StyleSheet.create({
   container: {
@@ -67,11 +67,7 @@ const createExpenseStyles = (c: ColorScheme) => StyleSheet.create({
     marginBottom: Spacing.xl,
     backgroundColor: c.surface,
     borderRadius: Radius.cardXl,
-    shadowColor: c.cardShadow,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: Spacing.md,
-    elevation: 2,
+    ...cardShadowMd(c),
   },
   amountLabel: {
     fontSize: 14,
@@ -147,11 +143,7 @@ const createExpenseStyles = (c: ColorScheme) => StyleSheet.create({
     backgroundColor: c.surface,
     borderRadius: Radius.card,
     padding: Spacing.lg,
-    shadowColor: c.cardShadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: Spacing.sm,
-    elevation: 1,
+    ...cardShadowSm(c),
   },
   receiptActions: {
     flexDirection: 'row',
@@ -228,11 +220,7 @@ const createExpenseStyles = (c: ColorScheme) => StyleSheet.create({
     borderRadius: Radius.xl,
     padding: Spacing.xl,
     marginBottom: Spacing.md,
-    shadowColor: c.cardShadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: Spacing.sm,
-    elevation: 1,
+    ...cardShadowSm(c),
   },
   providerHeaderLeft: {
     flexDirection: 'row',

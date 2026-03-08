@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { ColorScheme } from '@/constants/colors';
-import { Radius, Spacing } from '@/constants/layout';
+import { Radius, Spacing, cardShadowXs } from '@/constants/layout';
 
 const createStyles = (c: ColorScheme) => StyleSheet.create({
   container: {
@@ -89,11 +89,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     backgroundColor: c.surface,
     borderRadius: Radius.xl,
     padding: Spacing.xl,
-    shadowColor: c.cardShadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: Spacing.xs,
-    elevation: 1,
+    ...cardShadowXs(c),
   },
   infoIconWrap: {
     width: 32,
@@ -132,11 +128,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     borderRadius: Radius.xl,
     padding: Spacing.xl,
     marginBottom: Spacing.lg,
-    shadowColor: c.cardShadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: Spacing.xs,
-    elevation: 1,
+    ...cardShadowXs(c),
   },
   applianceIconWrap: {
     width: 40,
@@ -173,11 +165,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     borderRadius: Radius.xl,
     padding: Spacing.lg,
     marginBottom: Spacing.xl,
-    shadowColor: c.cardShadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: Spacing.xs,
-    elevation: 1,
+    ...cardShadowXs(c),
   },
   notesSectionHeader: {
     flexDirection: 'row',
@@ -246,11 +234,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     borderRadius: Radius.xl,
     padding: Spacing.lg,
     marginBottom: Spacing.lg,
-    shadowColor: c.cardShadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: Spacing.xs,
-    elevation: 1,
+    ...cardShadowXs(c),
   },
   linkSectionHeader: {
     flexDirection: 'row',
@@ -390,11 +374,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     borderRadius: Radius.xl,
     padding: Spacing.lg,
     marginBottom: Spacing.lg,
-    shadowColor: c.cardShadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: Spacing.xs,
-    elevation: 1,
+    ...cardShadowXs(c),
   },
   proSectionHeader: {
     flexDirection: 'row',
@@ -498,11 +478,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     borderRadius: Radius.xl,
     padding: Spacing.lg,
     marginBottom: Spacing.lg,
-    shadowColor: c.cardShadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: Spacing.xs,
-    elevation: 1,
+    ...cardShadowXs(c),
   },
   calendarSectionHeader: {
     flexDirection: 'row',

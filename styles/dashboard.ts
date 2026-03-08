@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { ColorScheme } from '@/constants/colors';
-import { Radius, Spacing } from '@/constants/layout';
+import { Radius, Spacing, cardShadowSm, cardShadowMd } from '@/constants/layout';
 
 const createStyles = (c: ColorScheme) => StyleSheet.create({
   container: {
@@ -90,11 +90,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     paddingVertical: Spacing.xl,
     paddingHorizontal: Spacing.xl,
     gap: Spacing.md,
-    shadowColor: c.cardShadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: Spacing.sm,
-    elevation: 1,
+    ...cardShadowSm(c),
     flex: 1,
   },
   quickActionIcon: {
@@ -115,11 +111,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     borderRadius: Radius.cardLg,
     padding: Radius.cardLg,
     marginBottom: Spacing.xxl,
-    shadowColor: c.cardShadow,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: Spacing.md,
-    elevation: 2,
+    ...cardShadowMd(c),
   },
   budgetLabel: {
     fontSize: 14,
@@ -189,11 +181,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     borderRadius: Radius.xl,
     padding: Spacing.lg,
     marginBottom: Spacing.sm,
-    shadowColor: c.cardShadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: Spacing.sm,
-    elevation: 1,
+    ...cardShadowSm(c),
   },
   priorityIndicator: {
     width: 4,
@@ -243,11 +231,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     borderRadius: Radius.card,
     padding: Spacing.xxxl,
     alignItems: 'center',
-    shadowColor: c.cardShadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: Spacing.sm,
-    elevation: 1,
+    ...cardShadowSm(c),
   },
   emptyTitle: {
     fontSize: 16,
@@ -289,11 +273,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     borderRadius: Radius.card,
     padding: Spacing.lg,
     alignItems: 'center',
-    shadowColor: c.cardShadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: Spacing.sm,
-    elevation: 1,
+    ...cardShadowSm(c),
   },
   providerAvatar: {
     width: 48,
@@ -313,11 +293,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     borderRadius: Radius.card,
     padding: Spacing.xxl,
     alignItems: 'center',
-    shadowColor: c.cardShadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: Spacing.sm,
-    elevation: 1,
+    ...cardShadowSm(c),
   },
   emptyProviderIcon: {
     width: 44,

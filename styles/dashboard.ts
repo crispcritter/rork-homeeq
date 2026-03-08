@@ -287,6 +287,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   providerInitial: {
     fontSize: 18,
     fontWeight: '700',
+    color: c.text,
   },
   emptyProviderCard: {
     backgroundColor: c.surface,

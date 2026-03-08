@@ -249,7 +249,7 @@ export default function DashboardScreen() {
           <View style={styles.sectionHeader}>
             <Text style={[styles.sectionTitle, { color: c.text }]}>Trusted pros</Text>
             <TouchableOpacity onPress={() => handlePress('/(tabs)/pros')}>
-              <Text style={styles.seeAllText}>{trustedPros.length > 0 ? 'See all' : 'Find pros'}</Text>
+              <Text style={[styles.seeAllText, { color: c.primary }]}>{trustedPros.length > 0 ? 'See all' : 'Find pros'}</Text>
             </TouchableOpacity>
           </View>
           {trustedPros.length === 0 ? (

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -65,10 +65,21 @@ export default function AppliancesScreen() {
 
   const { onRefresh, isRefreshing } = useRefresh();
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [sortBy, setSortBy] = useState<SortOption>('name');
 
+  useEffect(() => {
+    debounceTimer.current = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 150);
+    return () => {
+      if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    };
+  }, [search]);
+
   const filtered = useMemo(() => {
-    const lowerSearch = search.toLowerCase();
+    const lowerSearch = debouncedSearch.toLowerCase();
     const list = appliances.filter(
       (a) =>
         a.name.toLowerCase().includes(lowerSearch) ||
@@ -114,7 +125,7 @@ export default function AppliancesScreen() {
     });
 
     return withWarranty;
-  }, [appliances, search, sortBy]);
+  }, [appliances, debouncedSearch, sortBy]);
 
   const proNameByApplianceId = useMemo(() => {
     const map = new Map<string, string>();

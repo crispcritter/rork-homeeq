@@ -245,7 +245,7 @@ export default function DashboardScreen() {
           )}
         </AnimatedCard>
 
-        <AnimatedCard index={7} style={styles.section}>
+        <AnimatedCard index={4 + Math.min(upcomingTasks.length, 3)} style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={[styles.sectionTitle, { color: c.text }]}>Trusted pros</Text>
             <TouchableOpacity onPress={() => handlePress('/(tabs)/pros')}>

@@ -452,6 +452,178 @@ export default function ProfileScreen() {
           </Text>
         </View>
 
+        <CollapsibleSection title="Account & Household" themeColors={c} globalDefault={sectionsDefaultOpen}>
+          <View style={[styles.card, { backgroundColor: c.surface }]}>
+            {isAuthenticated ? (
+              <>
+                <View style={styles.inputRow}>
+                  <View style={[styles.inputIcon, { backgroundColor: c.primaryLight }]}>
+                    <Cloud size={18} color={c.primary} />
+                  </View>
+                  <View style={styles.inputContent}>
+                    <Text style={[styles.inputLabel, { color: c.textSecondary }]}>Signed in as</Text>
+                    <Text style={[styles.textInput, { color: c.text }]}>{user?.email}</Text>
+                  </View>
+                </View>
+                <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
+                <View style={styles.inputRow}>
+                  <View style={[styles.inputIcon, { backgroundColor: syncStatus === 'synced' ? c.successLight : syncStatus === 'error' ? c.dangerLight : c.primaryLight }]}>
+                    {syncStatus === 'syncing' ? (
+                      <ActivityIndicator size="small" color={c.primary} />
+                    ) : syncStatus === 'synced' ? (
+                      <CheckCircle size={18} color={c.success} />
+                    ) : (
+                      <RefreshCw size={18} color={syncStatus === 'error' ? c.danger : c.primary} />
+                    )}
+                  </View>
+                  <View style={[styles.inputContent, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }]}>
+                    <View style={{ flex: 1 }}>
+                      <Text style={[styles.inputLabel, { color: c.textSecondary }]}>Sync status</Text>
+                      <Text style={{ fontSize: 14, fontWeight: '500' as const, color: c.text }}>{syncStatusLabel}</Text>
+                    </View>
+                    <TouchableOpacity
+                      onPress={handleManualSync}
+                      style={[styles.syncNowButton, { backgroundColor: c.primaryLight }]}
+                      activeOpacity={0.7}
+                      disabled={syncStatus === 'syncing'}
+                    >
+                      <Text style={[styles.syncNowText, { color: c.primary }]}>Sync Now</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </>
+            ) : (
+              <TouchableOpacity
+                style={styles.inputRow}
+                onPress={() => navRouter.push('/sign-in')}
+                activeOpacity={0.7}
+                testID="sign-in-button"
+              >
+                <View style={[styles.inputIcon, { backgroundColor: c.primaryLight }]}>
+                  <LogIn size={18} color={c.primary} />
+                </View>
+                <View style={styles.inputContent}>
+                  <Text style={{ fontSize: 16, fontWeight: '600' as const, color: c.primary }}>Sign In</Text>
+                  <Text style={[styles.inputLabel, { color: c.textSecondary, marginBottom: 0, marginTop: 2 }]}>Sync your data across devices</Text>
+                </View>
+                <ChevronDown size={16} color={c.textTertiary} style={{ transform: [{ rotate: '-90deg' }] }} />
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {isAuthenticated && (
+            <View style={[styles.card, { backgroundColor: c.surface, marginTop: 12 }]}>
+              <View style={styles.inputRow}>
+                <View style={[styles.inputIcon, { backgroundColor: c.primaryLight }]}>
+                  <Users size={18} color={c.primary} />
+                </View>
+                <View style={styles.inputContent}>
+                  <Text style={[styles.inputLabel, { color: c.textSecondary }]}>Household</Text>
+                  <Text style={{ fontSize: 15, fontWeight: '600' as const, color: c.text }}>
+                    {household ? household.name : 'Not set up'}
+                  </Text>
+                  {household && (
+                    <Text style={{ fontSize: 12, color: c.textTertiary, marginTop: 2 }}>
+                      {household.members.length} {household.members.length === 1 ? 'member' : 'members'}
+                      {household.isOwner ? ' · You are the owner' : ` · Owned by ${household.ownerEmail}`}
+                    </Text>
+                  )}
+                </View>
+              </View>
+
+              {household ? (
+                <>
+                  {household.members.map((member) => (
+                    <View key={member.userId}>
+                      <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
+                      <View style={[styles.inputRow, { paddingVertical: 10 }]}>
+                        <View style={[styles.householdAvatar, { backgroundColor: member.role === 'owner' ? c.primaryLight : c.surfaceAlt }]}>
+                          <User size={14} color={member.role === 'owner' ? c.primary : c.textSecondary} />
+                        </View>
+                        <View style={{ flex: 1 }}>
+                          <Text style={{ fontSize: 14, fontWeight: '500' as const, color: c.text }}>{member.email}</Text>
+                          <Text style={{ fontSize: 12, color: c.textTertiary, marginTop: 1 }}>
+                            {member.role === 'owner' ? 'Owner' : getRoleLabel(member.role as HouseholdRole)} · Joined {new Date(member.joinedAt).toLocaleDateString()}
+                          </Text>
+                        </View>
+                        {household.isOwner && member.userId !== user?.id && (
+                          <TouchableOpacity
+                            onPress={() => handleRemoveMember(member.userId, member.email)}
+                            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                            activeOpacity={0.7}
+                          >
+                            <X size={16} color={c.danger} />
+                          </TouchableOpacity>
+                        )}
+                      </View>
+                    </View>
+                  ))}
+
+                  <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
+                  <TouchableOpacity
+                    style={styles.inputRow}
+                    onPress={() => void handleInviteMember()}
+                    activeOpacity={0.7}
+                    testID="invite-household-member-real"
+                  >
+                    <View style={[styles.householdInviteIconContainer, { backgroundColor: c.primaryLight }]}>
+                      <UserPlus size={14} color={c.primary} />
+                    </View>
+                    <Text style={{ fontSize: 15, fontWeight: '600' as const, color: c.primary }}>Invite Member</Text>
+                  </TouchableOpacity>
+
+                  {!household.isOwner && (
+                    <>
+                      <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
+                      <TouchableOpacity
+                        style={styles.inputRow}
+                        onPress={handleLeaveHousehold}
+                        activeOpacity={0.7}
+                      >
+                        <View style={[styles.inputIcon, { backgroundColor: c.dangerLight }]}>
+                          <LogOut size={16} color={c.danger} />
+                        </View>
+                        <Text style={{ fontSize: 15, fontWeight: '500' as const, color: c.danger }}>Leave Household</Text>
+                      </TouchableOpacity>
+                    </>
+                  )}
+                </>
+              ) : (
+                <>
+                  <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
+                  <TouchableOpacity
+                    style={styles.inputRow}
+                    onPress={handleCreateHousehold}
+                    activeOpacity={0.7}
+                    testID="create-household-button"
+                  >
+                    <View style={[styles.householdInviteIconContainer, { backgroundColor: c.primaryLight }]}>
+                      <UserPlus size={14} color={c.primary} />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={{ fontSize: 15, fontWeight: '600' as const, color: c.primary }}>Create Household</Text>
+                      <Text style={{ fontSize: 12, color: c.textTertiary, marginTop: 2 }}>Share your home data with family members</Text>
+                    </View>
+                  </TouchableOpacity>
+                </>
+              )}
+            </View>
+          )}
+
+          {isAuthenticated && (
+            <View style={[styles.card, { backgroundColor: c.surface, marginTop: 12 }]}>
+              <TouchableOpacity style={styles.inputRow} onPress={handleSignOut} activeOpacity={0.7}>
+                <View style={[styles.inputIcon, { backgroundColor: c.dangerLight }]}>
+                  <LogOut size={18} color={c.danger} />
+                </View>
+                <View style={styles.inputContent}>
+                  <Text style={{ fontSize: 16, fontWeight: '500' as const, color: c.danger }}>Sign Out</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          )}
+        </CollapsibleSection>
+
         <CollapsibleSection title="Basics" themeColors={c} globalDefault={sectionsDefaultOpen}>
           <View style={[styles.card, { backgroundColor: c.surface }]}>
             <View style={styles.inputRow}>
@@ -889,180 +1061,7 @@ export default function ProfileScreen() {
           </View>
         </CollapsibleSection>
 
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={[styles.sectionLabel, { color: c.textSecondary }]}>Cloud & Account</Text>
-          </View>
-          <View style={[styles.card, { backgroundColor: c.surface }]}>
-            {isAuthenticated ? (
-              <>
-                <View style={styles.inputRow}>
-                  <View style={[styles.inputIcon, { backgroundColor: c.primaryLight }]}>
-                    <Cloud size={18} color={c.primary} />
-                  </View>
-                  <View style={styles.inputContent}>
-                    <Text style={[styles.inputLabel, { color: c.textSecondary }]}>Signed in as</Text>
-                    <Text style={[styles.textInput, { color: c.text }]}>{user?.email}</Text>
-                  </View>
-                </View>
-                <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
-                <View style={styles.inputRow}>
-                  <View style={[styles.inputIcon, { backgroundColor: syncStatus === 'synced' ? c.successLight : syncStatus === 'error' ? c.dangerLight : c.primaryLight }]}>
-                    {syncStatus === 'syncing' ? (
-                      <ActivityIndicator size="small" color={c.primary} />
-                    ) : syncStatus === 'synced' ? (
-                      <CheckCircle size={18} color={c.success} />
-                    ) : (
-                      <RefreshCw size={18} color={syncStatus === 'error' ? c.danger : c.primary} />
-                    )}
-                  </View>
-                  <View style={[styles.inputContent, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }]}>
-                    <View style={{ flex: 1 }}>
-                      <Text style={[styles.inputLabel, { color: c.textSecondary }]}>Sync status</Text>
-                      <Text style={{ fontSize: 14, fontWeight: '500' as const, color: c.text }}>{syncStatusLabel}</Text>
-                    </View>
-                    <TouchableOpacity
-                      onPress={handleManualSync}
-                      style={[styles.syncNowButton, { backgroundColor: c.primaryLight }]}
-                      activeOpacity={0.7}
-                      disabled={syncStatus === 'syncing'}
-                    >
-                      <Text style={[styles.syncNowText, { color: c.primary }]}>Sync Now</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </>
-            ) : (
-              <TouchableOpacity
-                style={styles.inputRow}
-                onPress={() => navRouter.push('/sign-in')}
-                activeOpacity={0.7}
-                testID="sign-in-button"
-              >
-                <View style={[styles.inputIcon, { backgroundColor: c.primaryLight }]}>
-                  <LogIn size={18} color={c.primary} />
-                </View>
-                <View style={styles.inputContent}>
-                  <Text style={{ fontSize: 16, fontWeight: '600' as const, color: c.primary }}>Sign In</Text>
-                  <Text style={[styles.inputLabel, { color: c.textSecondary, marginBottom: 0, marginTop: 2 }]}>Sync your data across devices</Text>
-                </View>
-                <ChevronDown size={16} color={c.textTertiary} style={{ transform: [{ rotate: '-90deg' }] }} />
-              </TouchableOpacity>
-            )}
-          </View>
 
-          {isAuthenticated && (
-            <View style={[styles.card, { backgroundColor: c.surface, marginTop: 12 }]}>
-              <View style={styles.inputRow}>
-                <View style={[styles.inputIcon, { backgroundColor: c.primaryLight }]}>
-                  <Users size={18} color={c.primary} />
-                </View>
-                <View style={styles.inputContent}>
-                  <Text style={[styles.inputLabel, { color: c.textSecondary }]}>Household</Text>
-                  <Text style={{ fontSize: 15, fontWeight: '600' as const, color: c.text }}>
-                    {household ? household.name : 'Not set up'}
-                  </Text>
-                  {household && (
-                    <Text style={{ fontSize: 12, color: c.textTertiary, marginTop: 2 }}>
-                      {household.members.length} {household.members.length === 1 ? 'member' : 'members'}
-                      {household.isOwner ? ' · You are the owner' : ` · Owned by ${household.ownerEmail}`}
-                    </Text>
-                  )}
-                </View>
-              </View>
-
-              {household ? (
-                <>
-                  {household.members.map((member) => (
-                    <View key={member.userId}>
-                      <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
-                      <View style={[styles.inputRow, { paddingVertical: 10 }]}>
-                        <View style={[styles.householdAvatar, { backgroundColor: member.role === 'owner' ? c.primaryLight : c.surfaceAlt }]}>
-                          <User size={14} color={member.role === 'owner' ? c.primary : c.textSecondary} />
-                        </View>
-                        <View style={{ flex: 1 }}>
-                          <Text style={{ fontSize: 14, fontWeight: '500' as const, color: c.text }}>{member.email}</Text>
-                          <Text style={{ fontSize: 12, color: c.textTertiary, marginTop: 1 }}>
-                            {member.role === 'owner' ? 'Owner' : getRoleLabel(member.role as HouseholdRole)} · Joined {new Date(member.joinedAt).toLocaleDateString()}
-                          </Text>
-                        </View>
-                        {household.isOwner && member.userId !== user?.id && (
-                          <TouchableOpacity
-                            onPress={() => handleRemoveMember(member.userId, member.email)}
-                            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                            activeOpacity={0.7}
-                          >
-                            <X size={16} color={c.danger} />
-                          </TouchableOpacity>
-                        )}
-                      </View>
-                    </View>
-                  ))}
-
-                  <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
-                  <TouchableOpacity
-                    style={styles.inputRow}
-                    onPress={() => void handleInviteMember()}
-                    activeOpacity={0.7}
-                    testID="invite-household-member-real"
-                  >
-                    <View style={[styles.householdInviteIconContainer, { backgroundColor: c.primaryLight }]}>
-                      <UserPlus size={14} color={c.primary} />
-                    </View>
-                    <Text style={{ fontSize: 15, fontWeight: '600' as const, color: c.primary }}>Invite Member</Text>
-                  </TouchableOpacity>
-
-                  {!household.isOwner && (
-                    <>
-                      <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
-                      <TouchableOpacity
-                        style={styles.inputRow}
-                        onPress={handleLeaveHousehold}
-                        activeOpacity={0.7}
-                      >
-                        <View style={[styles.inputIcon, { backgroundColor: c.dangerLight }]}>
-                          <LogOut size={16} color={c.danger} />
-                        </View>
-                        <Text style={{ fontSize: 15, fontWeight: '500' as const, color: c.danger }}>Leave Household</Text>
-                      </TouchableOpacity>
-                    </>
-                  )}
-                </>
-              ) : (
-                <>
-                  <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
-                  <TouchableOpacity
-                    style={styles.inputRow}
-                    onPress={handleCreateHousehold}
-                    activeOpacity={0.7}
-                    testID="create-household-button"
-                  >
-                    <View style={[styles.householdInviteIconContainer, { backgroundColor: c.primaryLight }]}>
-                      <UserPlus size={14} color={c.primary} />
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <Text style={{ fontSize: 15, fontWeight: '600' as const, color: c.primary }}>Create Household</Text>
-                      <Text style={{ fontSize: 12, color: c.textTertiary, marginTop: 2 }}>Share your home data with family members</Text>
-                    </View>
-                  </TouchableOpacity>
-                </>
-              )}
-            </View>
-          )}
-
-          {isAuthenticated && (
-            <View style={[styles.card, { backgroundColor: c.surface, marginTop: 12 }]}>
-              <TouchableOpacity style={styles.inputRow} onPress={handleSignOut} activeOpacity={0.7}>
-                <View style={[styles.inputIcon, { backgroundColor: c.dangerLight }]}>
-                  <LogOut size={18} color={c.danger} />
-                </View>
-                <View style={styles.inputContent}>
-                  <Text style={{ fontSize: 16, fontWeight: '500' as const, color: c.danger }}>Sign Out</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>

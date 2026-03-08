@@ -390,7 +390,7 @@ export default function ProviderDetailScreen() {
             ) : (
               linkedAppliances.map((appliance) => (
                 <View key={appliance.id} style={styles.linkedApplianceCard}>
-                  <TouchableOpacity style={styles.linkedApplianceMain} onPress={() => { lightImpact(); router.push(`/appliance/${appliance.id}` as any); }} activeOpacity={0.7}>
+                  <TouchableOpacity style={styles.linkedApplianceMain} onPress={() => { lightImpact(); router.push({ pathname: '/appliance/[id]', params: { id: appliance.id } }); }} activeOpacity={0.7}>
                     <View style={[styles.applianceDot, { backgroundColor: CATEGORY_AVATARS[appliance.category] || c.textTertiary }]} />
                     <View style={styles.applianceInfo}>
                       <Text style={styles.applianceName}>{appliance.name}</Text>
@@ -451,7 +451,7 @@ export default function ProviderDetailScreen() {
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Expense history</Text>
               {relatedExpenses.map((expense) => (
-                <TouchableOpacity key={expense.id} style={styles.expenseRow} onPress={() => { lightImpact(); router.push(`/expense/${expense.id}` as any); }} activeOpacity={0.7}>
+                <TouchableOpacity key={expense.id} style={styles.expenseRow} onPress={() => { lightImpact(); router.push({ pathname: '/expense/[id]', params: { id: expense.id } }); }} activeOpacity={0.7}>
                   <View style={[styles.expenseDot, { backgroundColor: BUDGET_CATEGORY_COLORS[expense.category] || c.textTertiary }]} />
                   <View style={styles.expenseInfo}>
                     <Text style={styles.expenseDesc}>{expense.description}</Text>

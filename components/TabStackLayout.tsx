@@ -17,7 +17,7 @@ export default function TabStackLayout({ title }: TabStackLayoutProps) {
 
   const profileButton = () => (
     <TouchableOpacity
-      onPress={() => router.push('/profile' as any)}
+      onPress={() => router.push('/profile')}
       activeOpacity={0.7}
       hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
       testID="header-profile-button"

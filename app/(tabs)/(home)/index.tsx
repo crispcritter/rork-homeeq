@@ -7,7 +7,7 @@ import {
   Animated,
   RefreshControl,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, type Href } from 'expo-router';
 import { AlertTriangle, ChevronRight, Plus, Clock, Star, CirclePlus, Wrench, DollarSign, Search, CalendarDays, Calendar, WifiOff } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -58,9 +58,9 @@ export default function DashboardScreen() {
     }).start();
   }, [fadeAnim]);
 
-  const handlePress = useCallback((route: string) => {
+  const handlePress = useCallback((route: Href) => {
     lightImpact();
-    router.push(route as any);
+    router.push(route);
   }, [router]);
 
 

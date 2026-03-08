@@ -94,7 +94,7 @@ export default function ExpenseDetailScreen() {
             <TouchableOpacity
               onPress={() => {
                 lightImpact();
-                router.push(`/edit-expense?id=${expense.id}` as any);
+                router.push({ pathname: '/edit-expense', params: { id: expense.id } });
               }}
               activeOpacity={0.7}
               style={{ padding: 4 }}
@@ -231,7 +231,7 @@ export default function ExpenseDetailScreen() {
               onPress={() => {
                 if (linkedPro) {
                   lightImpact();
-                  router.push(`/provider/${linkedPro.id}` as any);
+                  router.push({ pathname: '/provider/[id]', params: { id: linkedPro.id } });
                 }
               }}
               activeOpacity={linkedPro ? 0.7 : 1}
@@ -321,7 +321,7 @@ export default function ExpenseDetailScreen() {
           style={styles.editBtn}
           onPress={() => {
             lightImpact();
-            router.push(`/edit-expense?id=${expense.id}` as any);
+            router.push({ pathname: '/edit-expense', params: { id: expense.id } });
           }}
           activeOpacity={0.7}
           testID="edit-expense-action"

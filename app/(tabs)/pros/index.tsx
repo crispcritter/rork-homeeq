@@ -707,7 +707,7 @@ export default function TrustedProsScreen() {
                 style={styles.proCard}
                 onPress={() => {
                   lightImpact();
-                  router.push(`/provider/${pro.id}` as any);
+                  router.push({ pathname: '/provider/[id]', params: { id: pro.id } });
                 }}
                 activeOpacity={0.7}
               >

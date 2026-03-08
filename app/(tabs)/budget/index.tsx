@@ -143,7 +143,7 @@ export default function BudgetScreen() {
               <TouchableOpacity
                 onPress={() => {
                   lightImpact();
-                  router.push('/(tabs)/pros' as any);
+                  router.push('/pros');
                 }}
                 activeOpacity={0.7}
                 style={styles.seeAllBtn}
@@ -163,7 +163,7 @@ export default function BudgetScreen() {
                   style={styles.proCard}
                   onPress={() => {
                     lightImpact();
-                    router.push(`/provider/${pro.id}` as any);
+                    router.push({ pathname: '/provider/[id]', params: { id: pro.id } });
                   }}
                   activeOpacity={0.7}
                 >
@@ -236,7 +236,7 @@ export default function BudgetScreen() {
                 style={styles.expenseRow}
                 onPress={() => {
                   lightImpact();
-                  router.push(`/expense/${item.id}` as any);
+                  router.push({ pathname: '/expense/[id]', params: { id: item.id } });
                 }}
                 activeOpacity={0.7}
               >
@@ -302,7 +302,7 @@ export default function BudgetScreen() {
       <FloatingActionButton
         onPress={() => {
           mediumImpact();
-          router.push('/add-expense' as any);
+          router.push('/add-expense');
         }}
         color={c.accent}
         testID="budget-add-expense"

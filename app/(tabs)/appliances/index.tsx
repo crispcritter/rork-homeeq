@@ -159,7 +159,7 @@ export default function AppliancesScreen() {
 
   const handleAddAppliance = useCallback(() => {
     lightImpact();
-    router.push('/add-appliance' as any);
+    router.push('/add-appliance');
   }, [router]);
 
   const handleAddRecommendedItem = useCallback((item: RecommendedItem) => {
@@ -180,7 +180,7 @@ export default function AppliancesScreen() {
 
   const handleAppliancePress = useCallback((id: string) => {
     lightImpact();
-    router.push(`/appliance/${id}` as any);
+    router.push({ pathname: '/appliance/[id]', params: { id } });
   }, [router]);
 
   return (

@@ -168,12 +168,12 @@ export default function ApplianceDetailScreen() {
 
   const handleNavigateToPro = useCallback(() => {
     if (linkedPro) {
-      router.push(`/provider/${linkedPro.id}` as any);
+      router.push({ pathname: '/provider/[id]', params: { id: linkedPro.id } });
     }
   }, [linkedPro, router]);
 
   const handleFindAPro = useCallback(() => {
-    router.push('/(tabs)/pros' as any);
+    router.push('/pros');
   }, [router]);
 
   const relatedTasks = useMemo(
@@ -861,7 +861,7 @@ export default function ApplianceDetailScreen() {
                   <Text style={styles.generateRecsBtnText}>{isGeneratingRecs ? 'Generating...' : 'Generate Recommendations'}</Text>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.addCustomTaskBtn} onPress={() => router.push({ pathname: '/add-task' as any, params: { applianceId: appliance.id } })} activeOpacity={0.7} testID="add-custom-task">
+              <TouchableOpacity style={styles.addCustomTaskBtn} onPress={() => router.push({ pathname: '/add-task', params: { applianceId: appliance.id } })} activeOpacity={0.7} testID="add-custom-task">
                 <Plus size={16} color={c.primary} />
                 <Text style={styles.addCustomTaskBtnText}>Add Custom Task</Text>
               </TouchableOpacity>
@@ -945,7 +945,7 @@ export default function ApplianceDetailScreen() {
           )}
 
           <View style={styles.actionRow}>
-            <TouchableOpacity style={styles.editBtn} onPress={() => router.push({ pathname: '/edit-appliance' as any, params: { id: appliance.id } })} activeOpacity={0.7} testID="edit-appliance">
+            <TouchableOpacity style={styles.editBtn} onPress={() => router.push({ pathname: '/edit-appliance', params: { id: appliance.id } })} activeOpacity={0.7} testID="edit-appliance">
               <Pencil size={16} color={c.primary} />
               <Text style={styles.editBtnText}>Edit Item</Text>
             </TouchableOpacity>

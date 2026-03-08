@@ -342,7 +342,7 @@ export default function TaskDetailScreen() {
 
   const handleNavigateToAppliance = useCallback(() => {
     if (appliance) {
-      router.push(`/appliance/${appliance.id}` as any);
+      router.push({ pathname: '/appliance/[id]', params: { id: appliance.id } });
     }
   }, [appliance, router]);
 
@@ -353,12 +353,12 @@ export default function TaskDetailScreen() {
 
   const handleNavigateToPro = useCallback(() => {
     if (linkedPro) {
-      router.push(`/provider/${linkedPro.id}` as any);
+      router.push({ pathname: '/provider/[id]', params: { id: linkedPro.id } });
     }
   }, [linkedPro, router]);
 
   const handleFindAPro = useCallback(() => {
-    router.push('/(tabs)/pros' as any);
+    router.push('/pros');
   }, [router]);
 
   if (!task) {

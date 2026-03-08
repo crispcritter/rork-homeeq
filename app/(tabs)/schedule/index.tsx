@@ -270,7 +270,7 @@ export default function ScheduleScreen() {
 
   const handleTaskPress = useCallback((taskId: string) => {
     lightImpact();
-    router.push(`/task/${taskId}` as any);
+    router.push({ pathname: '/task/[id]', params: { id: taskId } });
   }, [router]);
 
   const filters: { key: FilterType; label: string }[] = [
@@ -571,7 +571,7 @@ export default function ScheduleScreen() {
       <FloatingActionButton
         onPress={() => {
           mediumImpact();
-          router.push('/add-task' as any);
+          router.push('/add-task');
         }}
         color={c.primary}
         testID="schedule-add-task"

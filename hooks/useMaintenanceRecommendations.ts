@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { Alert } from 'react-native';
 import { generateObject } from '@rork-ai/toolkit-sdk';
 import { z } from 'zod';
-import { Appliance, MaintenanceTask, toISODateString } from '@/types';
+import { Appliance, MaintenanceTask, toISODateString, daysToNaturalUnit } from '@/types';
 import { categoryLabels } from '@/constants/categories';
 import { successNotification, lightImpact } from '@/utils/haptics';
 
@@ -86,7 +86,8 @@ export function useMaintenanceRecommendations(
       applianceId: appliance.id,
       estimatedCost: rec.estimatedCost,
       recurring: true,
-      recurringInterval: rec.frequencyDays,
+      recurringInterval: daysToNaturalUnit(rec.frequencyDays).interval,
+      recurringUnit: daysToNaturalUnit(rec.frequencyDays).unit,
     };
     addTask(newTask);
     setAddedRecIds((prev) => new Set(prev).add(index));

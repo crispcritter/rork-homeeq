@@ -65,7 +65,8 @@ export const sampleTasks: MaintenanceTask[] = [
     priority: 'high',
     status: 'upcoming',
     recurring: true,
-    recurringInterval: 90,
+    recurringInterval: 3,
+    recurringUnit: 'months',
     estimatedCost: 25,
   },
   {
@@ -77,7 +78,8 @@ export const sampleTasks: MaintenanceTask[] = [
     priority: 'medium',
     status: 'upcoming',
     recurring: true,
-    recurringInterval: 30,
+    recurringInterval: 1,
+    recurringUnit: 'months',
     estimatedCost: 0,
   },
   {
@@ -89,7 +91,8 @@ export const sampleTasks: MaintenanceTask[] = [
     priority: 'high',
     status: 'overdue',
     recurring: true,
-    recurringInterval: 365,
+    recurringInterval: 1,
+    recurringUnit: 'years',
     estimatedCost: 150,
   },
   {
@@ -100,7 +103,8 @@ export const sampleTasks: MaintenanceTask[] = [
     priority: 'medium',
     status: 'upcoming',
     recurring: true,
-    recurringInterval: 180,
+    recurringInterval: 6,
+    recurringUnit: 'months',
     estimatedCost: 200,
   },
   {
@@ -113,7 +117,8 @@ export const sampleTasks: MaintenanceTask[] = [
     status: 'completed',
     completedDate: asISODateString('2026-02-18'),
     recurring: true,
-    recurringInterval: 30,
+    recurringInterval: 1,
+    recurringUnit: 'months',
     estimatedCost: 5,
   },
 ];

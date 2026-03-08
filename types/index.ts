@@ -30,6 +30,31 @@ export function isValidRating(value: number): boolean {
   return !isNaN(value) && value >= 0 && value <= 5;
 }
 
+export function intervalToDays(interval: number, unit: RecurringUnit): number {
+  switch (unit) {
+    case 'days':
+      return interval;
+    case 'weeks':
+      return interval * 7;
+    case 'months':
+      return interval * 30;
+    case 'years':
+      return interval * 365;
+  }
+}
+
+export function formatRecurringLabel(interval: number, unit: RecurringUnit): string {
+  const label = unit === 'days' ? 'day' : unit === 'weeks' ? 'week' : unit === 'months' ? 'month' : 'year';
+  return `Every ${interval} ${interval === 1 ? label : label + 's'}`;
+}
+
+export function daysToNaturalUnit(days: number): { interval: number; unit: RecurringUnit } {
+  if (days >= 365 && days % 365 === 0) return { interval: days / 365, unit: 'years' };
+  if (days >= 30 && days % 30 === 0) return { interval: days / 30, unit: 'months' };
+  if (days >= 7 && days % 7 === 0) return { interval: days / 7, unit: 'weeks' };
+  return { interval: days, unit: 'days' };
+}
+
 export type ApplianceCategory =
   | 'hvac'
   | 'plumbing'
@@ -43,6 +68,7 @@ export type ApplianceCategory =
   | 'other';
 
 export type TaskPriority = 'low' | 'medium' | 'high';
+export type RecurringUnit = 'days' | 'weeks' | 'months' | 'years';
 export type TaskStatus = 'upcoming' | 'overdue' | 'completed' | 'archived';
 export type BudgetCategory = 'maintenance' | 'repair' | 'upgrade' | 'emergency' | 'inspection';
 
@@ -105,6 +131,7 @@ export interface MaintenanceTask {
   status: TaskStatus;
   recurring: boolean;
   recurringInterval?: number;
+  recurringUnit?: RecurringUnit;
   estimatedCost?: number;
   notes?: string[];
   archivedDate?: ISODateString;

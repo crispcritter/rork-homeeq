@@ -1,4 +1,4 @@
-import { Platform, Alert } from 'react-native';
+import { Platform } from 'react-native';
 import { MaintenanceTask } from '@/types';
 
 interface CalendarResult {
@@ -88,17 +88,19 @@ async function getDefaultReminderCalendarId(): Promise<string | null> {
 
 function buildRecurrenceRule(task: MaintenanceTask) {
   if (!task.recurring || !task.recurringInterval) return null;
+  const unit = task.recurringUnit ?? 'days';
   const interval = task.recurringInterval;
-  if (interval % 365 === 0) {
-    return { frequency: 'YEARLY' as const, interval: Math.round(interval / 365) };
+  switch (unit) {
+    case 'years':
+      return { frequency: 'YEARLY' as const, interval };
+    case 'months':
+      return { frequency: 'MONTHLY' as const, interval };
+    case 'weeks':
+      return { frequency: 'WEEKLY' as const, interval };
+    case 'days':
+    default:
+      return { frequency: 'DAILY' as const, interval };
   }
-  if (interval % 30 === 0) {
-    return { frequency: 'MONTHLY' as const, interval: Math.round(interval / 30) };
-  }
-  if (interval % 7 === 0) {
-    return { frequency: 'WEEKLY' as const, interval: Math.round(interval / 7) };
-  }
-  return { frequency: 'DAILY' as const, interval };
 }
 
 export async function addTaskToCalendar(task: MaintenanceTask): Promise<CalendarResult> {

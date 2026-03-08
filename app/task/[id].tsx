@@ -51,7 +51,7 @@ import {
 } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useHome } from '@/contexts/HomeContext';
-import { TaskPriority } from '@/types';
+import { TaskPriority, RecurringUnit, formatRecurringLabel } from '@/types';
 import { PRIORITIES } from '@/constants/priorities';
 import createFormStyles from '@/constants/formStyles';
 import { formatLongDate, formatRelativeDate } from '@/utils/dates';
@@ -177,6 +177,7 @@ export default function TaskDetailScreen() {
   const [editEstimatedCost, setEditEstimatedCost] = useState('');
   const [editRecurring, setEditRecurring] = useState(false);
   const [editRecurringInterval, setEditRecurringInterval] = useState('30');
+  const [editRecurringUnit, setEditRecurringUnit] = useState<RecurringUnit>('days');
   const [editApplianceId, setEditApplianceId] = useState('');
 
   const [newNote, setNewNote] = useState('');
@@ -196,6 +197,7 @@ export default function TaskDetailScreen() {
     setEditEstimatedCost(task.estimatedCost != null ? task.estimatedCost.toString() : '');
     setEditRecurring(task.recurring);
     setEditRecurringInterval(task.recurringInterval?.toString() ?? '30');
+    setEditRecurringUnit(task.recurringUnit ?? 'days');
     setEditApplianceId(task.applianceId ?? '');
     setIsEditing(true);
     lightImpact();
@@ -214,10 +216,11 @@ export default function TaskDetailScreen() {
       estimatedCost: editEstimatedCost,
       recurring: editRecurring,
       recurringInterval: editRecurringInterval,
+      recurringUnit: editRecurringUnit,
       applianceId: editApplianceId,
     });
     if (success) setIsEditing(false);
-  }, [handleSaveEdit, editTitle, editDescription, editDueDate, editPriority, editEstimatedCost, editRecurring, editRecurringInterval, editApplianceId]);
+  }, [handleSaveEdit, editTitle, editDescription, editDueDate, editPriority, editEstimatedCost, editRecurring, editRecurringInterval, editRecurringUnit, editApplianceId]);
 
   const toggleLinkInput = useCallback(() => {
     if (showLinkInput) {
@@ -546,16 +549,37 @@ export default function TaskDetailScreen() {
                   <View style={formStyles.divider} />
                   <View style={formStyles.inputRow}>
                     <View style={formStyles.inputContent}>
-                      <Text style={formStyles.inputLabel}>Repeat every (days)</Text>
-                      <TextInput
-                        style={formStyles.textInput}
-                        placeholder="30"
-                        placeholderTextColor={c.textTertiary}
-                        value={editRecurringInterval}
-                        onChangeText={setEditRecurringInterval}
-                        keyboardType="numeric"
-                        testID="edit-task-interval"
-                      />
+                      <Text style={formStyles.inputLabel}>Repeat every</Text>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                        <TextInput
+                          style={[formStyles.textInput, { flex: 1 }]}
+                          placeholder="30"
+                          placeholderTextColor={c.textTertiary}
+                          value={editRecurringInterval}
+                          onChangeText={setEditRecurringInterval}
+                          keyboardType="numeric"
+                          testID="edit-task-interval"
+                        />
+                        <View style={{ flexDirection: 'row', gap: 6 }}>
+                          {(['days', 'weeks', 'months', 'years'] as RecurringUnit[]).map((u) => (
+                            <TouchableOpacity
+                              key={u}
+                              onPress={() => setEditRecurringUnit(u)}
+                              style={{
+                                paddingHorizontal: 10,
+                                paddingVertical: 6,
+                                borderRadius: 8,
+                                backgroundColor: editRecurringUnit === u ? c.primary : c.surfaceAlt,
+                              }}
+                              activeOpacity={0.7}
+                            >
+                              <Text style={{ fontSize: 13, fontWeight: '500' as const, color: editRecurringUnit === u ? c.white : c.textSecondary }}>
+                                {u.charAt(0).toUpperCase() + u.slice(1)}
+                              </Text>
+                            </TouchableOpacity>
+                          ))}
+                        </View>
+                      </View>
                     </View>
                   </View>
                 </>
@@ -689,7 +713,7 @@ export default function TaskDetailScreen() {
               </View>
               <Text style={styles.infoLabel}>Repeats</Text>
               <Text style={styles.infoValue}>
-                Every {task.recurringInterval ?? 30} days
+                {formatRecurringLabel(task.recurringInterval ?? 30, task.recurringUnit ?? 'days')}
               </Text>
             </View>
           )}

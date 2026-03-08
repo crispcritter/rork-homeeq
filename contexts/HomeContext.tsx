@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import createContextHook from '@nkzw/create-context-hook';
-import { Appliance, MaintenanceTask, BudgetItem, HomeProfile, TrustedPro, PrivateNote, ReviewRating, ProServiceCategory, toISODateString, toISOTimestamp } from '../types';
+import { Appliance, MaintenanceTask, BudgetItem, HomeProfile, TrustedPro, PrivateNote, ReviewRating, ProServiceCategory, toISODateString, toISOTimestamp, intervalToDays } from '../types';
 import { RecommendedGroup, RecommendedItem, recommendedGroups as defaultRecommendedGroups } from '../mocks/recommendedItems';
 import { STORAGE_KEYS, loadFromStorage, loadMonthlyBudget, resetAllData, saveToStorage, saveMonthlyBudget } from './storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -186,7 +186,8 @@ export const [HomeProvider, useHome] = createContextHook(() => {
       );
 
       if (task.recurring && task.recurringInterval) {
-        const intervalDays = task.recurringInterval;
+        const unit = task.recurringUnit ?? 'days';
+        const intervalDays = intervalToDays(task.recurringInterval, unit);
         const currentDue = new Date(task.dueDate);
         const nextDue = new Date(currentDue);
         nextDue.setDate(nextDue.getDate() + intervalDays);
@@ -207,6 +208,7 @@ export const [HomeProvider, useHome] = createContextHook(() => {
           status: 'upcoming',
           recurring: true,
           recurringInterval: task.recurringInterval,
+          recurringUnit: task.recurringUnit ?? 'days',
           estimatedCost: task.estimatedCost,
           applianceId: task.applianceId,
           trustedProId: task.trustedProId,

@@ -55,7 +55,7 @@ function buildTaskRows(tasks: MaintenanceTask[], prosMap: Record<string, string>
     t.description || '',
     t.dueDate || '',
     t.estimatedCost != null ? t.estimatedCost.toFixed(2) : '',
-    t.recurring ? (t.recurringInterval ? `Every ${t.recurringInterval} days` : 'Yes') : 'No',
+    t.recurring ? (t.recurringInterval ? `Every ${t.recurringInterval} ${t.recurringUnit ?? 'days'}` : 'Yes') : 'No',
     t.productLink || '',
     t.trustedProId ? (prosMap[t.trustedProId] || '') : '',
     (t.notes ?? []).join('; '),

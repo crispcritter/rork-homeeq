@@ -13,7 +13,7 @@ import {
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useHome } from '@/contexts/HomeContext';
 import { useTheme } from '@/contexts/ThemeContext';
-import { TaskPriority, asISODateString } from '@/types';
+import { TaskPriority, RecurringUnit, asISODateString } from '@/types';
 import { PRIORITIES } from '@/constants/priorities';
 import createFormStyles from '@/constants/formStyles';
 import ApplianceChipSelector from '@/components/ApplianceChipSelector';
@@ -35,6 +35,7 @@ export default function AddTaskScreen() {
   const [estimatedCost, setEstimatedCost] = useState('');
   const [recurring, setRecurring] = useState(false);
   const [recurringInterval, setRecurringInterval] = useState('30');
+  const [recurringUnit, setRecurringUnit] = useState<RecurringUnit>('days');
 
   const handleSave = useCallback(() => {
     if (!title.trim()) {
@@ -60,11 +61,12 @@ export default function AddTaskScreen() {
       estimatedCost: estimatedCost ? parseFloat(estimatedCost) : undefined,
       recurring,
       recurringInterval: recurring ? parseInt(recurringInterval, 10) : undefined,
+      recurringUnit: recurring ? recurringUnit : undefined,
     };
 
     addTask(newTask);
     router.back();
-  }, [title, description, dueDate, priority, selectedApplianceId, estimatedCost, recurring, recurringInterval, addTask, router]);
+  }, [title, description, dueDate, priority, selectedApplianceId, estimatedCost, recurring, recurringInterval, recurringUnit, addTask, router]);
 
   return (
     <KeyboardAvoidingView
@@ -200,16 +202,37 @@ export default function AddTaskScreen() {
                 <View style={formStyles.divider} />
                 <View style={formStyles.inputRow}>
                   <View style={formStyles.inputContent}>
-                    <Text style={formStyles.inputLabel}>Repeat every (days)</Text>
-                    <TextInput
-                      style={formStyles.textInput}
-                      placeholder="30"
-                      placeholderTextColor={c.textTertiary}
-                      value={recurringInterval}
-                      onChangeText={setRecurringInterval}
-                      keyboardType="numeric"
-                      testID="task-interval"
-                    />
+                    <Text style={formStyles.inputLabel}>Repeat every</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                      <TextInput
+                        style={[formStyles.textInput, { flex: 1 }]}
+                        placeholder="30"
+                        placeholderTextColor={c.textTertiary}
+                        value={recurringInterval}
+                        onChangeText={setRecurringInterval}
+                        keyboardType="numeric"
+                        testID="task-interval"
+                      />
+                      <View style={{ flexDirection: 'row', gap: 6 }}>
+                        {(['days', 'weeks', 'months', 'years'] as RecurringUnit[]).map((u) => (
+                          <TouchableOpacity
+                            key={u}
+                            onPress={() => setRecurringUnit(u)}
+                            style={{
+                              paddingHorizontal: 10,
+                              paddingVertical: 6,
+                              borderRadius: 8,
+                              backgroundColor: recurringUnit === u ? c.primary : c.surfaceAlt,
+                            }}
+                            activeOpacity={0.7}
+                          >
+                            <Text style={{ fontSize: 13, fontWeight: '500' as const, color: recurringUnit === u ? c.white : c.textSecondary }}>
+                              {u.charAt(0).toUpperCase() + u.slice(1)}
+                            </Text>
+                          </TouchableOpacity>
+                        ))}
+                      </View>
+                    </View>
                   </View>
                 </View>
               </>

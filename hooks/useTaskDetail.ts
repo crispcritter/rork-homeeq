@@ -1,7 +1,7 @@
 import { useMemo, useCallback, useState } from 'react';
 import { Alert } from 'react-native';
 import { useHome } from '@/contexts/HomeContext';
-import { TaskPriority, TrustedPro, ISODateString, asISODateString } from '@/types';
+import { TaskPriority, RecurringUnit, TrustedPro, ISODateString, asISODateString, formatRecurringLabel } from '@/types';
 import { successNotification, mediumImpact, lightImpact } from '@/utils/haptics';
 import { isValidDateString } from '@/utils/dates';
 import {
@@ -47,7 +47,7 @@ export function useTaskDetail(taskId: string | undefined) {
     if (!task) return;
     const isRecurring = task.recurring && task.recurringInterval;
     const message = isRecurring
-      ? `Complete "${task.title}"?\n\nSince this is a recurring task, a new one will be created due in ${task.recurringInterval} days.`
+      ? `Complete "${task.title}"?\n\nSince this is a recurring task, a new one will be created due in ${formatRecurringLabel(task.recurringInterval!, task.recurringUnit ?? 'days').toLowerCase()}.`
       : `Complete "${task.title}"?`;
 
     Alert.alert('Mark as Done', message, [
@@ -64,7 +64,7 @@ export function useTaskDetail(taskId: string | undefined) {
             setTimeout(() => {
               Alert.alert(
                 'Next Task Created',
-                `A new "${task.title}" task has been scheduled for ${task.recurringInterval} days from now.`,
+                `A new "${task.title}" task has been scheduled for ${formatRecurringLabel(task.recurringInterval!, task.recurringUnit ?? 'days').toLowerCase()} from now.`,
                 [{ text: 'OK' }]
               );
             }, 500);
@@ -274,6 +274,7 @@ export function useTaskDetail(taskId: string | undefined) {
     estimatedCost: string;
     recurring: boolean;
     recurringInterval: string;
+    recurringUnit: RecurringUnit;
     applianceId: string;
   }) => {
     if (!task) return false;
@@ -301,6 +302,7 @@ export function useTaskDetail(taskId: string | undefined) {
       estimatedCost: costVal,
       recurring: edits.recurring,
       recurringInterval: edits.recurring ? parseInt(edits.recurringInterval, 10) || 30 : undefined,
+      recurringUnit: edits.recurring ? edits.recurringUnit : undefined,
       applianceId: edits.applianceId || undefined,
     };
 

@@ -222,7 +222,7 @@ export default function ProviderDetailScreen() {
               <View style={styles.overallRatingRow}>
                 <StarRating rating={averageRating} size={16} />
                 <Text style={styles.overallRatingText}>{formatRating(averageRating)}</Text>
-                <Text style={styles.overallRatingLabel}>avg across {pro.ratings!.length} {pro.ratings!.length === 1 ? 'source' : 'sources'}</Text>
+                <Text style={styles.overallRatingLabel}>avg across {pro.ratings?.length ?? 0} {(pro.ratings?.length ?? 0) === 1 ? 'source' : 'sources'}</Text>
               </View>
             )}
             {pro.insuranceVerified && !editing && (
@@ -297,7 +297,7 @@ export default function ProviderDetailScreen() {
               </View>
             ) : (
               <View style={styles.ratingsGrid}>
-                {pro.ratings!.map((r) => {
+                {(pro.ratings ?? []).map((r) => {
                   const source = REVIEW_SOURCES[r.source];
                   return (
                     <View key={r.source} style={styles.ratingCard}>

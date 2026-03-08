@@ -741,7 +741,7 @@ export default function TrustedProsScreen() {
                         <StarRating rating={avgRating} size={11} />
                         <Text style={styles.proRatingText}>{avgRating.toFixed(1)}</Text>
                         <Text style={styles.proRatingCount}>
-                          ({pro.ratings!.length} {pro.ratings!.length === 1 ? 'source' : 'sources'})
+                          ({pro.ratings?.length ?? 0} {(pro.ratings?.length ?? 0) === 1 ? 'source' : 'sources'})
                         </Text>
                       </View>
                     )}

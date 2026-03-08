@@ -44,13 +44,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     letterSpacing: -0.3,
     lineHeight: 26,
   },
   actionText: {
     fontSize: 14,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     lineHeight: 19,
   },
 });

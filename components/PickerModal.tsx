@@ -35,7 +35,7 @@ function PickerModal({ visible, title, options, selected, onSelect, onClose }: P
               }}
               activeOpacity={0.7}
             >
-              <Text style={[styles.optionText, { color: c.text }, selected === opt.value && { color: c.primary, fontWeight: '600' as const }]}>
+              <Text style={[styles.optionText, { color: c.text }, selected === opt.value && { color: c.primary, fontWeight: '600' }]}>
                 {opt.label}
               </Text>
               {selected === opt.value && <Check size={18} color={c.primary} />}
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 17,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     textAlign: 'center',
     marginBottom: 12,
   },
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 16,
-    fontWeight: '500' as const,
+    fontWeight: '500',
   },
 });
 

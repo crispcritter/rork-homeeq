@@ -8,8 +8,7 @@ import {
   Alert,
   Modal,
   TextInput,
-  ScrollView,
-  Platform,
+
 } from 'react-native';
 import {
   ChevronDown,
@@ -63,7 +62,7 @@ const GROUP_ICONS: Record<string, React.ElementType> = {
   other: Package,
 };
 
-const CATEGORY_OPTIONS: { key: ApplianceCategory; label: string }[] = [
+const _CATEGORY_OPTIONS: { key: ApplianceCategory; label: string }[] = [
   { key: 'kitchen', label: 'Kitchen' },
   { key: 'laundry', label: 'Laundry' },
   { key: 'hvac', label: 'Heating & Cooling' },
@@ -606,7 +605,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 16,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: Colors.text,
     lineHeight: 22,
   },
@@ -658,7 +657,7 @@ const groupStyles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 14,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.text,
     lineHeight: 19,
   },
@@ -714,7 +713,7 @@ const groupStyles = StyleSheet.create({
   },
   customBadgeText: {
     fontSize: 9,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.warning,
     lineHeight: 13,
   },
@@ -737,14 +736,14 @@ const groupStyles = StyleSheet.create({
   },
   addBtnText: {
     fontSize: 12,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.primary,
     lineHeight: 16,
   },
   addedLabel: {
     fontSize: 12,
     color: Colors.textTertiary,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     lineHeight: 16,
   },
   moreBtn: {
@@ -767,7 +766,7 @@ const groupStyles = StyleSheet.create({
   },
   addItemText: {
     fontSize: 13,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     color: Colors.textSecondary,
     lineHeight: 18,
   },
@@ -808,7 +807,7 @@ const menuStyles = StyleSheet.create({
   },
   title: {
     fontSize: 15,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: Colors.text,
     textAlign: 'center',
     marginBottom: 14,
@@ -834,7 +833,7 @@ const menuStyles = StyleSheet.create({
   },
   optionLabel: {
     fontSize: 15,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.text,
     lineHeight: 20,
   },
@@ -854,7 +853,7 @@ const menuStyles = StyleSheet.create({
   },
   cancelText: {
     fontSize: 15,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.textSecondary,
   },
 });
@@ -882,7 +881,7 @@ const addModalStyles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 17,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: Colors.text,
   },
   field: {
@@ -890,7 +889,7 @@ const addModalStyles = StyleSheet.create({
   },
   label: {
     fontSize: 13,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.textSecondary,
     marginBottom: 6,
     lineHeight: 17,
@@ -919,7 +918,7 @@ const addModalStyles = StyleSheet.create({
   },
   cancelBtnText: {
     fontSize: 15,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.textSecondary,
   },
   addBtn: {
@@ -937,7 +936,7 @@ const addModalStyles = StyleSheet.create({
   },
   addBtnText: {
     fontSize: 15,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.white,
   },
 });

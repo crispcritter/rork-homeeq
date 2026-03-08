@@ -381,20 +381,20 @@ const createStyles = (c: { background: string; surface: string; surfaceAlt: stri
   },
   categoryBadgeText: {
     fontSize: 12,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: Colors.white,
     lineHeight: 16,
   },
   heroAmount: {
     fontSize: 36,
-    fontWeight: '800' as const,
+    fontWeight: '800',
     color: Colors.danger,
     letterSpacing: -1,
     marginBottom: 6,
   },
   heroDesc: {
     fontSize: 18,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.text,
     textAlign: 'center',
     marginBottom: 4,
@@ -410,7 +410,7 @@ const createStyles = (c: { background: string; surface: string; surfaceAlt: stri
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: Colors.text,
     marginBottom: 10,
     letterSpacing: -0.2,
@@ -440,7 +440,7 @@ const createStyles = (c: { background: string; surface: string; surfaceAlt: stri
   },
   detailValue: {
     fontSize: 15,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.text,
     lineHeight: 20,
   },
@@ -482,7 +482,7 @@ const createStyles = (c: { background: string; surface: string; surfaceAlt: stri
   },
   receiptLabel: {
     fontSize: 12,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.white,
   },
   providerCard: {
@@ -511,7 +511,7 @@ const createStyles = (c: { background: string; surface: string; surfaceAlt: stri
   },
   providerAvatarText: {
     fontSize: 18,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: Colors.white,
   },
   providerMainInfo: {
@@ -519,7 +519,7 @@ const createStyles = (c: { background: string; surface: string; surfaceAlt: stri
   },
   providerName: {
     fontSize: 16,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: Colors.text,
     marginBottom: 2,
     lineHeight: 21,
@@ -540,7 +540,7 @@ const createStyles = (c: { background: string; surface: string; surfaceAlt: stri
   },
   trustedBadgeText: {
     fontSize: 11,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: '#4A7FBF',
   },
   providerDetails: {
@@ -570,7 +570,7 @@ const createStyles = (c: { background: string; surface: string; surfaceAlt: stri
   },
   editBtnText: {
     fontSize: 15,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.primary,
   },
   deleteBtn: {
@@ -584,7 +584,7 @@ const createStyles = (c: { background: string; surface: string; surfaceAlt: stri
   },
   deleteBtnText: {
     fontSize: 15,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.danger,
   },
 });

@@ -8,7 +8,6 @@ import {
   Animated,
   ActivityIndicator,
   Linking,
-  Platform,
 } from 'react-native';
 import { ExternalLink, Globe, X, ShoppingBag } from 'lucide-react-native';
 import { ColorScheme } from '@/constants/colors';
@@ -234,12 +233,12 @@ const LinkPreview = React.memo(function LinkPreview({ url, onRemove }: LinkPrevi
     };
 
     fadeAnim.setValue(0);
-    fetchMeta();
+    void fetchMeta();
 
     return () => {
       cancelled = true;
     };
-  }, [url]);
+  }, [url, fadeAnim]);
 
   const handlePress = useCallback(() => {
     console.log('[LinkPreview] Opening URL:', url);
@@ -411,7 +410,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   siteName: {
     fontSize: 11,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.textSecondary,
     textTransform: 'uppercase' as const,
     letterSpacing: 0.3,
@@ -419,7 +418,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   title: {
     fontSize: 14,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.text,
     lineHeight: 19,
     marginBottom: 2,

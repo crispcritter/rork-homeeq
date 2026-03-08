@@ -480,7 +480,7 @@ export default function ProfileScreen() {
                   <View style={[styles.inputContent, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }]}>
                     <View style={{ flex: 1 }}>
                       <Text style={[styles.inputLabel, { color: c.textSecondary }]}>Sync status</Text>
-                      <Text style={{ fontSize: 14, fontWeight: '500' as const, color: c.text }}>{syncStatusLabel}</Text>
+                      <Text style={{ fontSize: 14, fontWeight: '500', color: c.text }}>{syncStatusLabel}</Text>
                     </View>
                     <TouchableOpacity
                       onPress={handleManualSync}
@@ -504,7 +504,7 @@ export default function ProfileScreen() {
                   <LogIn size={18} color={c.primary} />
                 </View>
                 <View style={styles.inputContent}>
-                  <Text style={{ fontSize: 16, fontWeight: '600' as const, color: c.primary }}>Sign In</Text>
+                  <Text style={{ fontSize: 16, fontWeight: '600', color: c.primary }}>Sign In</Text>
                   <Text style={[styles.inputLabel, { color: c.textSecondary, marginBottom: 0, marginTop: 2 }]}>Sync your data across devices</Text>
                 </View>
                 <ChevronDown size={16} color={c.textTertiary} style={{ transform: [{ rotate: '-90deg' }] }} />
@@ -520,7 +520,7 @@ export default function ProfileScreen() {
                 </View>
                 <View style={styles.inputContent}>
                   <Text style={[styles.inputLabel, { color: c.textSecondary }]}>Household</Text>
-                  <Text style={{ fontSize: 15, fontWeight: '600' as const, color: c.text }}>
+                  <Text style={{ fontSize: 15, fontWeight: '600', color: c.text }}>
                     {household ? household.name : 'Not set up'}
                   </Text>
                   {household && (
@@ -542,7 +542,7 @@ export default function ProfileScreen() {
                           <User size={14} color={member.role === 'owner' ? c.primary : c.textSecondary} />
                         </View>
                         <View style={{ flex: 1 }}>
-                          <Text style={{ fontSize: 14, fontWeight: '500' as const, color: c.text }}>{member.email}</Text>
+                          <Text style={{ fontSize: 14, fontWeight: '500', color: c.text }}>{member.email}</Text>
                           <Text style={{ fontSize: 12, color: c.textTertiary, marginTop: 1 }}>
                             {member.role === 'owner' ? 'Owner' : getRoleLabel(member.role)} · Joined {new Date(member.joinedAt).toLocaleDateString()}
                           </Text>
@@ -570,7 +570,7 @@ export default function ProfileScreen() {
                     <View style={[styles.householdInviteIconContainer, { backgroundColor: c.primaryLight }]}>
                       <UserPlus size={14} color={c.primary} />
                     </View>
-                    <Text style={{ fontSize: 15, fontWeight: '600' as const, color: c.primary }}>Invite Member</Text>
+                    <Text style={{ fontSize: 15, fontWeight: '600', color: c.primary }}>Invite Member</Text>
                   </TouchableOpacity>
 
                   {!household.isOwner && (
@@ -584,7 +584,7 @@ export default function ProfileScreen() {
                         <View style={[styles.inputIcon, { backgroundColor: c.dangerLight }]}>
                           <LogOut size={16} color={c.danger} />
                         </View>
-                        <Text style={{ fontSize: 15, fontWeight: '500' as const, color: c.danger }}>Leave Household</Text>
+                        <Text style={{ fontSize: 15, fontWeight: '500', color: c.danger }}>Leave Household</Text>
                       </TouchableOpacity>
                     </>
                   )}
@@ -602,7 +602,7 @@ export default function ProfileScreen() {
                       <UserPlus size={14} color={c.primary} />
                     </View>
                     <View style={{ flex: 1 }}>
-                      <Text style={{ fontSize: 15, fontWeight: '600' as const, color: c.primary }}>Create Household</Text>
+                      <Text style={{ fontSize: 15, fontWeight: '600', color: c.primary }}>Create Household</Text>
                       <Text style={{ fontSize: 12, color: c.textTertiary, marginTop: 2 }}>Share your home data with family members</Text>
                     </View>
                   </TouchableOpacity>
@@ -618,7 +618,7 @@ export default function ProfileScreen() {
                   <LogOut size={18} color={c.danger} />
                 </View>
                 <View style={styles.inputContent}>
-                  <Text style={{ fontSize: 16, fontWeight: '500' as const, color: c.danger }}>Sign Out</Text>
+                  <Text style={{ fontSize: 16, fontWeight: '500', color: c.danger }}>Sign Out</Text>
                 </View>
               </TouchableOpacity>
             </View>
@@ -1192,7 +1192,7 @@ export default function ProfileScreen() {
                     <Text style={[
                       styles.paletteLabel,
                       { color: c.textSecondary },
-                      paletteId === option.id && { color: c.primary, fontWeight: '700' as const },
+                      paletteId === option.id && { color: c.primary, fontWeight: '700' },
                     ]}>{option.label}</Text>
                   </TouchableOpacity>
                 ))}
@@ -1438,7 +1438,7 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     fontSize: 16,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.primary,
   },
   heroSection: {
@@ -1481,7 +1481,7 @@ const styles = StyleSheet.create({
   },
   heroTitle: {
     fontSize: 22,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: Colors.text,
     marginBottom: 6,
   },
@@ -1505,7 +1505,7 @@ const styles = StyleSheet.create({
   },
   sectionLabel: {
     fontSize: 13,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.textSecondary,
     textTransform: 'uppercase' as const,
     letterSpacing: 0.8,
@@ -1540,13 +1540,13 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     fontSize: 12,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     color: Colors.textSecondary,
     marginBottom: 4,
   },
   textInput: {
     fontSize: 16,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     color: Colors.text,
     padding: 0,
     margin: 0,
@@ -1558,7 +1558,7 @@ const styles = StyleSheet.create({
   },
   pickerValue: {
     fontSize: 16,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     color: Colors.text,
   },
   divider: {
@@ -1599,13 +1599,13 @@ const styles = StyleSheet.create({
   },
   gridLabel: {
     fontSize: 11,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     color: Colors.textSecondary,
     marginBottom: 6,
   },
   gridInput: {
     fontSize: 20,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: Colors.text,
     textAlign: 'center',
     padding: 0,
@@ -1624,7 +1624,7 @@ const styles = StyleSheet.create({
   },
   switchLabel: {
     fontSize: 16,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     color: Colors.text,
     marginLeft: 14,
   },
@@ -1637,7 +1637,7 @@ const styles = StyleSheet.create({
   notesInput: {
     flex: 1,
     fontSize: 15,
-    fontWeight: '400' as const,
+    fontWeight: '400',
     color: Colors.text,
     minHeight: 80,
     padding: 0,
@@ -1652,7 +1652,7 @@ const styles = StyleSheet.create({
   },
   saveButtonLargeText: {
     fontSize: 16,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: Colors.white,
     letterSpacing: 0.3,
   },
@@ -1667,7 +1667,7 @@ const styles = StyleSheet.create({
   },
   resetButtonText: {
     fontSize: 16,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: '#D1453B',
   },
   zillowPreviewContainer: {
@@ -1686,7 +1686,7 @@ const styles = StyleSheet.create({
   },
   zillowEditText: {
     fontSize: 13,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.primary,
   },
   zillowAddButton: {
@@ -1715,7 +1715,7 @@ const styles = StyleSheet.create({
   zillowAddText: {
     flex: 1,
     fontSize: 16,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     color: Colors.text,
   },
   modalOverlay: {
@@ -1742,7 +1742,7 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: Colors.text,
   },
   modalDescription: {
@@ -1764,7 +1764,7 @@ const styles = StyleSheet.create({
   modalInput: {
     flex: 1,
     fontSize: 15,
-    fontWeight: '400' as const,
+    fontWeight: '400',
     color: Colors.text,
     padding: 0,
     margin: 0,
@@ -1782,7 +1782,7 @@ const styles = StyleSheet.create({
   },
   modalRemoveText: {
     fontSize: 15,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: '#D1453B',
   },
   modalSaveButton: {
@@ -1796,7 +1796,7 @@ const styles = StyleSheet.create({
   },
   modalSaveText: {
     fontSize: 15,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.white,
   },
   zillowSearchButton: {
@@ -1811,7 +1811,7 @@ const styles = StyleSheet.create({
   },
   zillowSearchButtonText: {
     fontSize: 15,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: '#fff',
   },
   zillowSearchHint: {
@@ -1848,7 +1848,7 @@ const styles = StyleSheet.create({
   },
   householdEmptyTitle: {
     fontSize: 15,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.text,
     marginBottom: 4,
   },
@@ -1878,7 +1878,7 @@ const styles = StyleSheet.create({
   },
   householdMemberName: {
     fontSize: 16,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.text,
     marginBottom: 3,
   },
@@ -1896,7 +1896,7 @@ const styles = StyleSheet.create({
   },
   householdRoleBadgeText: {
     fontSize: 11,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.primary,
   },
   householdPendingBadge: {
@@ -1907,7 +1907,7 @@ const styles = StyleSheet.create({
   },
   householdPendingText: {
     fontSize: 11,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.warning,
   },
   householdMemberContact: {
@@ -1945,7 +1945,7 @@ const styles = StyleSheet.create({
   householdInviteText: {
     flex: 1,
     fontSize: 16,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     color: Colors.text,
   },
   inviteMethodToggle: {
@@ -1968,7 +1968,7 @@ const styles = StyleSheet.create({
   },
   inviteMethodText: {
     fontSize: 14,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     color: Colors.textSecondary,
   },
   inviteMethodTextActive: {
@@ -1976,7 +1976,7 @@ const styles = StyleSheet.create({
   },
   inviteRoleLabel: {
     fontSize: 12,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     color: Colors.textSecondary,
     marginBottom: 8,
     marginLeft: 2,
@@ -1998,7 +1998,7 @@ const styles = StyleSheet.create({
   },
   inviteRoleChipText: {
     fontSize: 13,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     color: Colors.textSecondary,
   },
   inviteRoleChipTextActive: {
@@ -2006,7 +2006,7 @@ const styles = StyleSheet.create({
   },
   zillowDividerText: {
     fontSize: 12,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     color: Colors.textTertiary,
     textTransform: 'uppercase' as const,
     letterSpacing: 0.5,
@@ -2030,10 +2030,10 @@ const styles = StyleSheet.create({
   },
   themeToggleText: {
     fontSize: 13,
-    fontWeight: '600' as const,
+    fontWeight: '600',
   },
   themeToggleTextActive: {
-    fontWeight: '600' as const,
+    fontWeight: '600',
   },
   paletteButton: {
     flex: 1,
@@ -2054,7 +2054,7 @@ const styles = StyleSheet.create({
   },
   paletteLabel: {
     fontSize: 12,
-    fontWeight: '600' as const,
+    fontWeight: '600',
   },
   syncNowButton: {
     paddingHorizontal: 14,
@@ -2063,6 +2063,6 @@ const styles = StyleSheet.create({
   },
   syncNowText: {
     fontSize: 13,
-    fontWeight: '600' as const,
+    fontWeight: '600',
   },
 });

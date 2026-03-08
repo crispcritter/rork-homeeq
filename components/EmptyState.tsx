@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     marginBottom: 4,
     lineHeight: 22,
     textAlign: 'center',
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   },
   actionText: {
     fontSize: 14,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     lineHeight: 19,
   },
 });

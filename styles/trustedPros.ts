@@ -39,7 +39,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   findCardTitle: {
     fontSize: 17,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.text,
     letterSpacing: -0.2,
   },
@@ -57,7 +57,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   findInputLabel: {
     fontSize: 12,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.textSecondary,
     textTransform: 'uppercase' as const,
     letterSpacing: 0.5,
@@ -94,7 +94,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   selectedApplianceText: {
     flex: 1,
     fontSize: 13,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.primary,
   },
   orApplianceBtn: {
@@ -107,7 +107,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   orApplianceText: {
     fontSize: 13,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.primary,
   },
   findRadiusRow: {
@@ -127,7 +127,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   findRadiusChipText: {
     fontSize: 13,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.textSecondary,
   },
   findRadiusChipTextActive: {
@@ -148,7 +148,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   searchButtonText: {
     fontSize: 15,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.white,
   },
   findHint: {
@@ -173,7 +173,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   noResultsTitle: {
     fontSize: 16,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.text,
   },
   noResultsText: {
@@ -205,7 +205,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   paginationText: {
     fontSize: 13,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.textSecondary,
   },
   paginationTextActive: {
@@ -219,12 +219,12 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   resultsTitle: {
     fontSize: 14,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.text,
   },
   clearResultsText: {
     fontSize: 13,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.primary,
   },
   resultCard: {
@@ -249,7 +249,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   resultAvatarText: {
     fontSize: 17,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.white,
   },
   resultInfo: {
@@ -257,7 +257,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   resultName: {
     fontSize: 15,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.text,
     lineHeight: 20,
   },
@@ -273,7 +273,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   resultRatingText: {
     fontSize: 13,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.warning,
   },
   resultReviewCount: {
@@ -319,7 +319,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   savedBadgeText: {
     fontSize: 12,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.primary,
   },
   savedHeader: {
@@ -335,7 +335,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   savedHeaderTitle: {
     fontSize: 18,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.text,
     letterSpacing: -0.3,
   },
@@ -347,7 +347,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   savedCountText: {
     fontSize: 13,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.primary,
   },
   searchRow: {
@@ -396,7 +396,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   filterBadgeText: {
     fontSize: 9,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.white,
   },
   filtersWrap: {
@@ -419,14 +419,14 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   filterLabel: {
     fontSize: 12,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.textSecondary,
     textTransform: 'uppercase' as const,
     letterSpacing: 0.5,
   },
   filterClearText: {
     fontSize: 12,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.primary,
   },
   filterChipsRow: {
@@ -447,7 +447,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   filterChipText: {
     fontSize: 12,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.textSecondary,
   },
   filterChipTextActive: {
@@ -472,7 +472,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   radiusChipText: {
     fontSize: 12,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.textSecondary,
   },
   radiusChipTextActive: {
@@ -489,11 +489,11 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   activeFilterText: {
     fontSize: 13,
     color: c.textSecondary,
-    fontWeight: '500' as const,
+    fontWeight: '500',
   },
   clearAllText: {
     fontSize: 13,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.primary,
   },
   emptyState: {
@@ -513,7 +513,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   emptyTitle: {
     fontSize: 17,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.text,
     marginBottom: Spacing.xs,
   },
@@ -532,7 +532,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   emptyResetText: {
     fontSize: 14,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.primary,
   },
   proCard: {
@@ -558,7 +558,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   proAvatarText: {
     fontSize: 18,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.white,
   },
   proMainInfo: {
@@ -566,7 +566,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   proName: {
     fontSize: 16,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.text,
     marginBottom: 1,
     lineHeight: 21,
@@ -584,7 +584,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   proRatingText: {
     fontSize: 12,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.warning,
   },
   proRatingCount: {
@@ -631,12 +631,12 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   proTagText: {
     fontSize: 11,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.primaryDark,
   },
   proTagMore: {
     fontSize: 11,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.textTertiary,
   },
   proRadiusBadge: {
@@ -650,7 +650,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   proRadiusText: {
     fontSize: 11,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.primary,
   },
   proFooter: {
@@ -677,7 +677,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   proExpenseText: {
     fontSize: 11,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.primary,
     lineHeight: 15,
   },
@@ -692,7 +692,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   proLinkedText: {
     fontSize: 11,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.primary,
     lineHeight: 15,
   },
@@ -717,7 +717,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.text,
   },
   modalSubtitle: {
@@ -754,7 +754,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   appliancePickerName: {
     fontSize: 15,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.text,
     marginBottom: 2,
   },
@@ -765,7 +765,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   appliancePickerService: {
     fontSize: 11,
     color: c.primary,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     marginTop: 2,
   },
   emptyModalState: {

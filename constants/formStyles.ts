@@ -16,7 +16,7 @@ const createFormStyles = (c: ColorScheme) => StyleSheet.create({
   },
   sectionLabel: {
     fontSize: 13,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.textSecondary,
     textTransform: 'uppercase' as const,
     letterSpacing: 0.8,
@@ -43,14 +43,14 @@ const createFormStyles = (c: ColorScheme) => StyleSheet.create({
   },
   inputLabel: {
     fontSize: 12,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     color: c.textSecondary,
     marginBottom: Spacing.xs,
     lineHeight: 16,
   },
   textInput: {
     fontSize: 16,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     color: c.text,
     padding: 0,
     margin: 0,
@@ -74,7 +74,7 @@ const createFormStyles = (c: ColorScheme) => StyleSheet.create({
   },
   switchLabel: {
     fontSize: 15,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.text,
     lineHeight: 20,
   },
@@ -97,7 +97,7 @@ const createFormStyles = (c: ColorScheme) => StyleSheet.create({
   },
   priorityLabel: {
     fontSize: 15,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.text,
     marginBottom: 2,
     lineHeight: 20,
@@ -116,7 +116,7 @@ const createFormStyles = (c: ColorScheme) => StyleSheet.create({
   },
   saveBtnText: {
     fontSize: 16,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.white,
     lineHeight: 22,
   },

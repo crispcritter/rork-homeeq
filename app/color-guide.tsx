@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
   },
   pageTitle: {
     fontSize: 28,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     marginBottom: 4,
   },
   pageSubtitle: {
@@ -214,14 +214,14 @@ const styles = StyleSheet.create({
   },
   paletteBadgeText: {
     fontSize: 13,
-    fontWeight: '600' as const,
+    fontWeight: '600',
   },
   groupContainer: {
     marginBottom: 24,
   },
   groupTitle: {
     fontSize: 16,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     marginBottom: 10,
   },
   swatchGrid: {
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
   },
   swatchHex: {
     fontSize: 11,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   swatchLabel: {
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
   },
   swatchName: {
     fontSize: 12,
-    fontWeight: '500' as const,
+    fontWeight: '500',
   },
   divider: {
     height: 1,

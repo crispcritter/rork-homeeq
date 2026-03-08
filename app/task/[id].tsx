@@ -115,7 +115,7 @@ function CollapsibleSection({ title, icon, children, defaultOpen, rightElement, 
         activeOpacity={0.6}
       >
         {icon}
-        <Text style={{ fontSize: 15, fontWeight: '600' as const, color: c.text, lineHeight: 20, flex: 1 }}>{title}</Text>
+        <Text style={{ fontSize: 15, fontWeight: '600', color: c.text, lineHeight: 20, flex: 1 }}>{title}</Text>
         {rightElement && isOpen ? rightElement : null}
         <Animated.View style={{ transform: [{ rotate: rotation }] }}>
           <ChevronDown size={16} color={c.textSecondary} />
@@ -573,7 +573,7 @@ export default function TaskDetailScreen() {
                               }}
                               activeOpacity={0.7}
                             >
-                              <Text style={{ fontSize: 13, fontWeight: '500' as const, color: editRecurringUnit === u ? c.white : c.textSecondary }}>
+                              <Text style={{ fontSize: 13, fontWeight: '500', color: editRecurringUnit === u ? c.white : c.textSecondary }}>
                                 {u.charAt(0).toUpperCase() + u.slice(1)}
                               </Text>
                             </TouchableOpacity>

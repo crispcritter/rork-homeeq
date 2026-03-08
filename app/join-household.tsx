@@ -259,20 +259,20 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 26,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     marginBottom: 8,
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 15,
-    fontWeight: '400' as const,
+    fontWeight: '400',
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: 24,
   },
   loadingText: {
     fontSize: 15,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     marginTop: 16,
   },
   householdCard: {
@@ -297,17 +297,17 @@ const styles = StyleSheet.create({
   },
   householdName: {
     fontSize: 18,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     marginBottom: 4,
   },
   householdMeta: {
     fontSize: 13,
-    fontWeight: '400' as const,
+    fontWeight: '400',
     lineHeight: 18,
   },
   disclaimer: {
     fontSize: 13,
-    fontWeight: '400' as const,
+    fontWeight: '400',
     textAlign: 'center',
     lineHeight: 19,
     marginBottom: 28,
@@ -326,13 +326,13 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 16,
-    fontWeight: '700' as const,
+    fontWeight: '700',
   },
   secondaryButton: {
     paddingVertical: 12,
   },
   secondaryButtonText: {
     fontSize: 15,
-    fontWeight: '500' as const,
+    fontWeight: '500',
   },
 });

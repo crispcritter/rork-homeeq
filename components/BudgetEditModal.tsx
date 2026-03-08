@@ -41,7 +41,7 @@ function BudgetEditModal({ visible, currentBudget, onSave, onClose }: BudgetEdit
         friction: 10,
       }).start();
     }
-  }, [visible, currentBudget]);
+  }, [visible, currentBudget, modalAnim]);
 
   const handleClose = useCallback(() => {
     Animated.timing(modalAnim, {
@@ -177,7 +177,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.text,
     letterSpacing: -0.3,
   },
@@ -192,14 +192,14 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   modalCurrency: {
     fontSize: 28,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.textSecondary,
     marginRight: 4,
   },
   modalInput: {
     flex: 1,
     fontSize: 28,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.text,
     padding: 0,
   },
@@ -220,7 +220,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   quickAmountText: {
     fontSize: 14,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.textSecondary,
   },
   quickAmountTextActive: {
@@ -237,7 +237,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   modalSaveBtnText: {
     fontSize: 16,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.white,
   },
 });

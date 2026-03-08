@@ -615,7 +615,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   filterText: {
     fontSize: 13,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.textSecondary,
     lineHeight: 17,
   },
@@ -635,7 +635,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   filterBadgeText: {
     fontSize: 11,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.textSecondary,
     lineHeight: 15,
   },
@@ -662,7 +662,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   sortPillText: {
     fontSize: 13,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.textSecondary,
     lineHeight: 17,
   },
@@ -704,7 +704,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   groupTitle: {
     fontSize: 15,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.text,
     lineHeight: 20,
   },
@@ -717,7 +717,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   groupCountText: {
     fontSize: 12,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     lineHeight: 16,
   },
   groupChevronWrap: {
@@ -790,7 +790,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   taskTitle: {
     fontSize: 15,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.text,
     marginBottom: 3,
     lineHeight: 20,
@@ -846,7 +846,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   recurringText: {
     fontSize: 10,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     color: c.primary,
     lineHeight: 14,
   },
@@ -862,7 +862,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   priorityText: {
     fontSize: 10,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     textTransform: 'capitalize' as const,
     lineHeight: 14,
   },
@@ -882,7 +882,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   emptyTitle: {
     fontSize: 20,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.text,
     lineHeight: 26,
   },
@@ -927,7 +927,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   completedHeaderTitle: {
     fontSize: 15,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.success,
     lineHeight: 20,
   },
@@ -941,7 +941,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   completedCountText: {
     fontSize: 12,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.success,
     lineHeight: 16,
   },
@@ -988,7 +988,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   exportHeaderTitle: {
     fontSize: 16,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.text,
     lineHeight: 21,
   },
@@ -1028,7 +1028,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   exportGridTitle: {
     fontSize: 14,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.text,
     lineHeight: 18,
     textAlign: 'center' as const,

@@ -192,7 +192,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   exportHeaderTitle: {
     fontSize: 16,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.text,
     lineHeight: 21,
   },
@@ -232,7 +232,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   exportGridTitle: {
     fontSize: 14,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.text,
     lineHeight: 18,
     textAlign: 'center' as const,

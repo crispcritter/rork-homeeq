@@ -360,16 +360,16 @@ const styles = StyleSheet.create({
   },
   brandTitle: {
     fontSize: 34,
-    fontWeight: '300' as const,
+    fontWeight: '300',
     letterSpacing: 1,
     marginBottom: 8,
   },
   brandBold: {
-    fontWeight: '700' as const,
+    fontWeight: '700',
   },
   subtitle: {
     fontSize: 15,
-    fontWeight: '400' as const,
+    fontWeight: '400',
     textAlign: 'center',
     lineHeight: 22,
   },
@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 14,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     textAlign: 'center',
     lineHeight: 20,
   },
@@ -400,7 +400,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 16,
-    fontWeight: '400' as const,
+    fontWeight: '400',
     padding: 0,
     margin: 0,
   },
@@ -421,7 +421,7 @@ const styles = StyleSheet.create({
   },
   submitButtonText: {
     fontSize: 16,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     letterSpacing: 0.3,
   },
   toggleRow: {
@@ -435,7 +435,7 @@ const styles = StyleSheet.create({
   },
   toggleLink: {
     fontSize: 14,
-    fontWeight: '600' as const,
+    fontWeight: '600',
   },
   featureSection: {
     gap: 14,
@@ -454,7 +454,7 @@ const styles = StyleSheet.create({
   },
   featureText: {
     fontSize: 14,
-    fontWeight: '400' as const,
+    fontWeight: '400',
     lineHeight: 20,
   },
 });

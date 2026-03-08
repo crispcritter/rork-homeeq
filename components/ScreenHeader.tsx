@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 30,
-    fontWeight: '800' as const,
+    fontWeight: '800',
     letterSpacing: -0.8,
     lineHeight: 36,
   },

@@ -212,11 +212,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 38,
     color: '#2D2926',
-    fontWeight: '300' as const,
+    fontWeight: '300',
     letterSpacing: 1,
   },
   titleBold: {
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: '#5A8A60',
   },
   line: {
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 13,
     color: '#5A8A60',
-    fontWeight: '400' as const,
+    fontWeight: '400',
     letterSpacing: 1.5,
     textTransform: 'uppercase' as const,
   },

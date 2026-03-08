@@ -25,7 +25,7 @@ const createExpenseStyles = (c: ColorScheme) => StyleSheet.create({
   },
   backBtnText: {
     fontSize: 14,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.white,
   },
   typeToggleRow: {
@@ -52,7 +52,7 @@ const createExpenseStyles = (c: ColorScheme) => StyleSheet.create({
   },
   typeToggleText: {
     fontSize: 14,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.textSecondary,
   },
   typeToggleTextActive: {
@@ -71,7 +71,7 @@ const createExpenseStyles = (c: ColorScheme) => StyleSheet.create({
   },
   amountLabel: {
     fontSize: 14,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     color: c.textSecondary,
     marginBottom: Spacing.md,
     lineHeight: 19,
@@ -82,13 +82,13 @@ const createExpenseStyles = (c: ColorScheme) => StyleSheet.create({
   },
   amountSign: {
     fontSize: 28,
-    fontWeight: '300' as const,
+    fontWeight: '300',
     color: c.textTertiary,
     marginRight: Spacing.xs,
   },
   amountInput: {
     fontSize: 38,
-    fontWeight: '800' as const,
+    fontWeight: '800',
     color: c.text,
     minWidth: 120,
     textAlign: 'center',
@@ -108,7 +108,7 @@ const createExpenseStyles = (c: ColorScheme) => StyleSheet.create({
   },
   categoryChipText: {
     fontSize: 13,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.textSecondary,
     lineHeight: 17,
   },
@@ -133,7 +133,7 @@ const createExpenseStyles = (c: ColorScheme) => StyleSheet.create({
   },
   paymentChipText: {
     fontSize: 13,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     color: c.textSecondary,
   },
   paymentChipTextActive: {
@@ -170,7 +170,7 @@ const createExpenseStyles = (c: ColorScheme) => StyleSheet.create({
   },
   receiptBtnText: {
     fontSize: 13,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.text,
     lineHeight: 17,
   },
@@ -246,7 +246,7 @@ const createExpenseStyles = (c: ColorScheme) => StyleSheet.create({
   },
   trustedProPickerLabel: {
     fontSize: 12,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     color: c.textSecondary,
     marginBottom: Spacing.sm,
     marginLeft: Spacing.xs,
@@ -275,12 +275,12 @@ const createExpenseStyles = (c: ColorScheme) => StyleSheet.create({
   },
   trustedProAvatarText: {
     fontSize: 13,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.white,
   },
   trustedProChipName: {
     fontSize: 13,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.text,
     maxWidth: 120,
   },
@@ -294,7 +294,7 @@ const createExpenseStyles = (c: ColorScheme) => StyleSheet.create({
   },
   clearProBtnText: {
     fontSize: 12,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.danger,
   },
   saveBtn: {
@@ -306,7 +306,7 @@ const createExpenseStyles = (c: ColorScheme) => StyleSheet.create({
   },
   saveBtnText: {
     fontSize: 16,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.white,
     lineHeight: 22,
   },

@@ -371,7 +371,7 @@ export default function ApplianceForm({ mode, initialData, onSave }: ApplianceFo
                     onPress={() => { setPaymentMethod(method); setShowPaymentPicker(false); }}
                     activeOpacity={0.7}
                   >
-                    <Text style={[{ fontSize: 13, fontWeight: '500' as const, color: Colors.textSecondary }, paymentMethod === method && { color: Colors.white }]}>
+                    <Text style={[{ fontSize: 13, fontWeight: '500', color: Colors.textSecondary }, paymentMethod === method && { color: Colors.white }]}>
                       {method}
                     </Text>
                   </TouchableOpacity>
@@ -399,7 +399,7 @@ export default function ApplianceForm({ mode, initialData, onSave }: ApplianceFo
               <View style={styles.divider} />
               <TouchableOpacity style={styles.inputRow} onPress={() => setManual(undefined)} activeOpacity={0.7}>
                 <View style={styles.inputContent}>
-                  <Text style={{ fontSize: 14, color: Colors.danger, fontWeight: '500' as const }}>Remove Manual</Text>
+                  <Text style={{ fontSize: 14, color: Colors.danger, fontWeight: '500' }}>Remove Manual</Text>
                 </View>
               </TouchableOpacity>
             </View>
@@ -415,7 +415,7 @@ export default function ApplianceForm({ mode, initialData, onSave }: ApplianceFo
                   <Upload size={16} color={Colors.primary} />
                 </View>
                 <View style={[styles.inputContent, { marginLeft: 12 }]}>
-                  <Text style={{ fontSize: 14, fontWeight: '600' as const, color: Colors.primary }}>Upload Manual</Text>
+                  <Text style={{ fontSize: 14, fontWeight: '600', color: Colors.primary }}>Upload Manual</Text>
                   <Text style={{ fontSize: 12, color: Colors.textTertiary }}>Add a photo or document</Text>
                 </View>
                 <ChevronRight size={16} color={Colors.textTertiary} />
@@ -432,7 +432,7 @@ export default function ApplianceForm({ mode, initialData, onSave }: ApplianceFo
                   {isSearchingManual ? <ActivityIndicator size="small" color="#5B8CB8" /> : <Search size={16} color="#5B8CB8" />}
                 </View>
                 <View style={[styles.inputContent, { marginLeft: 12 }]}>
-                  <Text style={{ fontSize: 14, fontWeight: '600' as const, color: '#5B8CB8' }}>{isSearchingManual ? 'Searching...' : 'Find Manual'}</Text>
+                  <Text style={{ fontSize: 14, fontWeight: '600', color: '#5B8CB8' }}>{isSearchingManual ? 'Searching...' : 'Find Manual'}</Text>
                   <Text style={{ fontSize: 12, color: Colors.textTertiary }}>Search using brand & model info</Text>
                 </View>
                 {!isSearchingManual && <ChevronRight size={16} color={Colors.textTertiary} />}

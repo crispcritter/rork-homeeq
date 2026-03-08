@@ -27,7 +27,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   greeting: {
     fontSize: 30,
-    fontWeight: '800' as const,
+    fontWeight: '800',
     color: c.text,
     letterSpacing: -0.8,
     lineHeight: 36,
@@ -60,7 +60,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   alertTitle: {
     fontSize: 14,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.danger,
     lineHeight: 19,
   },
@@ -102,7 +102,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   quickActionLabel: {
     fontSize: 13,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.text,
     lineHeight: 17,
   },
@@ -115,7 +115,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   budgetLabel: {
     fontSize: 14,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     color: c.textSecondary,
     lineHeight: 19,
     marginBottom: Spacing.xl,
@@ -135,7 +135,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   spendingAmount: {
     fontSize: 22,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.text,
     letterSpacing: -0.3,
     lineHeight: 28,
@@ -163,14 +163,14 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.text,
     letterSpacing: -0.3,
     lineHeight: 26,
   },
   seeAllText: {
     fontSize: 14,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.primary,
     lineHeight: 19,
   },
@@ -194,7 +194,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   taskTitle: {
     fontSize: 15,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.text,
     marginBottom: Spacing.xs,
     lineHeight: 20,
@@ -222,7 +222,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   taskCost: {
     fontSize: 14,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.text,
     marginLeft: Spacing.sm,
   },
@@ -235,7 +235,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   emptyTitle: {
     fontSize: 16,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.text,
     marginBottom: Spacing.xs,
     lineHeight: 22,
@@ -257,7 +257,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   emptyActionText: {
     fontSize: 14,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.primary,
     lineHeight: 19,
   },
@@ -286,7 +286,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   providerInitial: {
     fontSize: 18,
-    fontWeight: '700' as const,
+    fontWeight: '700',
   },
   emptyProviderCard: {
     backgroundColor: c.surface,
@@ -306,7 +306,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   emptyProviderTitle: {
     fontSize: 15,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.text,
     marginBottom: Spacing.xs,
     lineHeight: 20,
@@ -319,7 +319,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   providerName: {
     fontSize: 13,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.text,
     textAlign: 'center',
     marginBottom: 2,
@@ -339,7 +339,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   ratingText: {
     fontSize: 12,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.text,
     lineHeight: 16,
   },

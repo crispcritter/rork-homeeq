@@ -36,7 +36,7 @@ function RootLayoutNav() {
         headerBackTitle: "Back",
         headerStyle: { backgroundColor: colors.background },
         headerTintColor: colors.primary,
-        headerTitleStyle: { color: colors.text, fontWeight: '600' as const },
+        headerTitleStyle: { color: colors.text, fontWeight: '600' },
         contentStyle: { backgroundColor: colors.background },
       }}
     >

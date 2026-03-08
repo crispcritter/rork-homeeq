@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   initial: {
-    fontWeight: '700' as const,
+    fontWeight: '700',
   },
 });
 

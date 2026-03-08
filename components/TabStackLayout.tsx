@@ -40,7 +40,7 @@ export default function TabStackLayout({ title }: TabStackLayoutProps) {
       screenOptions={{
         headerStyle: { backgroundColor: colors.background },
         headerTintColor: colors.primary,
-        headerTitleStyle: { color: colors.text, fontWeight: '700' as const },
+        headerTitleStyle: { color: colors.text, fontWeight: '700' },
         contentStyle: { backgroundColor: colors.background },
       }}
     >

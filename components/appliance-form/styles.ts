@@ -54,7 +54,7 @@ export const formStyles = StyleSheet.create({
   },
   scanTitle: {
     fontSize: 14,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.primaryDark,
     lineHeight: 19,
   },
@@ -113,7 +113,7 @@ export const formStyles = StyleSheet.create({
   analyzingText: {
     color: Colors.white,
     fontSize: 13,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     lineHeight: 17,
   },
   rescanRow: {
@@ -136,7 +136,7 @@ export const formStyles = StyleSheet.create({
   },
   rescanText: {
     fontSize: 14,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.primary,
     lineHeight: 19,
   },
@@ -145,7 +145,7 @@ export const formStyles = StyleSheet.create({
   },
   sectionLabel: {
     fontSize: 13,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.textSecondary,
     textTransform: 'uppercase' as const,
     letterSpacing: 0.8,
@@ -174,14 +174,14 @@ export const formStyles = StyleSheet.create({
   },
   inputLabel: {
     fontSize: 12,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     color: Colors.textSecondary,
     marginBottom: 4,
     lineHeight: 16,
   },
   textInput: {
     fontSize: 16,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     color: Colors.text,
     padding: 0,
     margin: 0,
@@ -211,7 +211,7 @@ export const formStyles = StyleSheet.create({
   },
   categoryChipText: {
     fontSize: 13,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.textSecondary,
     lineHeight: 17,
   },
@@ -224,7 +224,7 @@ export const formStyles = StyleSheet.create({
   },
   notesInput: {
     fontSize: 15,
-    fontWeight: '400' as const,
+    fontWeight: '400',
     color: Colors.text,
     minHeight: 80,
     padding: 0,
@@ -256,7 +256,7 @@ export const formStyles = StyleSheet.create({
   },
   receiptScanTitle: {
     fontSize: 14,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: '#8B6914',
     lineHeight: 19,
   },
@@ -287,12 +287,12 @@ export const formStyles = StyleSheet.create({
   },
   receiptPreviewLabel: {
     fontSize: 13,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     color: Colors.text,
   },
   receiptRemoveText: {
     fontSize: 12,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.danger,
   },
   photosSectionHeader: {
@@ -313,7 +313,7 @@ export const formStyles = StyleSheet.create({
   },
   addPhotoSmallText: {
     fontSize: 12,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.primary,
   },
   photosRow: {
@@ -365,7 +365,7 @@ export const formStyles = StyleSheet.create({
   },
   photoThumbLabel: {
     fontSize: 9,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     color: Colors.textTertiary,
     textAlign: 'center' as const,
   },
@@ -392,7 +392,7 @@ export const formStyles = StyleSheet.create({
   },
   saveBtnText: {
     fontSize: 16,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: Colors.white,
     lineHeight: 22,
   },
@@ -404,7 +404,7 @@ export const formStyles = StyleSheet.create({
   },
   notFoundText: {
     fontSize: 18,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.textSecondary,
     marginBottom: 16,
   },
@@ -416,7 +416,7 @@ export const formStyles = StyleSheet.create({
   },
   backBtnText: {
     fontSize: 14,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.white,
   },
   warrantyToggleRow: {
@@ -447,7 +447,7 @@ export const formStyles = StyleSheet.create({
   },
   warrantyToggleBtnText: {
     fontSize: 13,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: Colors.textSecondary,
   },
   warrantyToggleBtnTextActive: {

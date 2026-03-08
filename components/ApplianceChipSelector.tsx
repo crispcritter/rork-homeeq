@@ -61,7 +61,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   chipText: {
     fontSize: 13,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.textSecondary,
     lineHeight: 17,
   },

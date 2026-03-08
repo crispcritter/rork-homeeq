@@ -217,7 +217,7 @@ export default function AppliancesScreen() {
                 testID={`sort-${opt.key}`}
               >
                 {active && <Check size={12} color={c.primary} />}
-                <Text style={[styles.sortChipText, active && { color: c.primary, fontWeight: '600' as const }]}>{opt.label}</Text>
+                <Text style={[styles.sortChipText, active && { color: c.primary, fontWeight: '600' }]}>{opt.label}</Text>
               </TouchableOpacity>
             );
           })}
@@ -357,7 +357,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   sortChipText: {
     fontSize: 13,
     color: c.textSecondary,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     lineHeight: 17,
   },
   searchContainer: {
@@ -405,14 +405,14 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   cardImageText: {
     fontSize: 22,
-    fontWeight: '700' as const,
+    fontWeight: '700',
   },
   cardInfo: {
     flex: 1,
   },
   cardTitle: {
     fontSize: 16,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.text,
     marginBottom: 2,
     lineHeight: 22,
@@ -446,7 +446,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   chipText: {
     fontSize: 11,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     color: c.textSecondary,
     lineHeight: 15,
   },
@@ -466,7 +466,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   emptyTitle: {
     fontSize: 20,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.text,
     marginBottom: 6,
     textAlign: 'center',
@@ -490,7 +490,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   emptyBtnText: {
     fontSize: 15,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.white,
     lineHeight: 20,
   },

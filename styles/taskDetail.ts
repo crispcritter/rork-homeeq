@@ -47,7 +47,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   statusText: {
     fontSize: 12,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     lineHeight: 16,
   },
   priorityBadge: {
@@ -57,12 +57,12 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   priorityText: {
     fontSize: 12,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     lineHeight: 16,
   },
   title: {
     fontSize: 26,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.text,
     lineHeight: 32,
     letterSpacing: -0.3,
@@ -102,7 +102,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   infoLabel: {
     fontSize: 11,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     color: c.textTertiary,
     textTransform: 'uppercase' as const,
     letterSpacing: 0.5,
@@ -111,7 +111,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   infoValue: {
     fontSize: 14,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.text,
     lineHeight: 19,
   },
@@ -141,7 +141,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   applianceInfo: { flex: 1 },
   applianceLabel: {
     fontSize: 10,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.textTertiary,
     textTransform: 'uppercase' as const,
     letterSpacing: 0.5,
@@ -150,7 +150,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   applianceName: {
     fontSize: 15,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.text,
     lineHeight: 20,
   },
@@ -180,7 +180,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   notesSectionTitle: {
     fontSize: 15,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.text,
     lineHeight: 20,
   },
@@ -243,7 +243,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     marginBottom: Spacing.md,
   },
   linkTitleRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
-  linkSectionTitle: { fontSize: 15, fontWeight: '600' as const, color: c.text, lineHeight: 20 },
+  linkSectionTitle: { fontSize: 15, fontWeight: '600', color: c.text, lineHeight: 20 },
   addLinkBtn: {
     width: 32,
     height: 32,
@@ -306,7 +306,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     borderWidth: 1,
     borderColor: c.warning + '40',
   },
-  amazonSearchText: { fontSize: 14, fontWeight: '600' as const, color: c.warning, lineHeight: 19 },
+  amazonSearchText: { fontSize: 14, fontWeight: '600', color: c.warning, lineHeight: 19 },
   actionsSection: { gap: Spacing.md },
   completeBtn: {
     flexDirection: 'row',
@@ -317,7 +317,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     borderRadius: Radius.xl,
     paddingVertical: Spacing.lg,
   },
-  completeBtnText: { fontSize: 16, fontWeight: '700' as const, color: c.white, lineHeight: 22 },
+  completeBtnText: { fontSize: 16, fontWeight: '700', color: c.white, lineHeight: 22 },
   restoreBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -327,7 +327,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     borderRadius: Radius.xl,
     paddingVertical: Spacing.lg,
   },
-  restoreBtnText: { fontSize: 16, fontWeight: '700' as const, color: c.white, lineHeight: 22 },
+  restoreBtnText: { fontSize: 16, fontWeight: '700', color: c.white, lineHeight: 22 },
   archiveBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -337,7 +337,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     borderRadius: Radius.xl,
     paddingVertical: Spacing.xl,
   },
-  archiveBtnText: { fontSize: 15, fontWeight: '600' as const, color: c.textSecondary, lineHeight: 20 },
+  archiveBtnText: { fontSize: 15, fontWeight: '600', color: c.textSecondary, lineHeight: 20 },
   deleteBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -347,7 +347,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     borderRadius: Radius.xl,
     paddingVertical: Spacing.xl,
   },
-  deleteBtnText: { fontSize: 15, fontWeight: '600' as const, color: c.danger, lineHeight: 20 },
+  deleteBtnText: { fontSize: 15, fontWeight: '600', color: c.danger, lineHeight: 20 },
   editContent: { paddingHorizontal: Spacing.xl, paddingTop: Spacing.lg },
   editSaveBtn: {
     flexDirection: 'row',
@@ -359,7 +359,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     paddingVertical: Spacing.lg,
     marginTop: Spacing.xs,
   },
-  editSaveBtnText: { fontSize: 16, fontWeight: '700' as const, color: c.white, lineHeight: 22 },
+  editSaveBtnText: { fontSize: 16, fontWeight: '700', color: c.white, lineHeight: 22 },
   editCancelBtn: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -368,7 +368,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     marginTop: Spacing.md,
     backgroundColor: c.surfaceAlt,
   },
-  editCancelBtnText: { fontSize: 15, fontWeight: '600' as const, color: c.textSecondary, lineHeight: 20 },
+  editCancelBtnText: { fontSize: 15, fontWeight: '600', color: c.textSecondary, lineHeight: 20 },
   proSection: {
     backgroundColor: c.surface,
     borderRadius: Radius.xl,
@@ -383,7 +383,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     marginBottom: Spacing.md,
   },
   proTitleRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
-  proSectionTitle: { fontSize: 15, fontWeight: '600' as const, color: c.text, lineHeight: 20 },
+  proSectionTitle: { fontSize: 15, fontWeight: '600', color: c.text, lineHeight: 20 },
   proRemoveBtn: { padding: Spacing.xs },
   proCard: {
     flexDirection: 'row',
@@ -402,7 +402,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     alignItems: 'center',
   },
   proCardInfo: { flex: 1 },
-  proCardName: { fontSize: 15, fontWeight: '600' as const, color: c.text, lineHeight: 20 },
+  proCardName: { fontSize: 15, fontWeight: '600', color: c.text, lineHeight: 20 },
   proCardSpecialty: { fontSize: 12, color: c.textSecondary, lineHeight: 16, marginTop: 1 },
   proCardPhoneRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs, marginTop: 3 },
   proCardPhone: { fontSize: 12, color: c.textTertiary, lineHeight: 16 },
@@ -415,7 +415,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     paddingVertical: Spacing.xs,
     borderRadius: Radius.sm,
   },
-  proRatingText: { fontSize: 12, fontWeight: '600' as const, color: c.text, lineHeight: 16 },
+  proRatingText: { fontSize: 12, fontWeight: '600', color: c.text, lineHeight: 16 },
   proEmptyState: { alignItems: 'center', paddingVertical: Spacing.sm, gap: Spacing.md },
   proEmptyText: { fontSize: 13, color: c.textTertiary },
   proEmptyActions: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
@@ -428,7 +428,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     paddingVertical: Spacing.md,
     borderRadius: Radius.md,
   },
-  proSelectBtnText: { fontSize: 14, fontWeight: '600' as const, color: c.primary, lineHeight: 19 },
+  proSelectBtnText: { fontSize: 14, fontWeight: '600', color: c.primary, lineHeight: 19 },
   findProBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -438,11 +438,11 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     paddingVertical: Spacing.md,
     borderRadius: Radius.md,
   },
-  findProBtnText: { fontSize: 14, fontWeight: '600' as const, color: c.white, lineHeight: 19 },
+  findProBtnText: { fontSize: 14, fontWeight: '600', color: c.white, lineHeight: 19 },
   proPickerWrap: { gap: Spacing.sm },
   proPickerLabel: {
     fontSize: 12,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     color: c.textTertiary,
     textTransform: 'uppercase' as const,
     letterSpacing: 0.5,
@@ -467,10 +467,10 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     alignItems: 'center',
   },
   proPickerInfo: { flex: 1 },
-  proPickerName: { fontSize: 14, fontWeight: '600' as const, color: c.text, lineHeight: 19 },
+  proPickerName: { fontSize: 14, fontWeight: '600', color: c.text, lineHeight: 19 },
   proPickerSpecialty: { fontSize: 12, color: c.textSecondary, lineHeight: 16 },
   proPickerCancelBtn: { alignItems: 'center', paddingVertical: Spacing.md, marginTop: Spacing.xs },
-  proPickerCancelText: { fontSize: 14, fontWeight: '500' as const, color: c.textSecondary },
+  proPickerCancelText: { fontSize: 14, fontWeight: '500', color: c.textSecondary },
   proPickerEmpty: { alignItems: 'center', gap: Spacing.md, paddingVertical: Spacing.sm },
   proPickerEmptyText: { fontSize: 13, color: c.textTertiary },
   calendarSection: {
@@ -488,7 +488,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   calendarSectionTitle: {
     fontSize: 15,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.text,
     lineHeight: 20,
   },
@@ -514,7 +514,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   calendarAddBtnText: {
     fontSize: 14,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.text,
     lineHeight: 19,
   },
@@ -536,7 +536,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   calendarSyncedLabel: {
     fontSize: 14,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.primary,
     lineHeight: 19,
   },
@@ -561,7 +561,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   reminderSyncedLabel: {
     fontSize: 14,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.warning,
     lineHeight: 19,
   },
@@ -632,7 +632,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   youtubeCardTitle: {
     fontSize: 13,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.text,
     lineHeight: 18,
   },
@@ -666,7 +666,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   youtubeFullSearchText: {
     fontSize: 14,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: '#CC0000',
     lineHeight: 19,
   },

@@ -236,7 +236,7 @@ export default function DatePickerField({
 const localStyles = StyleSheet.create({
   label: {
     fontSize: 12,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     marginBottom: 4,
     lineHeight: 16,
   },
@@ -247,7 +247,7 @@ const localStyles = StyleSheet.create({
   },
   valueText: {
     fontSize: 16,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     lineHeight: 22,
     flex: 1,
   },
@@ -281,15 +281,15 @@ const localStyles = StyleSheet.create({
   },
   sheetCancel: {
     fontSize: 16,
-    fontWeight: '400' as const,
+    fontWeight: '400',
   },
   sheetTitle: {
     fontSize: 16,
-    fontWeight: '600' as const,
+    fontWeight: '600',
   },
   sheetDone: {
     fontSize: 16,
-    fontWeight: '600' as const,
+    fontWeight: '600',
   },
   picker: {
     height: 216,

@@ -42,7 +42,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   heroAmount: {
     fontSize: 28,
-    fontWeight: '800' as const,
+    fontWeight: '800',
     letterSpacing: -0.8,
     lineHeight: 34,
   },
@@ -78,7 +78,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   heroStatValue: {
     fontSize: 15,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.text,
     lineHeight: 20,
   },
@@ -98,7 +98,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.text,
     marginBottom: Spacing.md,
     letterSpacing: -0.3,
@@ -112,7 +112,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   seeAllText: {
     fontSize: 14,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.primary,
   },
   prosRow: {
@@ -138,12 +138,12 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   proAvatarText: {
     fontSize: 18,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: '#FFFFFF',
   },
   proName: {
     fontSize: 13,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.text,
     textAlign: 'center',
     marginBottom: 2,
@@ -178,7 +178,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   proExpenseCount: {
     fontSize: 10,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.primary,
     lineHeight: 14,
   },
@@ -208,7 +208,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   categoryLabel: {
     fontSize: 13,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.text,
     marginBottom: Spacing.xs,
     lineHeight: 17,
@@ -225,7 +225,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   categoryAmount: {
     fontSize: 14,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.text,
     minWidth: 56,
     textAlign: 'right',
@@ -250,7 +250,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   expenseDesc: {
     fontSize: 15,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.text,
     marginBottom: 2,
     lineHeight: 20,
@@ -279,7 +279,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   expenseProvider: {
     fontSize: 11,
-    fontWeight: '500' as const,
+    fontWeight: '500',
     color: c.primary,
     marginTop: 2,
     lineHeight: 15,
@@ -290,7 +290,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   expenseAmount: {
     fontSize: 15,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.danger,
   },
   expensePayment: {
@@ -316,7 +316,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.text,
     marginBottom: Spacing.xs,
     lineHeight: 22,
@@ -350,7 +350,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   exportHeaderTitle: {
     fontSize: 16,
-    fontWeight: '700' as const,
+    fontWeight: '700',
     color: c.text,
     lineHeight: 21,
   },
@@ -386,7 +386,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   exportGridTitle: {
     fontSize: 14,
-    fontWeight: '600' as const,
+    fontWeight: '600',
     color: c.text,
     lineHeight: 18,
     textAlign: 'center' as const,

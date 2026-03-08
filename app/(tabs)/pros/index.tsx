@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, useRef } from 'react';
+import React, { useMemo, useState, useCallback, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -58,6 +58,12 @@ export default function TrustedProsScreen() {
   const { trustedPros, deleteTrustedPro, addTrustedPro, appliances, homeProfile } = useHome();
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearchQuery(searchQuery), 150);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
   const [selectedCategory, setSelectedCategory] = useState<ProServiceCategory | 'all'>('all');
   const [maxRadius, setMaxRadius] = useState(0);
   const [showFilters, setShowFilters] = useState(false);
@@ -203,8 +209,8 @@ export default function TrustedProsScreen() {
   const filteredPros = useMemo(() => {
     let result = [...trustedPros];
 
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase().trim();
+    if (debouncedSearchQuery.trim()) {
+      const q = debouncedSearchQuery.toLowerCase().trim();
       result = result.filter((pro) => {
         const nameMatch = pro.name.toLowerCase().includes(q);
         const specialtyMatch = pro.specialty.toLowerCase().includes(q);
@@ -243,7 +249,7 @@ export default function TrustedProsScreen() {
         if (bR !== aR) return bR - aR;
         return b.expenseIds.length - a.expenseIds.length;
       });
-  }, [trustedPros, searchQuery, selectedCategory, maxRadius, appliances]);
+  }, [trustedPros, debouncedSearchQuery, selectedCategory, maxRadius, appliances]);
 
   const activeFilterCount = useMemo(() => {
     let count = 0;

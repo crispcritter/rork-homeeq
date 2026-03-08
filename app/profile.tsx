@@ -1063,10 +1063,7 @@ export default function ProfileScreen() {
 
 
 
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={[styles.sectionLabel, { color: c.textSecondary }]}>Settings</Text>
-          </View>
+        <CollapsibleSection title="App Settings" themeColors={c} globalDefault={sectionsDefaultOpen}>
           <View style={[styles.card, { backgroundColor: c.surface }]}>
             <View style={styles.switchRow}>
               <View style={styles.switchLeft}>
@@ -1201,7 +1198,7 @@ export default function ProfileScreen() {
               </View>
             </View>
           </View>
-        </View>
+        </CollapsibleSection>
 
         <TouchableOpacity style={[styles.saveButtonLarge, { backgroundColor: c.primary }]} onPress={handleSave} activeOpacity={0.8}>
           <Text style={styles.saveButtonLargeText}>Save Profile</Text>

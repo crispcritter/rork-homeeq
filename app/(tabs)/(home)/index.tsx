@@ -8,7 +8,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { AlertTriangle, ChevronRight, Plus, Clock, Star, CirclePlus, Wrench, DollarSign, Search, CalendarDays, Calendar } from 'lucide-react-native';
+import { AlertTriangle, ChevronRight, Plus, Clock, Star, CirclePlus, Wrench, DollarSign, Search, CalendarDays, Calendar, WifiOff } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useRefresh } from '@/hooks/useRefresh';
@@ -40,6 +40,7 @@ export default function DashboardScreen() {
     overdueTasks,
     getApplianceById,
     isLoading,
+    isError,
     homeProfile,
     trustedPros,
   } = useHome();
@@ -87,6 +88,24 @@ export default function DashboardScreen() {
             Here's what's happening{homeProfile.nickname ? ` at ${homeProfile.nickname}` : ' at home'}
           </Text>
         </View>
+
+        {isError && (
+          <AnimatedCard index={0}>
+            <PressableCard
+              style={[styles.alertBanner, { backgroundColor: c.warningLight }]}
+              onPress={onRefresh}
+            >
+              <View style={styles.alertIconWrap}>
+                <WifiOff size={18} color={c.warning} />
+              </View>
+              <View style={styles.alertContent}>
+                <Text style={[styles.alertTitle, { color: c.warning }]}>Couldn't load some data</Text>
+                <Text style={[styles.alertSubtitle, { color: c.warning }]}>Tap to retry</Text>
+              </View>
+              <ChevronRight size={16} color={c.warning} />
+            </PressableCard>
+          </AnimatedCard>
+        )}
 
         {overdueTasks.length > 0 && (
           <AnimatedCard index={0}>

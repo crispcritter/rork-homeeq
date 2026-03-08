@@ -13,6 +13,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { generateId } from '@/utils/id';
 import {
   UserCheck,
   Phone,
@@ -162,7 +163,7 @@ export default function TrustedProsScreen() {
     }
 
     const newPro = {
-      id: `pro-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
+      id: generateId('pro'),
       name: place.name,
       specialty: place.types.length > 0
         ? place.types[0].replace(/_/g, ' ').replace(/\b\w/g, (ch) => ch.toUpperCase())

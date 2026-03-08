@@ -10,6 +10,7 @@ import { parseLocalDate } from '@/utils/dates';
 import * as SecureStore from 'expo-secure-store';
 import { trpcClient, AUTH_TOKEN_KEY } from '@/lib/trpc';
 import { deleteAppPassword } from '@/utils/appInfoSecure';
+import { generateId } from '@/utils/id';
 
 export const [HomeProvider, useHome] = createContextHook(() => {
   const queryClient = useQueryClient();
@@ -205,7 +206,7 @@ export const [HomeProvider, useHome] = createContextHook(() => {
         }
 
         const nextTask: MaintenanceTask = {
-          id: `task-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+          id: generateId('task'),
           title: task.title,
           description: task.description,
           dueDate: toISODateString(nextDue),

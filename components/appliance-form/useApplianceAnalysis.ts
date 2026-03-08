@@ -1,10 +1,11 @@
 import { useState, useCallback } from 'react';
-import { Alert, Platform, Animated } from 'react-native';
+import { Alert, Animated } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import * as ImagePicker from 'expo-image-picker';
 import { generateObject } from '@rork-ai/toolkit-sdk';
 import { ApplianceCategory, AppliancePhoto, ISODateString } from '@/types';
 import { applianceSchema, labelReadSchema, lookupSchema, receiptSchema } from './schemas';
+import { generateId } from '@/utils/id';
 
 interface FormSetters {
   setName: (v: string) => void;
@@ -293,7 +294,7 @@ export function useApplianceAnalysis(setters: FormSetters) {
         const asset = result.assets[0];
         console.log('[ApplianceForm] Additional photo captured:', asset.uri);
         const newPhoto: AppliancePhoto = {
-          id: Date.now().toString() + '_' + Math.random().toString(36).substring(2, 7),
+          id: generateId('photo'),
           uri: asset.uri,
           isPrimary: setters.getPhotos().length === 0 && !setters.getImageUri(),
         };

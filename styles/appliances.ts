@@ -126,6 +126,28 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     color: c.textSecondary,
     lineHeight: 15,
   },
+  errorBanner: {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    gap: 12,
+    marginHorizontal: 20,
+    marginTop: 8,
+    padding: 14,
+    borderRadius: 14,
+  },
+  errorBannerContent: {
+    flex: 1,
+  },
+  errorBannerTitle: {
+    fontSize: 14,
+    fontWeight: '600' as const,
+    lineHeight: 19,
+  },
+  errorBannerSubtitle: {
+    fontSize: 12,
+    lineHeight: 16,
+    opacity: 0.8,
+  },
   emptyState: {
     alignItems: 'center',
     paddingVertical: 60,

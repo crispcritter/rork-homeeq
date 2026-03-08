@@ -17,6 +17,7 @@ import {
   Shield,
   ChevronRight,
   Check,
+  WifiOff,
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -59,6 +60,7 @@ export default function AppliancesScreen() {
     duplicateRecommendedItem,
     syncRecommendedItem,
     trustedPros,
+    isError,
   } = useHome();
 
   const { onRefresh, isRefreshing } = useRefresh();
@@ -196,6 +198,21 @@ export default function AppliancesScreen() {
         title="My Items"
         subtitle={`${appliances.length} ${appliances.length === 1 ? 'item' : 'items'} tracked`}
       />
+
+      {isError && (
+        <TouchableOpacity
+          style={[styles.errorBanner, { backgroundColor: c.warningLight }]}
+          onPress={onRefresh}
+          activeOpacity={0.7}
+        >
+          <WifiOff size={16} color={c.warning} />
+          <View style={styles.errorBannerContent}>
+            <Text style={[styles.errorBannerTitle, { color: c.warning }]}>Couldn't load some data</Text>
+            <Text style={[styles.errorBannerSubtitle, { color: c.warning }]}>Tap to retry</Text>
+          </View>
+          <ChevronRight size={14} color={c.warning} />
+        </TouchableOpacity>
+      )}
 
       <View style={styles.searchRow}>
         <View style={styles.searchContainer}>

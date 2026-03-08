@@ -136,7 +136,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     borderRadius: Radius.lg,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: Spacing.md,
+    marginEnd: Spacing.md,
   },
   applianceInfo: { flex: 1 },
   applianceLabel: {

@@ -187,7 +187,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     width: 4,
     height: 32,
     borderRadius: 2,
-    marginRight: Spacing.xl,
+    marginEnd: Spacing.xl,
   },
   taskContent: {
     flex: 1,
@@ -224,7 +224,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     color: c.text,
-    marginLeft: Spacing.sm,
+    marginStart: Spacing.sm,
   },
   emptyCard: {
     backgroundColor: c.surface,

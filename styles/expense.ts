@@ -84,7 +84,7 @@ const createExpenseStyles = (c: ColorScheme) => StyleSheet.create({
     fontSize: 28,
     fontWeight: '300',
     color: c.textTertiary,
-    marginRight: Spacing.xs,
+    marginEnd: Spacing.xs,
   },
   amountInput: {
     fontSize: 38,
@@ -249,7 +249,7 @@ const createExpenseStyles = (c: ColorScheme) => StyleSheet.create({
     fontWeight: '500',
     color: c.textSecondary,
     marginBottom: Spacing.sm,
-    marginLeft: Spacing.xs,
+    marginStart: Spacing.xs,
   },
   trustedProChips: {
     gap: Spacing.md,

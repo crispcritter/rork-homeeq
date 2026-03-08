@@ -243,7 +243,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    marginRight: Spacing.md,
+    marginEnd: Spacing.md,
   },
   expenseInfo: {
     flex: 1,
@@ -286,7 +286,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   expenseRight: {
     alignItems: 'flex-end',
-    marginLeft: Spacing.sm,
+    marginStart: Spacing.sm,
   },
   expenseAmount: {
     fontSize: 15,

@@ -17,6 +17,7 @@ import { Camera, X, Sparkles, ChevronRight, ScanLine, Hash, Receipt, Plus, Star,
 import Colors from '@/constants/colors';
 import { PAYMENT_METHODS } from '@/constants/expenseOptions';
 import { Appliance, ApplianceCategory, PurchaseData, AppliancePhoto, ManualInfo, AppInfo, asISODateString, toISODateString } from '@/types';
+import { getAppPassword, setAppPassword, deleteAppPassword } from '@/utils/appInfoSecure';
 import { successNotification } from '@/utils/haptics';
 import DatePickerField from '@/components/DatePickerField';
 import { CATEGORIES } from '@/components/appliance-form/constants';
@@ -54,7 +55,17 @@ export default function ApplianceForm({ mode, initialData, onSave }: ApplianceFo
   const [showPaymentPicker, setShowPaymentPicker] = useState(false);
 
   const [appUsername, setAppUsername] = useState(initialData?.appInfo?.username ?? '');
-  const [appPassword, setAppPassword] = useState(initialData?.appInfo?.password ?? '');
+  const [appPasswordValue, setAppPasswordValue] = useState('');
+  const [appPasswordLoaded, setAppPasswordLoaded] = useState(!initialData?.appInfo?.hasSecurePassword);
+
+  React.useEffect(() => {
+    if (initialData?.id && initialData?.appInfo?.hasSecurePassword) {
+      void getAppPassword(initialData.id).then((pw) => {
+        if (pw) setAppPasswordValue(pw);
+        setAppPasswordLoaded(true);
+      });
+    }
+  }, [initialData?.id, initialData?.appInfo?.hasSecurePassword]);
 
   const nameRef = useRef(name);
   nameRef.current = name;
@@ -109,13 +120,20 @@ export default function ApplianceForm({ mode, initialData, onSave }: ApplianceFo
     const primaryPhoto = allPhotos.find((p) => p.isPrimary) ?? allPhotos[0];
     const primaryImageUrl = primaryPhoto?.uri || imageUri || undefined;
 
+    const applianceId = initialData?.id ?? Date.now().toString();
     const appInfo: AppInfo = {};
     if (appUsername.trim()) appInfo.username = appUsername.trim();
-    if (appPassword.trim()) appInfo.password = appPassword.trim();
+    const trimmedPw = appPasswordValue.trim();
+    if (trimmedPw) {
+      void setAppPassword(applianceId, trimmedPw);
+      appInfo.hasSecurePassword = true;
+    } else if (initialData?.appInfo?.hasSecurePassword) {
+      void deleteAppPassword(applianceId);
+    }
 
     console.log(`[ApplianceForm] Saving (${mode}):`, name.trim());
     onSave({
-      id: initialData?.id ?? Date.now().toString(),
+      id: applianceId,
       name: name.trim(),
       brand: brand.trim(),
       model: model.trim(),
@@ -133,7 +151,7 @@ export default function ApplianceForm({ mode, initialData, onSave }: ApplianceFo
       appInfo: Object.keys(appInfo).length > 0 ? appInfo : undefined,
     });
     router.back();
-  }, [name, brand, model, serialNumber, category, purchaseDate, warrantyExpiry, hasWarranty, notes, location, imageUri, photos, purchasePrice, retailer, paymentMethod, orderNumber, receiptImageUri, manual, appUsername, appPassword, initialData, mode, onSave, router]);
+  }, [name, brand, model, serialNumber, category, purchaseDate, warrantyExpiry, hasWarranty, notes, location, imageUri, photos, purchasePrice, retailer, paymentMethod, orderNumber, receiptImageUri, manual, appUsername, appPasswordValue, initialData, mode, onSave, router]);
 
   const handleManualUpload = useCallback(async () => {
     const result = await handleUploadManual();
@@ -436,7 +454,7 @@ export default function ApplianceForm({ mode, initialData, onSave }: ApplianceFo
               </View>
             </View>
             <View style={styles.divider} />
-            <View style={styles.inputRow}><View style={styles.inputContent}><Text style={styles.inputLabel}>Password</Text><TextInput style={styles.textInput} placeholder="Your password for this app" placeholderTextColor={Colors.textTertiary} value={appPassword} onChangeText={setAppPassword} secureTextEntry autoCapitalize="none" testID={`${testIdPrefix}input-app-password`} /></View></View>
+            <View style={styles.inputRow}><View style={styles.inputContent}><Text style={styles.inputLabel}>Password</Text><TextInput style={styles.textInput} placeholder={appPasswordLoaded ? 'Your password for this app' : 'Loading...'} placeholderTextColor={Colors.textTertiary} value={appPasswordValue} onChangeText={setAppPasswordValue} secureTextEntry autoCapitalize="none" editable={appPasswordLoaded} testID={`${testIdPrefix}input-app-password`} /></View></View>
           </View>
         </View>
 

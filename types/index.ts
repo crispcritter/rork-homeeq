@@ -110,7 +110,7 @@ export interface AppInfo {
   appStoreUrl?: string;
   appName?: string;
   username?: string;
-  password?: string;
+  hasSecurePassword?: boolean;
 }
 
 export interface Appliance {

@@ -9,6 +9,7 @@ import { DEFAULT_PROFILE } from '@/constants/defaultProfile';
 import { parseLocalDate } from '@/utils/dates';
 import * as SecureStore from 'expo-secure-store';
 import { trpcClient, AUTH_TOKEN_KEY } from '@/lib/trpc';
+import { deleteAppPassword } from '@/utils/appInfoSecure';
 
 export const [HomeProvider, useHome] = createContextHook(() => {
   const queryClient = useQueryClient();
@@ -153,10 +154,14 @@ export const [HomeProvider, useHome] = createContextHook(() => {
   }, [listMutate]);
 
   const deleteAppliance = useCallback((id: string) => {
+    const existing = (queryClient.getQueryData<Appliance[]>(['appliances']) ?? []).find((a) => a.id === id);
+    if (existing?.appInfo?.hasSecurePassword) {
+      void deleteAppPassword(id);
+    }
     void listMutate<Appliance>(STORAGE_KEYS.appliances, ['appliances'], (items) =>
       items.filter((a) => a.id !== id)
     );
-  }, [listMutate]);
+  }, [listMutate, queryClient]);
 
   const addTask = useCallback((task: MaintenanceTask) => {
     void listMutate<MaintenanceTask>(STORAGE_KEYS.tasks, ['tasks'], (items) => {

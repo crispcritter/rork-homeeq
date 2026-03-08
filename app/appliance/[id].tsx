@@ -60,6 +60,7 @@ import { useManualSearch } from '@/hooks/useManualSearch';
 import { useMaintenanceRecommendations } from '@/hooks/useMaintenanceRecommendations';
 import { useAppStoreSearch } from '@/hooks/useAppStoreSearch';
 import * as Clipboard from 'expo-clipboard';
+import { getAppPassword } from '@/utils/appInfoSecure';
 
 export default function ApplianceDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -82,6 +83,19 @@ export default function ApplianceDetailScreen() {
     return initial;
   });
   const [showAppPassword, setShowAppPassword] = useState(false);
+  const [securePassword, setSecurePassword] = useState<string | null>(null);
+  const [securePasswordLoaded, setSecurePasswordLoaded] = useState(false);
+
+  React.useEffect(() => {
+    if (appliance?.id && appliance?.appInfo?.hasSecurePassword) {
+      void getAppPassword(appliance.id).then((pw) => {
+        setSecurePassword(pw);
+        setSecurePasswordLoaded(true);
+      });
+    } else {
+      setSecurePasswordLoaded(true);
+    }
+  }, [appliance?.id, appliance?.appInfo?.hasSecurePassword]);
 
   const toggleSection = useCallback((key: string) => {
     lightImpact();
@@ -641,7 +655,7 @@ export default function ApplianceDetailScreen() {
               </View>
             )}
 
-            {appliance.appInfo && (appliance.appInfo.username || appliance.appInfo.password) ? (
+            {appliance.appInfo && (appliance.appInfo.username || appliance.appInfo.hasSecurePassword) ? (
               <>
                 <View style={styles.appInfoDivider} />
                 {appliance.appInfo.username ? (
@@ -666,7 +680,7 @@ export default function ApplianceDetailScreen() {
                     </TouchableOpacity>
                   </View>
                 ) : null}
-                {appliance.appInfo.password ? (
+                {appliance.appInfo.hasSecurePassword && securePasswordLoaded && securePassword ? (
                   <>
                     {appliance.appInfo.username ? <View style={styles.appInfoDivider} /> : null}
                     <View style={styles.appInfoCredRow}>
@@ -676,7 +690,7 @@ export default function ApplianceDetailScreen() {
                       <View style={styles.appInfoCredContent}>
                         <Text style={styles.appInfoCredLabel}>Password</Text>
                         <Text style={styles.appInfoCredValue} selectable>
-                          {showAppPassword ? appliance.appInfo.password : '••••••••'}
+                          {showAppPassword ? securePassword : '••••••••'}
                         </Text>
                       </View>
                       <TouchableOpacity
@@ -694,7 +708,7 @@ export default function ApplianceDetailScreen() {
                         style={styles.appInfoCopyBtn}
                         onPress={() => {
                           lightImpact();
-                          void Clipboard.setStringAsync(appliance.appInfo!.password!);
+                          void Clipboard.setStringAsync(securePassword);
                         }}
                         activeOpacity={0.7}
                         hitSlop={8}

@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { sampleAppliances, sampleTasks, sampleBudgetItems } from '@/mocks/data';
 import type { Appliance, MaintenanceTask, BudgetItem, HomeProfile, TrustedPro } from '@/types';
+import { setAppPassword } from '@/utils/appInfoSecure';
 
 type Validator<T> = (value: unknown) => value is T;
 
@@ -17,7 +18,7 @@ export const STORAGE_KEYS = {
   sectionsDefaultOpen: 'home_sections_default_open',
 } as const;
 
-export const CURRENT_SCHEMA_VERSION = 3;
+export const CURRENT_SCHEMA_VERSION = 4;
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return typeof v === 'object' && v !== null && !Array.isArray(v);
@@ -118,6 +119,31 @@ const migrations: Record<number, MigrationFn> = {
       } catch (e) {
         console.error('[Migration] v3 BudgetItem migration failed:', e);
       }
+    }
+  },
+  4: async () => {
+    const raw = await AsyncStorage.getItem(STORAGE_KEYS.appliances);
+    if (!raw) return;
+    try {
+      const appliances = JSON.parse(raw) as Record<string, unknown>[];
+      let changed = false;
+      for (const appliance of appliances) {
+        const appInfo = appliance.appInfo as Record<string, unknown> | undefined;
+        if (appInfo && typeof appInfo.password === 'string' && appInfo.password.length > 0) {
+          const id = appliance.id as string;
+          await setAppPassword(id, appInfo.password);
+          delete appInfo.password;
+          appInfo.hasSecurePassword = true;
+          changed = true;
+          console.log('[Migration] v4: Moved password to SecureStore for appliance:', id);
+        }
+      }
+      if (changed) {
+        await AsyncStorage.setItem(STORAGE_KEYS.appliances, JSON.stringify(appliances));
+        console.log('[Migration] v4: Scrubbed plaintext passwords from AsyncStorage');
+      }
+    } catch (e) {
+      console.error('[Migration] v4 AppInfo password migration failed:', e);
     }
   },
 };

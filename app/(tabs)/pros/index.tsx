@@ -755,7 +755,7 @@ export default function TrustedProsScreen() {
                   <TouchableOpacity
                     style={styles.deleteBtn}
                     onPress={(e) => {
-                      e.stopPropagation?.();
+                      e.stopPropagation();
                       handleDelete(pro.id, pro.name);
                     }}
                     activeOpacity={0.7}

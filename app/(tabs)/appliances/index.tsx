@@ -67,45 +67,52 @@ export default function AppliancesScreen() {
   const [sortBy, setSortBy] = useState<SortOption>('name');
 
   const filtered = useMemo(() => {
+    const lowerSearch = search.toLowerCase();
     const list = appliances.filter(
       (a) =>
-        a.name.toLowerCase().includes(search.toLowerCase()) ||
-        a.brand.toLowerCase().includes(search.toLowerCase()) ||
-        a.category.toLowerCase().includes(search.toLowerCase()) ||
-        (a.location || '').toLowerCase().includes(search.toLowerCase()) ||
-        (a.model || '').toLowerCase().includes(search.toLowerCase()) ||
-        (a.serialNumber || '').toLowerCase().includes(search.toLowerCase())
+        a.name.toLowerCase().includes(lowerSearch) ||
+        a.brand.toLowerCase().includes(lowerSearch) ||
+        a.category.toLowerCase().includes(lowerSearch) ||
+        (a.location || '').toLowerCase().includes(lowerSearch) ||
+        (a.model || '').toLowerCase().includes(lowerSearch) ||
+        (a.serialNumber || '').toLowerCase().includes(lowerSearch)
     );
 
-    return [...list].sort((a, b) => {
+    const withWarranty = list.map((a) => ({
+      appliance: a,
+      warranty: getWarrantyStatus(a.warrantyExpiry),
+    }));
+
+    const warrantyOrder: Record<string, number> = { 'Expiring Soon': 0, 'Covered': 1, 'Expired': 2, 'Unknown': 3 };
+
+    withWarranty.sort((a, b) => {
       switch (sortBy) {
         case 'name':
-          return (a.name || '').localeCompare(b.name || '');
+          return (a.appliance.name || '').localeCompare(b.appliance.name || '');
         case 'category': {
-          const catA = categoryLabels[a.category] || a.category || '';
-          const catB = categoryLabels[b.category] || b.category || '';
+          const catA = categoryLabels[a.appliance.category] || a.appliance.category || '';
+          const catB = categoryLabels[b.appliance.category] || b.appliance.category || '';
           const catCmp = catA.localeCompare(catB);
-          return catCmp !== 0 ? catCmp : (a.name || '').localeCompare(b.name || '');
+          return catCmp !== 0 ? catCmp : (a.appliance.name || '').localeCompare(b.appliance.name || '');
         }
         case 'location': {
-          const locA = a.location || 'zzz';
-          const locB = b.location || 'zzz';
+          const locA = a.appliance.location || 'zzz';
+          const locB = b.appliance.location || 'zzz';
           const locCmp = locA.localeCompare(locB);
-          return locCmp !== 0 ? locCmp : (a.name || '').localeCompare(b.name || '');
+          return locCmp !== 0 ? locCmp : (a.appliance.name || '').localeCompare(b.appliance.name || '');
         }
         case 'warranty': {
-          const wA = getWarrantyStatus(a.warrantyExpiry);
-          const wB = getWarrantyStatus(b.warrantyExpiry);
-          const order: Record<string, number> = { 'Expiring Soon': 0, 'Covered': 1, 'Expired': 2, 'Unknown': 3 };
-          const oA = order[wA.label] ?? 4;
-          const oB = order[wB.label] ?? 4;
+          const oA = warrantyOrder[a.warranty.label] ?? 4;
+          const oB = warrantyOrder[b.warranty.label] ?? 4;
           if (oA !== oB) return oA - oB;
-          return (wB.daysLeft ?? -Infinity) - (wA.daysLeft ?? -Infinity);
+          return (b.warranty.daysLeft ?? -Infinity) - (a.warranty.daysLeft ?? -Infinity);
         }
         default:
           return 0;
       }
     });
+
+    return withWarranty;
   }, [appliances, search, sortBy]);
 
   const proNameByApplianceId = useMemo(() => {
@@ -252,8 +259,7 @@ export default function AppliancesScreen() {
             )}
           </View>
         ) : (
-          filtered.map((appliance) => {
-            const warranty = getWarrantyStatus(appliance.warrantyExpiry);
+          filtered.map(({ appliance, warranty }) => {
             const avatarColor = CATEGORY_AVATARS[appliance.category] || c.textTertiary;
             return (
               <PressableCard

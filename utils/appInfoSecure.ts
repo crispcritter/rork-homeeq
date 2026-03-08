@@ -3,6 +3,9 @@ import * as SecureStore from 'expo-secure-store';
 const APP_PW_PREFIX = 'appinfo_pw_';
 
 function keyFor(applianceId: string): string {
+  if (!applianceId || !applianceId.trim()) {
+    throw new Error('[AppInfoSecure] applianceId must be a non-empty string');
+  }
   return `${APP_PW_PREFIX}${applianceId}`;
 }
 

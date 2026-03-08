@@ -1,12 +1,20 @@
 import * as SecureStore from 'expo-secure-store';
 
 const APP_PW_PREFIX = 'appinfo_pw_';
+const SECURE_STORE_MAX_KEY_BYTES = 2048;
 
 function keyFor(applianceId: string): string {
   if (!applianceId || !applianceId.trim()) {
     throw new Error('[AppInfoSecure] applianceId must be a non-empty string');
   }
-  return `${APP_PW_PREFIX}${applianceId}`;
+  const key = `${APP_PW_PREFIX}${applianceId}`;
+  const byteLength = new TextEncoder().encode(key).length;
+  if (byteLength > SECURE_STORE_MAX_KEY_BYTES) {
+    throw new Error(
+      `[AppInfoSecure] SecureStore key exceeds ${SECURE_STORE_MAX_KEY_BYTES}-byte limit (got ${byteLength}): "${key.slice(0, 40)}..."`
+    );
+  }
+  return key;
 }
 
 export async function getAppPassword(applianceId: string): Promise<string | null> {

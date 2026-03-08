@@ -354,14 +354,14 @@ export default function ProviderDetailScreen() {
                 </>
               ) : (
                 <>
-                  {pro.phone ? (<TouchableOpacity style={styles.contactRow} onPress={() => callPhone(pro.phone!)} activeOpacity={0.7}><Phone size={16} color="#4A7FBF" /><Text style={styles.contactText}>{pro.phone}</Text><ExternalLink size={14} color={c.textTertiary} /></TouchableOpacity>) : null}
+                  {pro.phone ? (<TouchableOpacity style={styles.contactRow} onPress={() => callPhone(pro.phone!)} activeOpacity={0.7}><Phone size={16} color={c.primary} /><Text style={styles.contactText}>{pro.phone}</Text><ExternalLink size={14} color={c.textTertiary} /></TouchableOpacity>) : null}
                   {pro.phone && (pro.email || pro.website || pro.address) && <View style={styles.divider} />}
-                  {pro.email ? (<TouchableOpacity style={styles.contactRow} onPress={() => sendEmail(pro.email!)} activeOpacity={0.7}><Mail size={16} color="#4A7FBF" /><Text style={styles.contactText}>{pro.email}</Text><ExternalLink size={14} color={c.textTertiary} /></TouchableOpacity>) : null}
+                  {pro.email ? (<TouchableOpacity style={styles.contactRow} onPress={() => sendEmail(pro.email!)} activeOpacity={0.7}><Mail size={16} color={c.primary} /><Text style={styles.contactText}>{pro.email}</Text><ExternalLink size={14} color={c.textTertiary} /></TouchableOpacity>) : null}
                   {pro.email && (pro.website || pro.address) && <View style={styles.divider} />}
-                  {pro.website ? (<TouchableOpacity style={styles.contactRow} onPress={() => openWebsite(pro.website!)} activeOpacity={0.7}><Globe size={16} color="#4A7FBF" /><Text style={styles.contactText}>{pro.website}</Text><ExternalLink size={14} color={c.textTertiary} /></TouchableOpacity>) : null}
+                  {pro.website ? (<TouchableOpacity style={styles.contactRow} onPress={() => openWebsite(pro.website!)} activeOpacity={0.7}><Globe size={16} color={c.primary} /><Text style={styles.contactText}>{pro.website}</Text><ExternalLink size={14} color={c.textTertiary} /></TouchableOpacity>) : null}
                   {pro.website && pro.address && <View style={styles.divider} />}
-                  {pro.address ? (<View style={styles.contactRow}><MapPin size={16} color="#4A7FBF" /><Text style={styles.contactText}>{pro.address}</Text></View>) : null}
-                  {pro.licenseNumber ? (<><View style={styles.divider} /><View style={styles.contactRow}><Award size={16} color="#4A7FBF" /><Text style={styles.contactText}>License: {pro.licenseNumber}</Text></View></>) : null}
+                  {pro.address ? (<View style={styles.contactRow}><MapPin size={16} color={c.primary} /><Text style={styles.contactText}>{pro.address}</Text></View>) : null}
+                  {pro.licenseNumber ? (<><View style={styles.divider} /><View style={styles.contactRow}><Award size={16} color={c.primary} /><Text style={styles.contactText}>License: {pro.licenseNumber}</Text></View></>) : null}
                   {pro.notes ? (<><View style={styles.divider} /><View style={styles.contactRow}><StickyNote size={16} color={c.textTertiary} /><Text style={styles.contactText}>{pro.notes}</Text></View></>) : null}
                   {!pro.phone && !pro.email && !pro.website && !pro.address && !pro.notes && (
                     <View style={styles.contactRow}><Text style={styles.noContactText}>No contact info added — tap edit to add</Text></View>
@@ -512,7 +512,7 @@ export default function ProviderDetailScreen() {
                 const active = ratingSource === src;
                 return (
                   <TouchableOpacity key={src} style={[styles.sourceChip, active && { backgroundColor: REVIEW_SOURCES[src].color }]} onPress={() => setRatingSource(src)} activeOpacity={0.7}>
-                    <Text style={[styles.sourceChipText, active && { color: '#fff' }]}>{REVIEW_SOURCES[src].label}</Text>
+                    <Text style={[styles.sourceChipText, active && { color: c.white }]}>{REVIEW_SOURCES[src].label}</Text>
                   </TouchableOpacity>
                 );
               })}

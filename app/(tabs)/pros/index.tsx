@@ -292,7 +292,7 @@ export default function TrustedProsScreen() {
           >
             <View style={styles.findCardHeaderLeft}>
               <View style={styles.findIconWrap}>
-                <Compass size={20} color="#fff" />
+                <Compass size={20} color={c.white} />
               </View>
               <View>
                 <Text style={styles.findCardTitle}>Find a Pro</Text>
@@ -300,7 +300,7 @@ export default function TrustedProsScreen() {
               </View>
             </View>
             <Animated.View style={{ transform: [{ rotate: chevronRotation }] }}>
-              <ChevronDown size={20} color="#5A7FA0" />
+              <ChevronDown size={20} color={c.textSecondary} />
             </Animated.View>
           </TouchableOpacity>
 
@@ -329,7 +329,7 @@ export default function TrustedProsScreen() {
                         {selectedAppliance.name}
                       </Text>
                       <TouchableOpacity onPress={clearApplianceSelection} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
-                        <X size={13} color="#4A7FBF" />
+                        <X size={13} color={c.primary} />
                       </TouchableOpacity>
                     </View>
                   )}
@@ -348,7 +348,7 @@ export default function TrustedProsScreen() {
                   activeOpacity={0.7}
                 >
                   <Text style={styles.orApplianceText}>or select from your items</Text>
-                  <ChevronRight size={14} color="#4A7FBF" />
+                  <ChevronRight size={14} color={c.primary} />
                 </TouchableOpacity>
               )}
 
@@ -397,10 +397,10 @@ export default function TrustedProsScreen() {
                 disabled={!canSearch || placesSearchMutation.isPending}
               >
                 {placesSearchMutation.isPending ? (
-                  <ActivityIndicator size="small" color="#fff" />
+                  <ActivityIndicator size="small" color={c.white} />
                 ) : (
                   <>
-                    <Search size={18} color="#fff" />
+                    <Search size={18} color={c.white} />
                     <Text style={styles.searchButtonText}>Search Professionals</Text>
                   </>
                 )}
@@ -481,7 +481,7 @@ export default function TrustedProsScreen() {
                               {saved ? (
                                 <Check size={16} color={c.primary} />
                               ) : (
-                                <Plus size={16} color="#fff" />
+                                <Plus size={16} color={c.white} />
                               )}
                             </TouchableOpacity>
                           </View>
@@ -499,7 +499,7 @@ export default function TrustedProsScreen() {
                                 onPress={() => Linking.openURL(`tel:${place.phone}`)}
                                 activeOpacity={0.7}
                               >
-                                <Phone size={13} color="#4A7FBF" />
+                                <Phone size={13} color={c.primary} />
                                 <Text style={[styles.resultDetailText, styles.resultDetailLink]}>{place.phone}</Text>
                               </TouchableOpacity>
                             ) : null}
@@ -509,7 +509,7 @@ export default function TrustedProsScreen() {
                                 onPress={() => Linking.openURL(`mailto:${place.email}`)}
                                 activeOpacity={0.7}
                               >
-                                <Mail size={13} color="#4A7FBF" />
+                                <Mail size={13} color={c.primary} />
                                 <Text style={[styles.resultDetailText, styles.resultDetailLink]}>{place.email}</Text>
                               </TouchableOpacity>
                             ) : null}
@@ -519,7 +519,7 @@ export default function TrustedProsScreen() {
                                 onPress={() => Linking.openURL(place.website!)}
                                 activeOpacity={0.7}
                               >
-                                <Globe size={13} color="#4A7FBF" />
+                                <Globe size={13} color={c.primary} />
                                 <Text style={[styles.resultDetailText, styles.resultDetailLink]} numberOfLines={1}>
                                   {place.website.replace(/^https?:\/\/(www\.)?/, '')}
                                 </Text>
@@ -562,7 +562,7 @@ export default function TrustedProsScreen() {
 
         <View style={styles.savedHeader}>
           <View style={styles.savedHeaderLeft}>
-            <UserCheck size={18} color="#4A7FBF" />
+            <UserCheck size={18} color={c.primary} />
             <Text style={styles.savedHeaderTitle}>Your Saved Pros</Text>
           </View>
           <View style={styles.savedCountBadge}>
@@ -784,7 +784,7 @@ export default function TrustedProsScreen() {
                     )}
                     {pro.serviceRadius && (
                       <View style={styles.proRadiusBadge}>
-                        <MapPinned size={10} color="#4A7FBF" />
+                        <MapPinned size={10} color={c.primary} />
                         <Text style={styles.proRadiusText}>{pro.serviceRadius} mi</Text>
                       </View>
                     )}
@@ -801,7 +801,7 @@ export default function TrustedProsScreen() {
                     </View>
                     {linkedCount > 0 && (
                       <View style={styles.proLinkedBadge}>
-                        <Link2 size={12} color="#4A7FBF" />
+                        <Link2 size={12} color={c.primary} />
                         <Text style={styles.proLinkedText}>
                           {linkedCount} {linkedCount === 1 ? 'item' : 'items'}
                         </Text>
@@ -853,7 +853,7 @@ export default function TrustedProsScreen() {
                   >
                     <View style={styles.appliancePickerLeft}>
                       <View style={styles.appliancePickerIcon}>
-                        <Wrench size={16} color="#4A7FBF" />
+                        <Wrench size={16} color={c.primary} />
                       </View>
                       <View style={styles.appliancePickerInfo}>
                         <Text style={styles.appliancePickerName}>{item.name}</Text>

@@ -269,7 +269,7 @@ const createExpenseStyles = (c: ColorScheme) => StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: '#4A7FBF',
+    backgroundColor: c.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },

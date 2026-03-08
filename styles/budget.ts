@@ -131,7 +131,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#4A7FBF',
+    backgroundColor: c.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.sm,
@@ -139,7 +139,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   proAvatarText: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: c.white,
   },
   proName: {
     fontSize: 13,

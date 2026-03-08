@@ -250,7 +250,7 @@ export default function ExpenseDetailScreen() {
                 </View>
                 {linkedPro && (
                   <View style={styles.trustedBadge}>
-                    <UserCheck size={12} color="#4A7FBF" />
+                    <UserCheck size={12} color={c.primary} />
                     <Text style={styles.trustedBadgeText}>Trusted</Text>
                   </View>
                 )}
@@ -266,7 +266,7 @@ export default function ExpenseDetailScreen() {
                     }}
                     activeOpacity={0.7}
                   >
-                    <Phone size={13} color="#4A7FBF" />
+                    <Phone size={13} color={c.primary} />
                     <Text style={styles.providerDetailText}>{expense.provider.phone}</Text>
                     <ExternalLink size={12} color={c.textTertiary} />
                   </TouchableOpacity>
@@ -279,7 +279,7 @@ export default function ExpenseDetailScreen() {
                     }}
                     activeOpacity={0.7}
                   >
-                    <Mail size={13} color="#4A7FBF" />
+                    <Mail size={13} color={c.primary} />
                     <Text style={styles.providerDetailText}>{expense.provider.email}</Text>
                     <ExternalLink size={12} color={c.textTertiary} />
                   </TouchableOpacity>
@@ -295,7 +295,7 @@ export default function ExpenseDetailScreen() {
                     }}
                     activeOpacity={0.7}
                   >
-                    <Globe size={13} color="#4A7FBF" />
+                    <Globe size={13} color={c.primary} />
                     <Text style={styles.providerDetailText}>{expense.provider.website}</Text>
                     <ExternalLink size={12} color={c.textTertiary} />
                   </TouchableOpacity>
@@ -504,7 +504,7 @@ const createStyles = (c: { background: string; surface: string; surfaceAlt: stri
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#4A7FBF',
+    backgroundColor: c.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -535,13 +535,13 @@ const createStyles = (c: { background: string; surface: string; surfaceAlt: stri
     gap: 4,
     paddingHorizontal: 10,
     paddingVertical: 5,
-    backgroundColor: '#E8F0FE',
+    backgroundColor: c.primaryLight,
     borderRadius: 10,
   },
   trustedBadgeText: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#4A7FBF',
+    color: c.primary,
   },
   providerDetails: {
     gap: 8,

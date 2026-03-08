@@ -500,8 +500,8 @@ export default function ExpenseForm({ mode, existingExpense }: ExpenseFormProps)
             activeOpacity={0.7}
           >
             <View style={styles.providerHeaderLeft}>
-              <View style={[styles.providerHeaderIcon, { backgroundColor: '#E8F0FE' }]}>
-                <UserCheck size={18} color="#4A7FBF" />
+              <View style={[styles.providerHeaderIcon, { backgroundColor: c.primaryLight }]}>
+                <UserCheck size={18} color={c.primary} />
               </View>
               <View>
                 <Text style={formStyles.sectionLabel}>Service Provider</Text>

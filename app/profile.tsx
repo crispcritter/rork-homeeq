@@ -1344,7 +1344,7 @@ export default function ProfileScreen() {
               activeOpacity={0.7}
               testID="search-zillow-button"
             >
-              <Search size={18} color="#fff" />
+              <Search size={18} color={c.white} />
               <Text style={styles.zillowSearchButtonText}>Search on Zillow</Text>
             </TouchableOpacity>
 
@@ -1812,7 +1812,7 @@ const styles = StyleSheet.create({
   zillowSearchButtonText: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#fff',
+    color: Colors.white,
   },
   zillowSearchHint: {
     fontSize: 12,

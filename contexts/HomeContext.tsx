@@ -523,7 +523,12 @@ export const [HomeProvider, useHome] = createContextHook(() => {
     },
   });
 
-  const resetData = useCallback(() => {
+  const resetData = useCallback((options?: { confirmed: true }) => {
+    if (!options?.confirmed) {
+      console.warn('[HomeContext] resetData called without { confirmed: true } — ignoring. This is a destructive operation.');
+      return;
+    }
+    console.log('[HomeContext] resetData confirmed, proceeding with full data reset');
     resetDataMutation.mutate();
   }, [resetDataMutation]);
 

@@ -1220,7 +1220,7 @@ export default function ProfileScreen() {
                     text: 'Reset',
                     style: 'destructive',
                     onPress: () => {
-                      resetData();
+                      resetData({ confirmed: true });
                     },
                   },
                 ]

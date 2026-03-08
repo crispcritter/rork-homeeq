@@ -71,7 +71,7 @@ export default function TrustedProsScreen() {
 
   const [searchResults, setSearchResults] = useState<PlaceResult[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
-  const [savedPlaceIds, setSavedPlaceIds] = useState<Set<string>>(new Set());
+
   const [currentPage, setCurrentPage] = useState(1);
   const RESULTS_PER_PAGE = 5;
 
@@ -162,10 +162,14 @@ export default function TrustedProsScreen() {
     lightImpact();
   }, []);
 
-  const isAlreadySaved = useCallback((placeId: string, placeName: string) => {
-    if (savedPlaceIds.has(placeId)) return true;
-    return trustedPros.some((p) => p.name.toLowerCase() === placeName.toLowerCase());
-  }, [savedPlaceIds, trustedPros]);
+  const savedProNames = useMemo(
+    () => new Set(trustedPros.map((p) => p.name.toLowerCase())),
+    [trustedPros]
+  );
+
+  const isAlreadySaved = useCallback((_placeId: string, placeName: string) => {
+    return savedProNames.has(placeName.toLowerCase());
+  }, [savedProNames]);
 
   const handleSavePro = useCallback((place: PlaceResult) => {
     if (isAlreadySaved(place.id, place.name)) {
@@ -192,7 +196,6 @@ export default function TrustedProsScreen() {
     };
 
     addTrustedPro(newPro);
-    setSavedPlaceIds((prev) => new Set(prev).add(place.id));
     successNotification();
     console.log('[TrustedPros] Saved pro from Places:', place.name);
   }, [isAlreadySaved, effectiveSearchQuery, addTrustedPro]);

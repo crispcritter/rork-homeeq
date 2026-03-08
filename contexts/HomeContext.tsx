@@ -479,7 +479,7 @@ export const [HomeProvider, useHome] = createContextHook(() => {
             ...g,
             items: g.items.map((i) =>
               i.id === itemId
-                ? { ...i, name: matchingAppliance.name, category: matchingAppliance.category as any, location: matchingAppliance.location }
+                ? { ...i, name: matchingAppliance.name, category: matchingAppliance.category, location: matchingAppliance.location }
                 : i
             ),
           }

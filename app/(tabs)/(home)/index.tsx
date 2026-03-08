@@ -31,7 +31,8 @@ function getGreeting(): string {
 }
 
 export default function DashboardScreen() {
-  const router = useRouter();
+  const greeting = useMemo(() => getGreeting(), []);
+  const router = useRouter();  
   const { colors: c } = useTheme();
   const styles = useMemo(() => createStyles(c), [c]);
   const {
@@ -81,7 +82,7 @@ export default function DashboardScreen() {
         }
       >
         <View style={styles.greetingSection}>
-          <Text style={styles.greeting}>{getGreeting()}</Text>
+          <Text style={styles.greeting}>{greeting}</Text>
           <Text style={styles.greetingSubtitle}>
             Here's what's happening{homeProfile.nickname ? ` at ${homeProfile.nickname}` : ' at home'}
           </Text>

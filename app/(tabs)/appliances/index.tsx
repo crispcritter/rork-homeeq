@@ -141,7 +141,7 @@ export default function AppliancesScreen() {
       item.name || '',
       item.location || '',
       item.purchaseDate || '',
-      item.hasWarranty ? 'Yes' : (item.warrantyExpiry ? 'Yes' : 'No'),
+      (item.hasWarranty || item.warrantyExpiry) ? 'Yes' : 'No',
       item.warrantyExpiry || '',
       item.serialNumber || '',
       item.category || '',

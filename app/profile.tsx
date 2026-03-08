@@ -72,7 +72,6 @@ import {
   HeatingCoolingType,
   WaterHeaterType,
   GarageType,
-  HouseholdRole,
   asISODateString,
 } from '@/types';
 import { numericToString, stringToNumeric } from '@/utils/numeric';
@@ -170,7 +169,9 @@ function CollapsibleSection({ title, children, defaultOpen, themeColors, globalD
   );
 }
 
-const ROLE_OPTIONS: { label: string; value: HouseholdRole }[] = [
+type HouseholdRoleLabel = 'owner' | 'spouse' | 'partner' | 'family' | 'roommate' | 'other';
+
+const ROLE_OPTIONS: { label: string; value: HouseholdRoleLabel }[] = [
   { label: 'Spouse', value: 'spouse' },
   { label: 'Partner', value: 'partner' },
   { label: 'Family Member', value: 'family' },
@@ -178,7 +179,7 @@ const ROLE_OPTIONS: { label: string; value: HouseholdRole }[] = [
   { label: 'Other', value: 'other' },
 ];
 
-const getRoleLabel = (role: HouseholdRole): string => {
+const getRoleLabel = (role: string): string => {
   if (role === 'owner') return 'Owner';
   return ROLE_OPTIONS.find((r) => r.value === role)?.label ?? role;
 };
@@ -543,7 +544,7 @@ export default function ProfileScreen() {
                         <View style={{ flex: 1 }}>
                           <Text style={{ fontSize: 14, fontWeight: '500' as const, color: c.text }}>{member.email}</Text>
                           <Text style={{ fontSize: 12, color: c.textTertiary, marginTop: 1 }}>
-                            {member.role === 'owner' ? 'Owner' : getRoleLabel(member.role as HouseholdRole)} · Joined {new Date(member.joinedAt).toLocaleDateString()}
+                            {member.role === 'owner' ? 'Owner' : getRoleLabel(member.role)} · Joined {new Date(member.joinedAt).toLocaleDateString()}
                           </Text>
                         </View>
                         {household.isOwner && member.userId !== user?.id && (

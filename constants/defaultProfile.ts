@@ -26,5 +26,4 @@ export const DEFAULT_PROFILE: HomeProfile = {
   purchaseDate: asISODateString(''),
   notes: '',
   zillowLink: '',
-  householdMembers: [],
 };

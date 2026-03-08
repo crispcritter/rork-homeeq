@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import createContextHook from '@nkzw/create-context-hook';
-import { Appliance, MaintenanceTask, BudgetItem, HomeProfile, TrustedPro, PrivateNote, ReviewRating, ProServiceCategory, HouseholdMember, toISODateString, toISOTimestamp } from '../types';
+import { Appliance, MaintenanceTask, BudgetItem, HomeProfile, TrustedPro, PrivateNote, ReviewRating, ProServiceCategory, toISODateString, toISOTimestamp } from '../types';
 import { RecommendedGroup, RecommendedItem, recommendedGroups as defaultRecommendedGroups } from '../mocks/recommendedItems';
 import { STORAGE_KEYS, loadFromStorage, loadMonthlyBudget, resetAllData, saveToStorage, saveMonthlyBudget } from './storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -401,25 +401,6 @@ export const [HomeProvider, useHome] = createContextHook(() => {
     }
   }, [queryClient, triggerCloudSync]);
 
-  const addHouseholdMember = useCallback(async (member: HouseholdMember) => {
-    const current = queryClient.getQueryData<HomeProfile>(['homeProfile']) ?? DEFAULT_PROFILE;
-    const updated = { ...current, householdMembers: [...(current.householdMembers ?? []), member] };
-    await updateHomeProfile(updated);
-    console.log('[HomeContext] Added household member:', member.name);
-  }, [queryClient, updateHomeProfile]);
-
-  const removeHouseholdMember = useCallback(async (memberId: string) => {
-    const current = queryClient.getQueryData<HomeProfile>(['homeProfile']) ?? DEFAULT_PROFILE;
-    const updated = { ...current, householdMembers: (current.householdMembers ?? []).filter((m) => m.id !== memberId) };
-    await updateHomeProfile(updated);
-    console.log('[HomeContext] Removed household member:', memberId);
-  }, [queryClient, updateHomeProfile]);
-
-  const updateHouseholdMember = useCallback(async (member: HouseholdMember) => {
-    const current = queryClient.getQueryData<HomeProfile>(['homeProfile']) ?? DEFAULT_PROFILE;
-    const updated = { ...current, householdMembers: (current.householdMembers ?? []).map((m) => m.id === member.id ? member : m) };
-    await updateHomeProfile(updated);
-  }, [queryClient, updateHomeProfile]);
 
   const updateRecommendedGroups = useCallback(async (groups: RecommendedGroup[]) => {
     try {
@@ -674,9 +655,6 @@ export const [HomeProvider, useHome] = createContextHook(() => {
     isResetting: resetDataMutation.isPending,
     refreshAll,
     isRefreshing,
-    addHouseholdMember,
-    removeHouseholdMember,
-    updateHouseholdMember,
     sectionsDefaultOpen,
     setSectionsDefaultOpen,
   }), [
@@ -690,7 +668,7 @@ export const [HomeProvider, useHome] = createContextHook(() => {
     unlinkApplianceFromPro, updateProRatings, updateProServiceInfo, setMonthlyBudget,
     updateHomeProfile, addRecommendedItem, removeRecommendedItem, duplicateRecommendedItem,
     syncRecommendedItem, resetData, resetDataMutation.isPending, refreshAll, isRefreshing,
-    addHouseholdMember, removeHouseholdMember, updateHouseholdMember, sectionsDefaultOpen,
+    sectionsDefaultOpen,
     setSectionsDefaultOpen,
   ]);
 });

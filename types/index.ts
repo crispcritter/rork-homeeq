@@ -173,7 +173,6 @@ export interface HomeProfile {
   notes: string;
   profileImage?: string;
   zillowLink?: string;
-  householdMembers?: HouseholdMember[];
 }
 
 export interface ReviewRating {
@@ -190,18 +189,6 @@ export interface PrivateNote {
 }
 
 export type ProServiceCategory = ApplianceCategory | 'general' | 'landscaping' | 'painting' | 'cleaning' | 'pest-control' | 'security';
-
-export type HouseholdRole = 'owner' | 'spouse' | 'partner' | 'family' | 'roommate' | 'other';
-
-export interface HouseholdMember {
-  id: string;
-  name: string;
-  email?: string;
-  phone?: string;
-  role: HouseholdRole;
-  invitedAt: ISODateString;
-  status: 'pending' | 'accepted';
-}
 
 export interface TrustedPro {
   id: string;

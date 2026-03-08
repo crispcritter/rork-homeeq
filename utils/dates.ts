@@ -1,10 +1,13 @@
 import { ISODateString } from '@/types';
 
 export function parseLocalDate(dateStr: ISODateString | string): Date {
-  const [year, month, day] = dateStr.split('-').map(Number);
-  if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
+  const datePart = dateStr.includes('T') ? dateStr.split('T')[0] : dateStr;
+  const parts = datePart.split('-').map(Number);
+  const [year, month, day] = parts;
+  if (parts.length === 3 && Number.isFinite(year) && Number.isFinite(month) && Number.isFinite(day)) {
     return new Date(year, month - 1, day);
   }
+  console.warn('parseLocalDate: unexpected format, falling back to Date constructor:', dateStr);
   return new Date(dateStr);
 }
 

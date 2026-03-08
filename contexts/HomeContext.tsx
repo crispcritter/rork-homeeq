@@ -130,10 +130,10 @@ export const [HomeProvider, useHome] = createContextHook(() => {
     try {
       await saveToStorage(storageKey, updated);
       queryClient.setQueryData(queryKey, updated);
+      triggerCloudSync();
     } catch (error) {
       console.error(`[HomeContext] Failed to persist ${storageKey}:`, error);
     }
-    triggerCloudSync();
     return updated;
   }, [queryClient, triggerCloudSync]);
 

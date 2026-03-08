@@ -264,7 +264,7 @@ export default function ApplianceDetailScreen() {
   }
 
   const hasWarranty = appliance.hasWarranty ?? (appliance.warrantyExpiry ? true : false);
-  const warranty = hasWarranty ? getWarrantyStatus(appliance.warrantyExpiry) : null;
+  const warranty = hasWarranty && appliance.warrantyExpiry ? getWarrantyStatus(appliance.warrantyExpiry) : null;
 
   return (
     <>
@@ -333,7 +333,7 @@ export default function ApplianceDetailScreen() {
                   : `Expired ${Math.abs(warranty.daysLeft)} days ago`}
               </Text>
               <Text style={styles.warrantyDate}>
-                Warranty ends {formatLongDate(appliance.warrantyExpiry)}
+                Warranty ends {appliance.warrantyExpiry ? formatLongDate(appliance.warrantyExpiry) : 'N/A'}
               </Text>
             </View>
           )}
@@ -363,7 +363,7 @@ export default function ApplianceDetailScreen() {
               </View>
               <View style={styles.detailTextWrap}>
                 <Text style={styles.detailLabel}>Purchased</Text>
-                <Text style={styles.detailValue}>{formatMonthYear(appliance.purchaseDate)}</Text>
+                <Text style={styles.detailValue}>{appliance.purchaseDate ? formatMonthYear(appliance.purchaseDate) : 'Not set'}</Text>
               </View>
             </View>
             <View style={styles.detailDivider} />

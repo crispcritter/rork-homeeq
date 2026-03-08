@@ -120,8 +120,8 @@ export interface Appliance {
   model: string;
   serialNumber: string;
   category: ApplianceCategory;
-  purchaseDate: ISODateString;
-  warrantyExpiry: ISODateString;
+  purchaseDate?: ISODateString;
+  warrantyExpiry?: ISODateString;
   imageUrl?: string;
   photos?: AppliancePhoto[];
   notes: string;

@@ -33,7 +33,7 @@ import { lightImpact } from '@/utils/haptics';
 import { rowsToCSV, buildHtmlReport } from '@/utils/export';
 import ExportSection from '@/components/ExportSection';
 import { RecommendedItem } from '@/mocks/recommendedItems';
-import { Appliance, asISODateString } from '@/types';
+import { Appliance } from '@/types';
 import { categoryLabels } from '@/constants/categories';
 
 type SortOption = 'name' | 'category' | 'location' | 'warranty';
@@ -80,7 +80,7 @@ export default function AppliancesScreen() {
 
     const withWarranty = list.map((a) => ({
       appliance: a,
-      warranty: getWarrantyStatus(a.warrantyExpiry),
+      warranty: getWarrantyStatus(a.warrantyExpiry ?? ''),
     }));
 
     const warrantyOrder: Record<string, number> = { 'Expiring Soon': 0, 'Covered': 1, 'Expired': 2, 'Unknown': 3 };
@@ -178,8 +178,8 @@ export default function AppliancesScreen() {
       model: '',
       serialNumber: '',
       category: item.category,
-      purchaseDate: asISODateString(''),
-      warrantyExpiry: asISODateString(''),
+      purchaseDate: undefined,
+      warrantyExpiry: undefined,
       notes: '',
       location: item.location,
     };

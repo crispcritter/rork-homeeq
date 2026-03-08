@@ -9,6 +9,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { generateId } from '@/utils/id';
 import { Image } from 'expo-image';
 import {
   Plus,
@@ -164,7 +165,7 @@ export default function AppliancesScreen() {
 
   const handleAddRecommendedItem = useCallback((item: RecommendedItem) => {
     const newAppliance: Appliance = {
-      id: Date.now().toString(),
+      id: generateId('appliance'),
       name: item.name,
       brand: '',
       model: '',

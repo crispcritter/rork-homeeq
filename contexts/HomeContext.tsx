@@ -6,7 +6,7 @@ import { RecommendedGroup, RecommendedItem, recommendedGroups as defaultRecommen
 import { STORAGE_KEYS, loadFromStorage, loadMonthlyBudget, resetAllData, saveToStorage, saveMonthlyBudget } from './storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DEFAULT_PROFILE } from '@/constants/defaultProfile';
-import { parseLocalDate } from '@/utils/dates';
+import { parseLocalDate, normalizeToMidnight } from '@/utils/dates';
 import * as SecureStore from 'expo-secure-store';
 import { trpcClient, AUTH_TOKEN_KEY } from '@/lib/trpc';
 import { deleteAppPassword } from '@/utils/appInfoSecure';
@@ -204,8 +204,7 @@ export const [HomeProvider, useHome] = createContextHook(() => {
         const nextDue = new Date(currentDue);
         nextDue.setDate(nextDue.getDate() + intervalDays);
 
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        const today = normalizeToMidnight(new Date());
         if (nextDue < today) {
           nextDue.setTime(today.getTime());
           nextDue.setDate(nextDue.getDate() + intervalDays);
@@ -543,13 +542,11 @@ export const [HomeProvider, useHome] = createContextHook(() => {
   useEffect(() => {
     if (tasksQuery.isLoading || tasks.length === 0) return;
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const today = normalizeToMidnight(new Date());
 
     const needsUpdate = tasks.some((t) => {
       if (t.status !== 'upcoming') return false;
-      const due = parseLocalDate(t.dueDate);
-      due.setHours(0, 0, 0, 0);
+      const due = normalizeToMidnight(parseLocalDate(t.dueDate));
       return due < today;
     });
 
@@ -559,8 +556,7 @@ export const [HomeProvider, useHome] = createContextHook(() => {
     void listMutate<MaintenanceTask>(STORAGE_KEYS.tasks, ['tasks'], (items) =>
       items.map((t) => {
         if (t.status !== 'upcoming') return t;
-        const due = parseLocalDate(t.dueDate);
-        due.setHours(0, 0, 0, 0);
+        const due = normalizeToMidnight(parseLocalDate(t.dueDate));
         if (due < today) {
           console.log('[HomeContext] Task marked overdue:', t.title, '| due:', t.dueDate);
           return { ...t, status: 'overdue' as const };

@@ -1,5 +1,9 @@
 import { ISODateString } from '@/types';
 
+export function normalizeToMidnight(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
 export function parseLocalDate(dateStr: ISODateString | string): Date {
   const datePart = dateStr.includes('T') ? dateStr.split('T')[0] : dateStr;
   const parts = datePart.split('-').map(Number);
@@ -13,9 +17,8 @@ export function parseLocalDate(dateStr: ISODateString | string): Date {
 
 export function formatRelativeDate(dateStr: ISODateString | string): string {
   const date = parseLocalDate(dateStr);
-  const now = new Date();
-  const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const dateMidnight = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const todayMidnight = normalizeToMidnight(new Date());
+  const dateMidnight = normalizeToMidnight(date);
   const diffDays = Math.round((dateMidnight.getTime() - todayMidnight.getTime()) / (1000 * 60 * 60 * 24));
   if (diffDays < 0) return `${Math.abs(diffDays)}d overdue`;
   if (diffDays === 0) return 'Today';
@@ -77,9 +80,8 @@ export function getWarrantyStatus(expiryDate: ISODateString | string): WarrantyS
   if (isNaN(expiry.getTime())) {
     return { label: 'Unknown', colorKey: 'textTertiary', daysLeft: null };
   }
-  const now = new Date();
-  const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const expiryMidnight = new Date(expiry.getFullYear(), expiry.getMonth(), expiry.getDate());
+  const todayMidnight = normalizeToMidnight(new Date());
+  const expiryMidnight = normalizeToMidnight(expiry);
   const diffDays = Math.round((expiryMidnight.getTime() - todayMidnight.getTime()) / (1000 * 60 * 60 * 24));
   if (diffDays < 0) return { label: 'Expired', colorKey: 'danger', daysLeft: diffDays };
   if (diffDays < 90) return { label: 'Expiring Soon', colorKey: 'warning', daysLeft: diffDays };

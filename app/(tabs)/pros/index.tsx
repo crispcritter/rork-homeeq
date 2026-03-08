@@ -11,6 +11,9 @@ import {
   Modal,
   FlatList,
   ActivityIndicator,
+  LayoutAnimation,
+  Platform,
+  UIManager,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { generateId } from '@/utils/id';
@@ -43,6 +46,10 @@ import StarRating from '@/components/StarRating';
 import { searchPlaces, PlaceResult } from '@/utils/googlePlaces';
 import { useMutation } from '@tanstack/react-query';
 import createStyles from '@/styles/trustedPros';
+
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 export default function TrustedProsScreen() {
   const router = useRouter();
@@ -99,10 +106,14 @@ export default function TrustedProsScreen() {
   }, [showFilters, filterAnim]);
 
   const toggleFindSection = useCallback(() => {
-    const next = !showFindSection;
-    setShowFindSection(next);
+    LayoutAnimation.configureNext(LayoutAnimation.create(
+      300,
+      LayoutAnimation.Types.easeInEaseOut,
+      LayoutAnimation.Properties.opacity,
+    ));
+    setShowFindSection((prev) => !prev);
     Animated.timing(findSectionAnim, {
-      toValue: next ? 1 : 0,
+      toValue: showFindSection ? 0 : 1,
       duration: 300,
       useNativeDriver: false,
     }).start();
@@ -266,11 +277,6 @@ export default function TrustedProsScreen() {
     outputRange: [0, 1],
   });
 
-  const findMaxHeight = findSectionAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, 5000],
-  });
-
   const findOpacity = findSectionAnim.interpolate({
     inputRange: [0, 1],
     outputRange: [0, 1],
@@ -304,7 +310,8 @@ export default function TrustedProsScreen() {
             </Animated.View>
           </TouchableOpacity>
 
-          <Animated.View style={{ maxHeight: findMaxHeight, opacity: findOpacity, overflow: 'hidden' }}>
+          {showFindSection && (
+          <Animated.View style={{ opacity: findOpacity }}>
             <View style={styles.findBody}>
               <Text style={styles.findInputLabel}>What do you need?</Text>
               <View style={styles.findInputRow}>
@@ -558,6 +565,7 @@ export default function TrustedProsScreen() {
               })()}
             </View>
           </Animated.View>
+          )}
         </View>
 
         <View style={styles.savedHeader}>

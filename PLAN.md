@@ -1,36 +1,27 @@
-# Add Subscription Paywall with RevenueCat
+# Add RevenueCat Test Store Subscription Flow
 
-## Features
+**Features**
+- Connect to your RevenueCat Test Store on app launch
+- Display a paywall screen showing your two subscription options: $2.99/month and $29.99/year
+- Allow test purchases through the RevenueCat Test Store (works in the web preview and on device)
+- Restore previous purchases
+- Show current subscription status (free vs. premium) in the app
+- Gate premium features behind the subscription (ready for you to choose which features later)
 
-- **Subscription plans**: Monthly ($2.99/mo) and Annual ($29.99/yr) options
-- **Paywall screen**: A beautiful, dedicated screen that shows the two subscription plans with feature highlights
-- **Restore purchases**: Button to restore existing subscriptions on a new device
-- **Subscription status tracking**: The app knows whether you're a free or premium user
-- **Gate premium features**: AI-powered features (photo scanning, barcode lookup, maintenance recommendations) require a subscription
-- **Manage subscription**: View your current plan and subscription status from settings/profile
+**Design**
+- Paywall presented as a full-screen modal with a clean, warm aesthetic matching your app's existing color palette
+- Bold headline at top with a short value proposition
+- Two plan cards side by side — monthly and yearly — with the yearly card highlighted as "Best Value" showing the savings
+- A prominent "Subscribe" button that changes based on the selected plan
+- A subtle "Restore Purchases" link at the bottom
+- Small "Already subscribed" badge on the profile/settings area when active
+- Smooth fade-in animation when the paywall appears
 
-## Design
+**Screens & Flow**
+1. **Paywall Screen** — New modal screen accessible from the home tab or profile; shows the two plans and handles the purchase
+2. **Profile / Settings** — Updated to show subscription status and a link to manage or view the paywall
+3. **Subscription Context** — Behind the scenes, tracks whether the user is a premium subscriber so any screen can check access
 
-- **Paywall screen** with a clean, modern card-based layout — not a generic template
-- Two plan cards (Monthly & Annual) with the annual plan highlighted as "Best Value" showing savings
-- A prominent "Start Free Trial" or "Subscribe" button at the bottom
-- Feature list showing what's included in premium (AI appliance scanning, smart maintenance recommendations, etc.)
-- Subtle animations on plan selection
-- Matches the existing app theme and color system
-
-## Screens
-
-- **Paywall screen**: Opens as a modal from anywhere in the app — shows plans, features, and subscribe/restore buttons
-- **Profile updates**: Subscription status badge and "Manage Subscription" option added to the existing profile screen
-
-## Setup Required (Before I Can Build)
-
-RevenueCat is **not yet connected** to this project. Before implementation, the following needs to happen:
-
-1. **Connect RevenueCat** to the project (I'll handle this automatically)
-2. **Create 3 store apps** in RevenueCat: Test Store, App Store, and Play Store
-3. **Set up products**: Monthly and Annual subscription products in all 3 stores
-4. **Configure entitlements**: A "pro" entitlement linked to both products
-5. **Set environment variables**: 3 API keys (Test, iOS, Android)
-
-All of this will be configured as part of the implementation.
+**What this enables**
+- You'll be able to open the app, tap to view the paywall, and complete a test purchase using RevenueCat's Test Store — no Apple or Google account needed
+- Once you're happy with the flow, we'll swap in the real App Store keys for production

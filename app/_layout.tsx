@@ -6,6 +6,7 @@ import { View } from "react-native";
 import { HomeProvider } from "@/contexts/HomeContext";
 import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
 import { trpc, trpcClient } from "@/lib/trpc";
 import SplashAnimation from "@/components/SplashAnimation";
 
@@ -93,6 +94,10 @@ function RootLayoutNav() {
         name="join-household"
         options={{ presentation: "modal", title: "Join Household", headerShown: false }}
       />
+      <Stack.Screen
+        name="paywall"
+        options={{ presentation: "modal", headerShown: false }}
+      />
     </Stack>
   );
 }
@@ -115,8 +120,10 @@ export default function RootLayout() {
           <AuthProvider>
             <ThemeProvider>
               <HomeProvider>
-                <RootLayoutNav />
-                {showSplash && <SplashAnimation onFinish={handleSplashFinish} />}
+                <SubscriptionProvider>
+                  <RootLayoutNav />
+                  {showSplash && <SplashAnimation onFinish={handleSplashFinish} />}
+                </SubscriptionProvider>
               </HomeProvider>
             </ThemeProvider>
           </AuthProvider>

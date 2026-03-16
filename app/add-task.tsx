@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import {
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useHome } from '@/contexts/HomeContext';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useSubscription } from '@/contexts/SubscriptionContext';
 import { TaskPriority, RecurringUnit, asISODateString } from '@/types';
 import { PRIORITIES } from '@/constants/priorities';
 import createFormStyles from '@/constants/formStyles';
@@ -23,8 +24,20 @@ import { successNotification } from '@/utils/haptics';
 export default function AddTaskScreen() {
   const router = useRouter();
   const { colors: c } = useTheme();
-  const { addTask, appliances } = useHome();
+  const { addTask, appliances, activeTasks } = useHome();
+  const { canAddTask } = useSubscription();
   const formStyles = useMemo(() => createFormStyles(c), [c]);
+
+  useEffect(() => {
+    if (!canAddTask(activeTasks.length)) {
+      console.log('[AddTask] Free tier limit reached, redirecting to paywall');
+      router.replace('/paywall');
+    }
+  }, [canAddTask, activeTasks.length, router]);
+
+  if (!canAddTask(activeTasks.length)) {
+    return null;
+  }
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');

@@ -49,9 +49,10 @@ import { useHome } from '@/contexts/HomeContext';
 import Colors from '@/constants/colors';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSubscription } from '@/contexts/SubscriptionContext';
 import DatePickerField from '@/components/DatePickerField';
 import { ColorScheme, PALETTE_OPTIONS } from '@/constants/colors';
-import { Moon, Sun, Smartphone, ChevronsUpDown, Cloud, LogOut, LogIn, RefreshCw, CheckCircle } from 'lucide-react-native';
+import { Moon, Sun, Smartphone, ChevronsUpDown, Cloud, LogOut, LogIn, RefreshCw, CheckCircle, Crown } from 'lucide-react-native';
 import { successNotification } from '@/utils/haptics';
 import PickerModal from '@/components/PickerModal';
 import LinkPreview from '@/components/LinkPreview';
@@ -188,6 +189,7 @@ export default function ProfileScreen() {
   const { homeProfile, updateHomeProfile, resetData, isResetting, sectionsDefaultOpen, setSectionsDefaultOpen } = useHome();
   const { colors: c, themeMode, setThemeMode, paletteId, setPalette } = useTheme();
   const { user, isAuthenticated, signOut, syncStatus, lastSyncedAt, pushToCloud, household, createHousehold, generateInvite, removeMember, leaveHousehold, refreshHousehold } = useAuth();
+  const { isPro } = useSubscription();
   const navRouter = useRouter();
   const [form, setForm] = useState<ProfileFormState>(() => profileToForm(homeProfile));
   const [activePicker, setActivePicker] = useState<string | null>(null);
@@ -452,6 +454,38 @@ export default function ProfileScreen() {
             This info helps personalize maintenance reminders and budgeting
           </Text>
         </View>
+
+        {isPro ? (
+          <View style={[styles.card, { backgroundColor: c.primaryLight, marginBottom: 20 }]}>
+            <View style={[styles.inputRow, { paddingVertical: 16 }]}>
+              <View style={[styles.inputIcon, { backgroundColor: c.primary }]}>
+                <Crown size={18} color={c.white} />
+              </View>
+              <View style={styles.inputContent}>
+                <Text style={{ fontSize: 16, fontWeight: '700' as const, color: c.primary }}>HomeEQ Pro</Text>
+                <Text style={{ fontSize: 13, color: c.textSecondary, marginTop: 2 }}>All features unlocked</Text>
+              </View>
+            </View>
+          </View>
+        ) : (
+          <TouchableOpacity
+            style={[styles.card, { backgroundColor: c.surface, marginBottom: 20 }]}
+            onPress={() => navRouter.push('/paywall')}
+            activeOpacity={0.8}
+            testID="upgrade-pro-card"
+          >
+            <View style={[styles.inputRow, { paddingVertical: 16 }]}>
+              <View style={[styles.inputIcon, { backgroundColor: c.warningLight }]}>
+                <Crown size={18} color={c.warning} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontSize: 16, fontWeight: '700' as const, color: c.text }}>Upgrade to Pro</Text>
+                <Text style={{ fontSize: 13, color: c.textSecondary, marginTop: 2 }}>Unlock unlimited items, tasks & more</Text>
+              </View>
+              <ChevronDown size={16} color={c.textTertiary} style={{ transform: [{ rotate: '-90deg' }] }} />
+            </View>
+          </TouchableOpacity>
+        )}
 
         <CollapsibleSection title="Account & Household" themeColors={c} globalDefault={sectionsDefaultOpen}>
           <View style={[styles.card, { backgroundColor: c.surface }]}>

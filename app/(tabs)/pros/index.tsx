@@ -37,12 +37,17 @@ import {
   ChevronDown,
   Plus,
   Check,
+  Award,
+  Shield,
+  StickyNote,
+  UserPlus,
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { lightImpact, mediumImpact, successNotification } from '@/utils/haptics';
 import { ProServiceCategory, toISOTimestamp, toRating, toNonNegativeInt } from '@/types';
-import { SERVICE_FILTER_OPTIONS, RADIUS_FILTER_OPTIONS, SEARCH_RADIUS_OPTIONS, APPLIANCE_TO_SERVICE } from '@/constants/serviceCategories';
+import { SERVICE_FILTER_OPTIONS, RADIUS_FILTER_OPTIONS, SEARCH_RADIUS_OPTIONS, APPLIANCE_TO_SERVICE, SERVICE_CATEGORY_OPTIONS, RADIUS_OPTIONS } from '@/constants/serviceCategories';
+import { categoryLabels, CATEGORY_AVATARS } from '@/constants/categories';
 import StarRating from '@/components/StarRating';
 import { searchPlaces, PlaceResult } from '@/utils/googlePlaces';
 import { useMutation } from '@tanstack/react-query';
@@ -73,6 +78,20 @@ export default function TrustedProsScreen() {
   const [findLocation, setFindLocation] = useState(homeProfile?.zipCode ?? '');
   const [findRadius, setFindRadius] = useState(20);
   const [showAppliancePicker, setShowAppliancePicker] = useState(false);
+  const [showAddProModal, setShowAddProModal] = useState(false);
+
+  const [addProName, setAddProName] = useState('');
+  const [addProSpecialty, setAddProSpecialty] = useState('');
+  const [addProPhone, setAddProPhone] = useState('');
+  const [addProEmail, setAddProEmail] = useState('');
+  const [addProWebsite, setAddProWebsite] = useState('');
+  const [addProAddress, setAddProAddress] = useState('');
+  const [addProLicense, setAddProLicense] = useState('');
+  const [addProInsurance, setAddProInsurance] = useState(false);
+  const [addProNotes, setAddProNotes] = useState('');
+  const [addProServiceCats, setAddProServiceCats] = useState<ProServiceCategory[]>([]);
+  const [addProRadius, setAddProRadius] = useState<number>(20);
+  const [addProLinkedApplianceIds, setAddProLinkedApplianceIds] = useState<string[]>([]);
   const [selectedApplianceId, setSelectedApplianceId] = useState<string | null>(null);
   const [showFindSection, setShowFindSection] = useState(true);
 
@@ -81,6 +100,79 @@ export default function TrustedProsScreen() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const RESULTS_PER_PAGE = 5;
+
+  const resetAddProForm = useCallback(() => {
+    setAddProName('');
+    setAddProSpecialty('');
+    setAddProPhone('');
+    setAddProEmail('');
+    setAddProWebsite('');
+    setAddProAddress('');
+    setAddProLicense('');
+    setAddProInsurance(false);
+    setAddProNotes('');
+    setAddProServiceCats([]);
+    setAddProRadius(20);
+    setAddProLinkedApplianceIds([]);
+  }, []);
+
+  const handleOpenAddPro = useCallback(() => {
+    resetAddProForm();
+    setShowAddProModal(true);
+    lightImpact();
+  }, [resetAddProForm]);
+
+  const canSaveAddPro = addProName.trim().length > 0;
+
+  const handleSaveAddPro = useCallback(() => {
+    if (!canSaveAddPro) {
+      Alert.alert('Name Required', 'Please enter a name for the professional.');
+      return;
+    }
+
+    const newProId = generateId('pro');
+    const newPro = {
+      id: newProId,
+      name: addProName.trim(),
+      specialty: addProSpecialty.trim() || 'General',
+      phone: addProPhone.trim() || undefined,
+      email: addProEmail.trim() || undefined,
+      website: addProWebsite.trim() || undefined,
+      address: addProAddress.trim() || undefined,
+      notes: addProNotes.trim() || undefined,
+      licenseNumber: addProLicense.trim() || undefined,
+      insuranceVerified: addProInsurance,
+      expenseIds: [] as string[],
+      createdAt: toISOTimestamp(new Date()),
+      ratings: [] as [],
+      serviceCategories: addProServiceCats.length > 0 ? addProServiceCats : undefined,
+      serviceRadius: addProServiceCats.length > 0 ? addProRadius : undefined,
+      linkedApplianceIds: addProLinkedApplianceIds.length > 0 ? addProLinkedApplianceIds : undefined,
+    };
+
+    addTrustedPro(newPro);
+    successNotification();
+    setShowAddProModal(false);
+    resetAddProForm();
+    console.log('[TrustedPros] Manually added pro:', newPro.name);
+  }, [
+    canSaveAddPro, addProName, addProSpecialty, addProPhone, addProEmail,
+    addProWebsite, addProAddress, addProNotes, addProLicense, addProInsurance,
+    addProServiceCats, addProRadius, addProLinkedApplianceIds, addTrustedPro, resetAddProForm,
+  ]);
+
+  const toggleAddProServiceCat = useCallback((cat: ProServiceCategory) => {
+    setAddProServiceCats((prev) =>
+      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
+    );
+  }, []);
+
+  const toggleAddProAppliance = useCallback((applianceId: string) => {
+    setAddProLinkedApplianceIds((prev) =>
+      prev.includes(applianceId) ? prev.filter((id) => id !== applianceId) : [...prev, applianceId]
+    );
+    lightImpact();
+  }, []);
 
   const filterAnim = useRef(new Animated.Value(0)).current;
   const findSectionAnim = useRef(new Animated.Value(1)).current;
@@ -590,8 +682,18 @@ export default function TrustedProsScreen() {
             <UserCheck size={18} color={c.primary} />
             <Text style={styles.savedHeaderTitle}>Your Saved Pros</Text>
           </View>
-          <View style={styles.savedCountBadge}>
-            <Text style={styles.savedCountText}>{trustedPros.length}</Text>
+          <View style={styles.savedHeaderLeft}>
+            <View style={styles.savedCountBadge}>
+              <Text style={styles.savedCountText}>{trustedPros.length}</Text>
+            </View>
+            <TouchableOpacity
+              style={styles.addProBtn}
+              onPress={handleOpenAddPro}
+              activeOpacity={0.7}
+              testID="add-pro-btn"
+            >
+              <Plus size={18} color={c.white} />
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -850,6 +952,219 @@ export default function TrustedProsScreen() {
 
         <View style={{ height: 40 }} />
       </ScrollView>
+
+      <Modal
+        visible={showAddProModal}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowAddProModal(false)}
+      >
+        <View style={styles.addProModalOverlay}>
+          <View style={styles.addProModalContent}>
+            <View style={styles.addProModalHeader}>
+              <Text style={styles.addProModalTitle}>Add a Pro</Text>
+              <TouchableOpacity
+                onPress={() => setShowAddProModal(false)}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              >
+                <X size={22} color={c.textSecondary} />
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.addProModalSubtitle}>
+              Add a trusted professional you already know
+            </Text>
+
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+              contentContainerStyle={styles.addProScrollContent}
+            >
+              <Text style={[styles.addProSectionLabel, { marginTop: 0 }]}>Details</Text>
+              <View style={styles.addProFieldRow}>
+                <UserPlus size={16} color={c.textTertiary} />
+                <TextInput
+                  style={styles.addProFieldInput}
+                  value={addProName}
+                  onChangeText={setAddProName}
+                  placeholder="Name *"
+                  placeholderTextColor={c.textTertiary}
+                  testID="add-pro-name"
+                />
+              </View>
+              <View style={styles.addProFieldRow}>
+                <Wrench size={16} color={c.textTertiary} />
+                <TextInput
+                  style={styles.addProFieldInput}
+                  value={addProSpecialty}
+                  onChangeText={setAddProSpecialty}
+                  placeholder="Specialty (e.g. Plumber, Electrician)"
+                  placeholderTextColor={c.textTertiary}
+                />
+              </View>
+
+              <Text style={styles.addProSectionLabel}>Contact</Text>
+              <View style={styles.addProFieldRow}>
+                <Phone size={16} color={c.textTertiary} />
+                <TextInput
+                  style={styles.addProFieldInput}
+                  value={addProPhone}
+                  onChangeText={setAddProPhone}
+                  placeholder="Phone number"
+                  placeholderTextColor={c.textTertiary}
+                  keyboardType="phone-pad"
+                />
+              </View>
+              <View style={styles.addProFieldRow}>
+                <Mail size={16} color={c.textTertiary} />
+                <TextInput
+                  style={styles.addProFieldInput}
+                  value={addProEmail}
+                  onChangeText={setAddProEmail}
+                  placeholder="Email"
+                  placeholderTextColor={c.textTertiary}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+              </View>
+              <View style={styles.addProFieldRow}>
+                <Globe size={16} color={c.textTertiary} />
+                <TextInput
+                  style={styles.addProFieldInput}
+                  value={addProWebsite}
+                  onChangeText={setAddProWebsite}
+                  placeholder="Website"
+                  placeholderTextColor={c.textTertiary}
+                  autoCapitalize="none"
+                  keyboardType="url"
+                />
+              </View>
+              <View style={styles.addProFieldRow}>
+                <MapPin size={16} color={c.textTertiary} />
+                <TextInput
+                  style={styles.addProFieldInput}
+                  value={addProAddress}
+                  onChangeText={setAddProAddress}
+                  placeholder="Address"
+                  placeholderTextColor={c.textTertiary}
+                />
+              </View>
+              <View style={styles.addProFieldRow}>
+                <Award size={16} color={c.textTertiary} />
+                <TextInput
+                  style={styles.addProFieldInput}
+                  value={addProLicense}
+                  onChangeText={setAddProLicense}
+                  placeholder="License #"
+                  placeholderTextColor={c.textTertiary}
+                />
+              </View>
+              <TouchableOpacity
+                style={styles.addProInsuranceRow}
+                onPress={() => setAddProInsurance((v) => !v)}
+                activeOpacity={0.7}
+              >
+                <Shield size={16} color={addProInsurance ? c.primary : c.textTertiary} />
+                <Text style={[styles.addProInsuranceText, { color: addProInsurance ? c.primary : c.textSecondary }]}>
+                  {addProInsurance ? 'Insurance verified' : 'Insurance not verified'}
+                </Text>
+                {addProInsurance && <Check size={16} color={c.primary} />}
+              </TouchableOpacity>
+              <View style={styles.addProFieldRow}>
+                <StickyNote size={16} color={c.textTertiary} />
+                <TextInput
+                  style={styles.addProNotesInput}
+                  value={addProNotes}
+                  onChangeText={setAddProNotes}
+                  placeholder="Notes"
+                  placeholderTextColor={c.textTertiary}
+                  multiline
+                />
+              </View>
+
+              <Text style={styles.addProSectionLabel}>Service Info</Text>
+              <View style={styles.addProCatGrid}>
+                {SERVICE_CATEGORY_OPTIONS.map((opt) => {
+                  const active = addProServiceCats.includes(opt.value);
+                  return (
+                    <TouchableOpacity
+                      key={opt.value}
+                      style={[styles.addProCatChip, active && styles.addProCatChipActive]}
+                      onPress={() => toggleAddProServiceCat(opt.value)}
+                      activeOpacity={0.7}
+                    >
+                      <Text style={[styles.addProCatChipText, active && styles.addProCatChipTextActive]}>
+                        {opt.label}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+              {addProServiceCats.length > 0 && (
+                <>
+                  <Text style={[styles.addProSectionLabel, { marginTop: 16 }]}>Service Radius</Text>
+                  <View style={styles.addProRadiusRow}>
+                    {RADIUS_OPTIONS.map((r) => {
+                      const active = addProRadius === r;
+                      return (
+                        <TouchableOpacity
+                          key={r}
+                          style={[styles.addProRadiusChip, active && styles.addProRadiusChipActive]}
+                          onPress={() => { setAddProRadius(r); lightImpact(); }}
+                          activeOpacity={0.7}
+                        >
+                          <Text style={[styles.addProRadiusChipText, active && styles.addProRadiusChipTextActive]}>
+                            {r} mi
+                          </Text>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
+                </>
+              )}
+
+              <Text style={styles.addProSectionLabel}>Linked Items</Text>
+              {appliances.length === 0 ? (
+                <View style={styles.addProEmptyAppliances}>
+                  <Text style={styles.addProEmptyAppliancesText}>No items added yet</Text>
+                </View>
+              ) : (
+                appliances.map((item) => {
+                  const linked = addProLinkedApplianceIds.includes(item.id);
+                  return (
+                    <TouchableOpacity
+                      key={item.id}
+                      style={styles.addProApplianceRow}
+                      onPress={() => toggleAddProAppliance(item.id)}
+                      activeOpacity={0.7}
+                    >
+                      <View style={[styles.addProApplianceDot, { backgroundColor: CATEGORY_AVATARS[item.category] || c.textTertiary }]} />
+                      <View style={styles.addProApplianceInfo}>
+                        <Text style={styles.addProApplianceName}>{item.name}</Text>
+                        <Text style={styles.addProApplianceMeta}>
+                          {categoryLabels[item.category] || item.category}{item.location ? ` · ${item.location}` : ''}
+                        </Text>
+                      </View>
+                      <View style={[styles.addProCheckbox, linked && styles.addProCheckboxActive]}>
+                        {linked && <Check size={14} color={c.white} />}
+                      </View>
+                    </TouchableOpacity>
+                  );
+                })
+              )}
+
+              <TouchableOpacity
+                style={[styles.addProSaveBtn, !canSaveAddPro && styles.addProSaveBtnDisabled]}
+                onPress={handleSaveAddPro}
+                activeOpacity={0.7}
+                disabled={!canSaveAddPro}
+                testID="save-add-pro-btn"
+              >
+                <Text style={styles.addProSaveBtnText}>Save Pro</Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
 
       <Modal
         visible={showAppliancePicker}

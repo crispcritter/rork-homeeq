@@ -53,33 +53,41 @@ export const [SubscriptionProvider, useSubscription] = createContextHook(() => {
   const customerInfoQuery = useQuery<CustomerInfo | null>({
     queryKey: ['rc_customerInfo'],
     queryFn: async () => {
+      if (!rcConfigured) {
+        console.log('[Subscription] RevenueCat not configured, skipping customer info fetch');
+        return null;
+      }
       try {
         const info = await Purchases.getCustomerInfo();
         console.log('[Subscription] Customer info fetched:', JSON.stringify(info.entitlements.active));
         return info;
-      } catch (e) {
-        console.error('[Subscription] Failed to get customer info:', e);
+      } catch (e: any) {
+        console.error('[Subscription] Failed to get customer info:', JSON.stringify(e?.message ?? e));
         return null;
       }
     },
     staleTime: 1000 * 60 * 5,
-    retry: 2,
+    retry: rcConfigured ? 2 : 0,
   });
 
   const offeringsQuery = useQuery<PurchasesOffering | null>({
     queryKey: ['rc_offerings'],
     queryFn: async () => {
+      if (!rcConfigured) {
+        console.log('[Subscription] RevenueCat not configured, skipping offerings fetch');
+        return null;
+      }
       try {
         const offerings = await Purchases.getOfferings();
         console.log('[Subscription] Offerings fetched:', offerings.current?.identifier);
         return offerings.current ?? null;
-      } catch (e) {
-        console.error('[Subscription] Failed to get offerings:', e);
+      } catch (e: any) {
+        console.error('[Subscription] Failed to get offerings:', JSON.stringify(e?.message ?? e));
         return null;
       }
     },
     staleTime: 1000 * 60 * 10,
-    retry: 2,
+    retry: rcConfigured ? 2 : 0,
   });
 
   const isPro = useMemo(() => {
@@ -155,6 +163,7 @@ export const [SubscriptionProvider, useSubscription] = createContextHook(() => {
   );
 
   useEffect(() => {
+    if (!rcConfigured) return;
     const listener = async (info: CustomerInfo) => {
       console.log('[Subscription] Customer info updated via listener');
       queryClient.setQueryData(['rc_customerInfo'], info);

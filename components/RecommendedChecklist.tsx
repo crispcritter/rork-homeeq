@@ -34,7 +34,8 @@ import {
   Warehouse,
   Waves,
 } from 'lucide-react-native';
-import Colors from '@/constants/colors';
+import { useTheme } from '@/contexts/ThemeContext';
+import { ColorScheme } from '@/constants/colors';
 import { RecommendedGroup, RecommendedItem, GROUP_META } from '@/mocks/recommendedItems';
 import { Appliance, ApplianceCategory } from '@/types';
 import { lightImpact, mediumImpact } from '@/utils/haptics';
@@ -92,47 +93,50 @@ function ItemActionsMenu({
   canSync: boolean;
   itemName: string;
 }) {
+  const { colors: c } = useTheme();
+  const ms = useMemo(() => createMenuStyles(c), [c]);
+
   if (!visible) return null;
 
   return (
-    <View style={menuStyles.backdrop}>
-      <TouchableOpacity style={menuStyles.backdropTouch} onPress={onClose} activeOpacity={1} />
-      <View style={menuStyles.container}>
-        <View style={menuStyles.handle} />
-        <Text style={menuStyles.title} numberOfLines={1}>{itemName}</Text>
+    <View style={ms.backdrop}>
+      <TouchableOpacity style={ms.backdropTouch} onPress={onClose} activeOpacity={1} />
+      <View style={ms.container}>
+        <View style={ms.handle} />
+        <Text style={ms.title} numberOfLines={1}>{itemName}</Text>
 
         {canSync && (
           <TouchableOpacity
-            style={menuStyles.option}
+            style={ms.option}
             onPress={() => { onSync(); onClose(); }}
             activeOpacity={0.7}
           >
-            <View style={[menuStyles.optionIcon, { backgroundColor: Colors.primaryLight }]}>
-              <RefreshCw size={16} color={Colors.primary} />
+            <View style={[ms.optionIcon, { backgroundColor: c.primaryLight }]}>
+              <RefreshCw size={16} color={c.primary} />
             </View>
-            <View style={menuStyles.optionTextWrap}>
-              <Text style={menuStyles.optionLabel}>Sync with My Items</Text>
-              <Text style={menuStyles.optionDesc}>Update from your tracked appliance</Text>
+            <View style={ms.optionTextWrap}>
+              <Text style={ms.optionLabel}>Sync with My Items</Text>
+              <Text style={ms.optionDesc}>Update from your tracked appliance</Text>
             </View>
           </TouchableOpacity>
         )}
 
         <TouchableOpacity
-          style={menuStyles.option}
+          style={ms.option}
           onPress={() => { onDuplicate(); onClose(); }}
           activeOpacity={0.7}
         >
-          <View style={[menuStyles.optionIcon, { backgroundColor: Colors.warningLight }]}>
-            <Copy size={16} color={Colors.warning} />
+          <View style={[ms.optionIcon, { backgroundColor: c.warningLight }]}>
+            <Copy size={16} color={c.warning} />
           </View>
-          <View style={menuStyles.optionTextWrap}>
-            <Text style={menuStyles.optionLabel}>Duplicate</Text>
-            <Text style={menuStyles.optionDesc}>Create a copy of this item</Text>
+          <View style={ms.optionTextWrap}>
+            <Text style={ms.optionLabel}>Duplicate</Text>
+            <Text style={ms.optionDesc}>Create a copy of this item</Text>
           </View>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={menuStyles.option}
+          style={ms.option}
           onPress={() => {
             Alert.alert(
               'Remove Item',
@@ -145,17 +149,17 @@ function ItemActionsMenu({
           }}
           activeOpacity={0.7}
         >
-          <View style={[menuStyles.optionIcon, { backgroundColor: Colors.dangerLight }]}>
-            <Trash2 size={16} color={Colors.danger} />
+          <View style={[ms.optionIcon, { backgroundColor: c.dangerLight }]}>
+            <Trash2 size={16} color={c.danger} />
           </View>
-          <View style={menuStyles.optionTextWrap}>
-            <Text style={[menuStyles.optionLabel, { color: Colors.danger }]}>Remove</Text>
-            <Text style={menuStyles.optionDesc}>Remove from recommended list</Text>
+          <View style={ms.optionTextWrap}>
+            <Text style={[ms.optionLabel, { color: c.danger }]}>Remove</Text>
+            <Text style={ms.optionDesc}>Remove from recommended list</Text>
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity style={menuStyles.cancelBtn} onPress={onClose} activeOpacity={0.7}>
-          <Text style={menuStyles.cancelText}>Cancel</Text>
+        <TouchableOpacity style={ms.cancelBtn} onPress={onClose} activeOpacity={0.7}>
+          <Text style={ms.cancelText}>Cancel</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -173,6 +177,8 @@ function AddItemModal({
   onClose: () => void;
   onAdd: (groupKey: string, item: RecommendedItem) => void;
 }) {
+  const { colors: c } = useTheme();
+  const ams = useMemo(() => createAddModalStyles(c), [c]);
   const [name, setName] = useState('');
   const [location, setLocation] = useState('');
   const meta = GROUP_META[groupKey];
@@ -194,21 +200,21 @@ function AddItemModal({
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <View style={addModalStyles.overlay}>
-        <View style={addModalStyles.card}>
-          <View style={addModalStyles.header}>
-            <Text style={addModalStyles.headerTitle}>Add Item to {meta?.label || 'List'}</Text>
+      <View style={ams.overlay}>
+        <View style={ams.card}>
+          <View style={ams.header}>
+            <Text style={ams.headerTitle}>Add Item to {meta?.label || 'List'}</Text>
             <TouchableOpacity onPress={onClose} hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}>
-              <X size={20} color={Colors.textSecondary} />
+              <X size={20} color={c.textSecondary} />
             </TouchableOpacity>
           </View>
 
-          <View style={addModalStyles.field}>
-            <Text style={addModalStyles.label}>Item Name</Text>
+          <View style={ams.field}>
+            <Text style={ams.label}>Item Name</Text>
             <TextInput
-              style={addModalStyles.input}
+              style={ams.input}
               placeholder="e.g. Ice Maker"
-              placeholderTextColor={Colors.textTertiary}
+              placeholderTextColor={c.textTertiary}
               value={name}
               onChangeText={setName}
               autoFocus
@@ -216,31 +222,31 @@ function AddItemModal({
             />
           </View>
 
-          <View style={addModalStyles.field}>
-            <Text style={addModalStyles.label}>Location</Text>
+          <View style={ams.field}>
+            <Text style={ams.label}>Location</Text>
             <TextInput
-              style={addModalStyles.input}
+              style={ams.input}
               placeholder="e.g. Kitchen"
-              placeholderTextColor={Colors.textTertiary}
+              placeholderTextColor={c.textTertiary}
               value={location}
               onChangeText={setLocation}
               testID="add-rec-item-location"
             />
           </View>
 
-          <View style={addModalStyles.actions}>
-            <TouchableOpacity style={addModalStyles.cancelBtn} onPress={onClose} activeOpacity={0.7}>
-              <Text style={addModalStyles.cancelBtnText}>Cancel</Text>
+          <View style={ams.actions}>
+            <TouchableOpacity style={ams.cancelBtn} onPress={onClose} activeOpacity={0.7}>
+              <Text style={ams.cancelBtnText}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[addModalStyles.addBtn, !name.trim() && addModalStyles.addBtnDisabled]}
+              style={[ams.addBtn, !name.trim() && ams.addBtnDisabled]}
               onPress={handleAdd}
               activeOpacity={0.7}
               disabled={!name.trim()}
               testID="add-rec-item-submit"
             >
-              <Plus size={16} color={Colors.white} />
-              <Text style={addModalStyles.addBtnText}>Add Item</Text>
+              <Plus size={16} color={c.white} />
+              <Text style={ams.addBtnText}>Add Item</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -268,6 +274,8 @@ function GroupSection({
   onSyncItem: (groupKey: string, itemId: string) => void;
   onAddCustomItem: (groupKey: string, item: RecommendedItem) => void;
 }) {
+  const { colors: c } = useTheme();
+  const gs = useMemo(() => createGroupStyles(c), [c]);
   const [expanded, setExpanded] = useState(false);
   const [activeMenuItemId, setActiveMenuItemId] = useState<string | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -310,33 +318,33 @@ function GroupSection({
   const activeMenuItem = group.items.find((i) => i.id === activeMenuItemId);
 
   return (
-    <View style={groupStyles.container}>
+    <View style={gs.container}>
       <TouchableOpacity
-        style={groupStyles.header}
+        style={gs.header}
         onPress={toggleExpand}
         activeOpacity={0.7}
       >
-        <View style={[groupStyles.iconWrap, { backgroundColor: group.color + '18' }]}>
+        <View style={[gs.iconWrap, { backgroundColor: group.color + '18' }]}>
           <IconComponent size={16} color={group.color} />
         </View>
-        <View style={groupStyles.headerTextWrap}>
-          <Text style={groupStyles.headerTitle}>{group.label}</Text>
-          <Text style={[groupStyles.headerCount, allDone && { color: Colors.success }]}>
+        <View style={gs.headerTextWrap}>
+          <Text style={gs.headerTitle}>{group.label}</Text>
+          <Text style={[gs.headerCount, allDone && { color: c.success }]}>
             {checkedCount}/{totalCount} added
           </Text>
         </View>
         {allDone && (
-          <View style={groupStyles.doneBadge}>
-            <CheckCircle2 size={12} color={Colors.white} />
+          <View style={gs.doneBadge}>
+            <CheckCircle2 size={12} color={c.white} />
           </View>
         )}
         <Animated.View style={{ transform: [{ rotate: rotation }] }}>
-          <ChevronDown size={18} color={Colors.textTertiary} />
+          <ChevronDown size={18} color={c.textTertiary} />
         </Animated.View>
       </TouchableOpacity>
 
-      <Animated.View style={[groupStyles.itemsWrap, { maxHeight, overflow: 'hidden' }]}>
-        <View style={groupStyles.itemsList}>
+      <Animated.View style={[gs.itemsWrap, { maxHeight, overflow: 'hidden' }]}>
+        <View style={gs.itemsList}>
           {group.items.map((item) => {
             const isAdded = matchedNames.has(item.name.toLowerCase());
             const matchedAppliance = matchedApplianceMap.get(item.name.toLowerCase());
@@ -346,36 +354,36 @@ function GroupSection({
             );
 
             return (
-              <View key={item.id} style={groupStyles.itemRow}>
+              <View key={item.id} style={gs.itemRow}>
                 {isAdded ? (
-                  <CheckCircle2 size={18} color={Colors.success} />
+                  <CheckCircle2 size={18} color={c.success} />
                 ) : (
-                  <Circle size={18} color={Colors.border} />
+                  <Circle size={18} color={c.border} />
                 )}
-                <View style={groupStyles.itemNameWrap}>
+                <View style={gs.itemNameWrap}>
                   <Text
                     style={[
-                      groupStyles.itemName,
-                      isAdded && groupStyles.itemNameDone,
+                      gs.itemName,
+                      isAdded && gs.itemNameDone,
                     ]}
                     numberOfLines={1}
                   >
                     {item.name}
                   </Text>
                   {item.isCustom && (
-                    <View style={groupStyles.customBadge}>
-                      <Text style={groupStyles.customBadgeText}>Custom</Text>
+                    <View style={gs.customBadge}>
+                      <Text style={gs.customBadgeText}>Custom</Text>
                     </View>
                   )}
                   {hasDetailDiff && (
-                    <View style={groupStyles.syncBadge}>
-                      <RefreshCw size={9} color={Colors.warning} />
+                    <View style={gs.syncBadge}>
+                      <RefreshCw size={9} color={c.warning} />
                     </View>
                   )}
                 </View>
                 {!isAdded && (
                   <TouchableOpacity
-                    style={groupStyles.addBtn}
+                    style={gs.addBtn}
                     onPress={() => {
                       lightImpact();
                       onAddItem(item);
@@ -383,15 +391,15 @@ function GroupSection({
                     activeOpacity={0.7}
                     hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                   >
-                    <Plus size={13} color={Colors.primary} />
-                    <Text style={groupStyles.addBtnText}>Add</Text>
+                    <Plus size={13} color={c.primary} />
+                    <Text style={gs.addBtnText}>Add</Text>
                   </TouchableOpacity>
                 )}
                 {isAdded && (
-                  <Text style={groupStyles.addedLabel}>Added</Text>
+                  <Text style={gs.addedLabel}>Added</Text>
                 )}
                 <TouchableOpacity
-                  style={groupStyles.moreBtn}
+                  style={gs.moreBtn}
                   onPress={() => {
                     lightImpact();
                     setActiveMenuItemId(item.id);
@@ -399,24 +407,24 @@ function GroupSection({
                   hitSlop={{ top: 10, bottom: 10, left: 6, right: 6 }}
                   activeOpacity={0.6}
                 >
-                  <MoreHorizontal size={16} color={Colors.textTertiary} />
+                  <MoreHorizontal size={16} color={c.textTertiary} />
                 </TouchableOpacity>
               </View>
             );
           })}
 
           <TouchableOpacity
-            style={groupStyles.addItemRow}
+            style={gs.addItemRow}
             onPress={() => {
               lightImpact();
               setShowAddModal(true);
             }}
             activeOpacity={0.7}
           >
-            <View style={[groupStyles.addItemIcon, { backgroundColor: group.color + '12' }]}>
+            <View style={[gs.addItemIcon, { backgroundColor: group.color + '12' }]}>
               <Plus size={14} color={group.color} />
             </View>
-            <Text style={groupStyles.addItemText}>Add custom item</Text>
+            <Text style={gs.addItemText}>Add custom item</Text>
           </TouchableOpacity>
         </View>
       </Animated.View>
@@ -461,6 +469,8 @@ export default function RecommendedChecklist({
   onSyncRecommendedItem,
   onAddCustomRecommendedItem,
 }: RecommendedChecklistProps) {
+  const { colors: c } = useTheme();
+  const s = useMemo(() => createStyles(c), [c]);
   const [collapsed, setCollapsed] = useState(true);
   const sectionAnim = useRef(new Animated.Value(0)).current;
   const chevronAnim = useRef(new Animated.Value(0)).current;
@@ -521,35 +531,35 @@ export default function RecommendedChecklist({
   });
 
   return (
-    <View style={styles.wrapper}>
+    <View style={s.wrapper}>
       <TouchableOpacity
-        style={styles.headerRow}
+        style={s.headerRow}
         onPress={toggleCollapsed}
         activeOpacity={0.7}
         testID="recommended-checklist-toggle"
       >
-        <View style={styles.headerLeft}>
-          <View style={styles.headerIconWrap}>
-            <ClipboardList size={18} color={Colors.primary} />
+        <View style={s.headerLeft}>
+          <View style={s.headerIconWrap}>
+            <ClipboardList size={18} color={c.primary} />
           </View>
           <View>
-            <Text style={styles.headerTitle}>Recommended Items</Text>
-            <Text style={styles.headerSubtitle}>
+            <Text style={s.headerTitle}>Recommended Items</Text>
+            <Text style={s.headerSubtitle}>
               {totalAdded} of {totalItems} items tracked
             </Text>
           </View>
         </View>
         <Animated.View style={{ transform: [{ rotate: chevronRotation }] }}>
-          <ChevronRight size={20} color={Colors.textTertiary} />
+          <ChevronRight size={20} color={c.textTertiary} />
         </Animated.View>
       </TouchableOpacity>
 
-      <View style={styles.progressBarBg}>
-        <View style={[styles.progressBarFill, { width: `${progressPercent * 100}%` }]} />
+      <View style={s.progressBarBg}>
+        <View style={[s.progressBarFill, { width: `${progressPercent * 100}%` }]} />
       </View>
 
       <Animated.View style={{ maxHeight: sectionMaxHeight, overflow: 'hidden' }}>
-        <View style={styles.groupsContainer}>
+        <View style={s.groupsContainer}>
           {recommendedGroups.map((group) => (
             <GroupSection
               key={group.key}
@@ -569,13 +579,13 @@ export default function RecommendedChecklist({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (c: ColorScheme) => StyleSheet.create({
   wrapper: {
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderRadius: 18,
     marginTop: 20,
     marginBottom: 12,
-    shadowColor: Colors.cardShadow,
+    shadowColor: c.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 8,
@@ -599,32 +609,32 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: c.primaryLight,
     justifyContent: 'center',
     alignItems: 'center',
   },
   headerTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.text,
+    color: c.text,
     lineHeight: 22,
   },
   headerSubtitle: {
     fontSize: 12,
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     lineHeight: 16,
     marginTop: 1,
   },
   progressBarBg: {
     height: 3,
-    backgroundColor: Colors.surfaceAlt,
+    backgroundColor: c.surfaceAlt,
     marginHorizontal: 16,
     borderRadius: 2,
     marginBottom: 4,
   },
   progressBarFill: {
     height: '100%',
-    backgroundColor: Colors.primary,
+    backgroundColor: c.primary,
     borderRadius: 2,
   },
   groupsContainer: {
@@ -634,7 +644,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const groupStyles = StyleSheet.create({
+const createGroupStyles = (c: ColorScheme) => StyleSheet.create({
   container: {
     marginBottom: 2,
   },
@@ -658,12 +668,12 @@ const groupStyles = StyleSheet.create({
   headerTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.text,
+    color: c.text,
     lineHeight: 19,
   },
   headerCount: {
     fontSize: 11,
-    color: Colors.textTertiary,
+    color: c.textTertiary,
     lineHeight: 15,
     marginTop: 1,
   },
@@ -671,7 +681,7 @@ const groupStyles = StyleSheet.create({
     width: 22,
     height: 22,
     borderRadius: 11,
-    backgroundColor: Colors.success,
+    backgroundColor: c.success,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 4,
@@ -687,7 +697,7 @@ const groupStyles = StyleSheet.create({
     paddingVertical: 9,
     gap: 8,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.borderLight,
+    borderBottomColor: c.borderLight,
   },
   itemNameWrap: {
     flex: 1,
@@ -697,16 +707,16 @@ const groupStyles = StyleSheet.create({
   },
   itemName: {
     fontSize: 14,
-    color: Colors.text,
+    color: c.text,
     lineHeight: 19,
     flexShrink: 1,
   },
   itemNameDone: {
-    color: Colors.textTertiary,
+    color: c.textTertiary,
     textDecorationLine: 'line-through',
   },
   customBadge: {
-    backgroundColor: Colors.warningLight,
+    backgroundColor: c.warningLight,
     paddingHorizontal: 6,
     paddingVertical: 1,
     borderRadius: 4,
@@ -714,14 +724,14 @@ const groupStyles = StyleSheet.create({
   customBadgeText: {
     fontSize: 9,
     fontWeight: '600',
-    color: Colors.warning,
+    color: c.warning,
     lineHeight: 13,
   },
   syncBadge: {
     width: 16,
     height: 16,
     borderRadius: 8,
-    backgroundColor: Colors.warningLight,
+    backgroundColor: c.warningLight,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -729,7 +739,7 @@ const groupStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 3,
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: c.primaryLight,
     paddingHorizontal: 9,
     paddingVertical: 5,
     borderRadius: 8,
@@ -737,12 +747,12 @@ const groupStyles = StyleSheet.create({
   addBtnText: {
     fontSize: 12,
     fontWeight: '600',
-    color: Colors.primary,
+    color: c.primary,
     lineHeight: 16,
   },
   addedLabel: {
     fontSize: 12,
-    color: Colors.textTertiary,
+    color: c.textTertiary,
     fontWeight: '500',
     lineHeight: 16,
   },
@@ -767,12 +777,12 @@ const groupStyles = StyleSheet.create({
   addItemText: {
     fontSize: 13,
     fontWeight: '500',
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     lineHeight: 18,
   },
 });
 
-const menuStyles = StyleSheet.create({
+const createMenuStyles = (c: ColorScheme) => StyleSheet.create({
   backdrop: {
     position: 'absolute',
     top: -500,
@@ -785,12 +795,12 @@ const menuStyles = StyleSheet.create({
   },
   backdropTouch: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: Colors.overlay,
+    backgroundColor: c.overlay,
   },
   container: {
     width: '85%',
     maxWidth: 340,
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderRadius: 20,
     paddingTop: 10,
     paddingBottom: 16,
@@ -801,14 +811,14 @@ const menuStyles = StyleSheet.create({
     width: 36,
     height: 4,
     borderRadius: 2,
-    backgroundColor: Colors.borderLight,
+    backgroundColor: c.borderLight,
     alignSelf: 'center',
     marginBottom: 12,
   },
   title: {
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.text,
+    color: c.text,
     textAlign: 'center',
     marginBottom: 14,
     paddingHorizontal: 12,
@@ -834,12 +844,12 @@ const menuStyles = StyleSheet.create({
   optionLabel: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text,
+    color: c.text,
     lineHeight: 20,
   },
   optionDesc: {
     fontSize: 12,
-    color: Colors.textTertiary,
+    color: c.textTertiary,
     lineHeight: 16,
     marginTop: 1,
   },
@@ -847,21 +857,21 @@ const menuStyles = StyleSheet.create({
     marginTop: 8,
     paddingVertical: 12,
     alignItems: 'center',
-    backgroundColor: Colors.surfaceAlt,
+    backgroundColor: c.surfaceAlt,
     borderRadius: 12,
     marginHorizontal: 8,
   },
   cancelText: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.textSecondary,
+    color: c.textSecondary,
   },
 });
 
-const addModalStyles = StyleSheet.create({
+const createAddModalStyles = (c: ColorScheme) => StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: Colors.overlay,
+    backgroundColor: c.overlay,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 24,
@@ -869,7 +879,7 @@ const addModalStyles = StyleSheet.create({
   card: {
     width: '100%',
     maxWidth: 360,
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderRadius: 20,
     padding: 22,
   },
@@ -882,7 +892,7 @@ const addModalStyles = StyleSheet.create({
   headerTitle: {
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.text,
+    color: c.text,
   },
   field: {
     marginBottom: 16,
@@ -890,19 +900,19 @@ const addModalStyles = StyleSheet.create({
   label: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     marginBottom: 6,
     lineHeight: 17,
   },
   input: {
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: c.border,
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 15,
-    color: Colors.text,
-    backgroundColor: Colors.surfaceAlt,
+    color: c.text,
+    backgroundColor: c.surfaceAlt,
   },
   actions: {
     flexDirection: 'row',
@@ -913,13 +923,13 @@ const addModalStyles = StyleSheet.create({
     flex: 1,
     paddingVertical: 13,
     borderRadius: 12,
-    backgroundColor: Colors.surfaceAlt,
+    backgroundColor: c.surfaceAlt,
     alignItems: 'center',
   },
   cancelBtnText: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.textSecondary,
+    color: c.textSecondary,
   },
   addBtn: {
     flex: 1,
@@ -929,7 +939,7 @@ const addModalStyles = StyleSheet.create({
     gap: 6,
     paddingVertical: 13,
     borderRadius: 12,
-    backgroundColor: Colors.primary,
+    backgroundColor: c.primary,
   },
   addBtnDisabled: {
     opacity: 0.5,
@@ -937,6 +947,6 @@ const addModalStyles = StyleSheet.create({
   addBtnText: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.white,
+    color: c.white,
   },
 });

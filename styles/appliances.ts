@@ -101,7 +101,9 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   cardChips: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 6,
+    rowGap: 4,
   },
   chip: {
     flexDirection: 'row',

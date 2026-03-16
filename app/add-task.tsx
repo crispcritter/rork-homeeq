@@ -226,7 +226,7 @@ export default function AddTaskScreen() {
                         keyboardType="numeric"
                         testID="task-interval"
                       />
-                      <View style={{ flexDirection: 'row', gap: 6 }}>
+                      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
                         {(['days', 'weeks', 'months', 'years'] as RecurringUnit[]).map((u) => (
                           <TouchableOpacity
                             key={u}
@@ -239,7 +239,7 @@ export default function AddTaskScreen() {
                             }}
                             activeOpacity={0.7}
                           >
-                            <Text style={{ fontSize: 13, fontWeight: '500', color: recurringUnit === u ? c.white : c.textSecondary }}>
+                            <Text style={{ fontSize: 13, fontWeight: '500' as const, color: recurringUnit === u ? c.white : c.textSecondary }}>
                               {u.charAt(0).toUpperCase() + u.slice(1)}
                             </Text>
                           </TouchableOpacity>

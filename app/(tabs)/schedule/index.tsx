@@ -365,7 +365,7 @@ export default function ScheduleScreen() {
               {task.priority}
             </Text>
           </View>
-          <ChevronRight size={14} color={c.textTertiary} style={{ marginTop: 6 }} />
+          <ChevronRight size={14} color={c.textTertiary} />
         </View>
       </PressableCard>
     );
@@ -736,6 +736,8 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     marginBottom: 10,
+    borderLeftWidth: 3,
+    borderLeftColor: 'transparent',
     shadowColor: c.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
@@ -743,7 +745,6 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     elevation: 1,
   },
   taskCardOverdue: {
-    borderLeftWidth: 3,
     borderLeftColor: c.danger,
   },
   taskCardCompleted: {
@@ -834,6 +835,8 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     fontSize: 11,
     color: c.textTertiary,
     lineHeight: 15,
+    flexShrink: 1,
+    maxWidth: '40%',
   },
   recurringBadge: {
     flexDirection: 'row',
@@ -852,7 +855,8 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   taskRight: {
     alignItems: 'flex-end',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
+    gap: 6,
     marginLeft: 8,
   },
   priorityTag: {

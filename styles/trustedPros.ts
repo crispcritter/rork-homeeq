@@ -362,7 +362,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     backgroundColor: c.surface,
     borderRadius: Radius.xl,
     paddingHorizontal: Spacing.xl,
-    paddingVertical: Spacing.md,
+    height: 46,
     gap: Spacing.md,
     ...cardShadowXs(c),
   },

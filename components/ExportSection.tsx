@@ -206,10 +206,11 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     marginTop: 12,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
+    justifyContent: 'space-between',
   },
   exportGridItem: {
-    width: '48%' as any,
+    width: '48.5%',
+    marginBottom: 10,
     backgroundColor: c.surface,
     borderRadius: 14,
     paddingVertical: 18,

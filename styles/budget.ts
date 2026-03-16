@@ -100,7 +100,6 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     color: c.text,
-    marginBottom: Spacing.md,
     letterSpacing: -0.3,
     lineHeight: 26,
   },
@@ -117,6 +116,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   prosRow: {
     gap: Spacing.md,
+    paddingLeft: Spacing.xs,
     paddingBottom: Spacing.xs,
   },
   proCard: {
@@ -292,6 +292,8 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     fontSize: 15,
     fontWeight: '700',
     color: c.danger,
+    minWidth: 65,
+    textAlign: 'right' as const,
   },
   expensePayment: {
     fontSize: 10,

@@ -22,7 +22,7 @@ function FloatingActionButton({ onPress, color, testID }: FloatingActionButtonPr
       speed: 12,
       bounciness: 8,
     }).start();
-  }, []);
+  }, [fabAnim]);
 
   return (
     <Animated.View style={[styles.fabContainer, {
@@ -44,7 +44,7 @@ function FloatingActionButton({ onPress, color, testID }: FloatingActionButtonPr
 const styles = StyleSheet.create({
   fabContainer: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 28,
     right: 20,
   },
   fab: {

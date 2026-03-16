@@ -139,6 +139,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
     color: c.text,
     letterSpacing: -0.3,
     lineHeight: 28,
+    flexShrink: 1,
   },
   spendingPeriod: {
     fontSize: 12,
@@ -202,7 +203,8 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   taskMeta: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
+    flexWrap: 'wrap',
+    gap: 6,
   },
   metaDot: {
     width: 3,
@@ -263,6 +265,7 @@ const createStyles = (c: ColorScheme) => StyleSheet.create({
   },
   providersRow: {
     gap: Spacing.md,
+    paddingLeft: Spacing.xs,
     paddingRight: Spacing.xs,
   },
   providerCard: {

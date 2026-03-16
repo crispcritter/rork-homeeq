@@ -187,7 +187,7 @@ export default function DashboardScreen() {
               <View style={styles.spendingItem}>
                 <View style={styles.spendingAmountRow}>
                   <CalendarDays size={16} color={c.primary} />
-                  <Text style={[styles.spendingAmount, { color: c.text }]}>
+                  <Text style={[styles.spendingAmount, { color: c.text }]} numberOfLines={1} adjustsFontSizeToFit>
                     ${Math.floor(spentThisMonth).toLocaleString()}
                   </Text>
                 </View>
@@ -197,7 +197,7 @@ export default function DashboardScreen() {
               <View style={styles.spendingItem}>
                 <View style={styles.spendingAmountRow}>
                   <Calendar size={16} color={c.accent} />
-                  <Text style={[styles.spendingAmount, { color: c.text }]}>
+                  <Text style={[styles.spendingAmount, { color: c.text }]} numberOfLines={1} adjustsFontSizeToFit>
                     ${Math.floor(spentThisYear).toLocaleString()}
                   </Text>
                 </View>

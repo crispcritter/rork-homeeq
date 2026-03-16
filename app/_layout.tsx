@@ -98,6 +98,14 @@ function RootLayoutNav() {
         name="paywall"
         options={{ presentation: "modal", headerShown: false }}
       />
+      <Stack.Screen
+        name="privacy-policy"
+        options={{ title: "Privacy Policy" }}
+      />
+      <Stack.Screen
+        name="terms-of-service"
+        options={{ title: "Terms of Service" }}
+      />
     </Stack>
   );
 }

@@ -43,15 +43,15 @@ import {
   Palette,
 } from 'lucide-react-native';
 import { Alert, Linking, Modal, ActivityIndicator } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, Link } from 'expo-router';
+import { FileText, Shield, Trash2 as TrashIcon } from 'lucide-react-native';
 
 import { useHome } from '@/contexts/HomeContext';
-import Colors from '@/constants/colors';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 import DatePickerField from '@/components/DatePickerField';
-import { ColorScheme, PALETTE_OPTIONS } from '@/constants/colors';
+import Colors, { ColorScheme, PALETTE_OPTIONS } from '@/constants/colors';
 import { Moon, Sun, Smartphone, ChevronsUpDown, Cloud, LogOut, LogIn, RefreshCw, CheckCircle, Crown } from 'lucide-react-native';
 import { successNotification } from '@/utils/haptics';
 import PickerModal from '@/components/PickerModal';
@@ -188,7 +188,7 @@ const getRoleLabel = (role: string): string => {
 export default function ProfileScreen() {
   const { homeProfile, updateHomeProfile, resetData, isResetting, sectionsDefaultOpen, setSectionsDefaultOpen } = useHome();
   const { colors: c, themeMode, setThemeMode, paletteId, setPalette } = useTheme();
-  const { user, isAuthenticated, signOut, syncStatus, lastSyncedAt, pushToCloud, household, createHousehold, generateInvite, removeMember, leaveHousehold, refreshHousehold } = useAuth();
+  const { user, isAuthenticated, signOut, deleteAccount, syncStatus, lastSyncedAt, pushToCloud, household, createHousehold, generateInvite, removeMember, leaveHousehold, refreshHousehold } = useAuth();
   const { isPro } = useSubscription();
   const navRouter = useRouter();
   const [form, setForm] = useState<ProfileFormState>(() => profileToForm(homeProfile));
@@ -794,11 +794,11 @@ export default function ProfileScreen() {
               <LinkPreview url={form.zillowLink} />
               <View style={styles.zillowPreviewActions}>
                 <TouchableOpacity
-                  style={styles.zillowEditButton}
+                  style={[styles.zillowEditButton, { backgroundColor: c.primaryLight }]}
                   onPress={() => setShowZillowModal(true)}
                   activeOpacity={0.7}
                 >
-                  <Text style={styles.zillowEditText}>Edit Link</Text>
+                  <Text style={[styles.zillowEditText, { color: c.primary }]}>Edit Link</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -827,7 +827,7 @@ export default function ProfileScreen() {
                 </View>
                 <Text style={[styles.gridLabel, { color: c.textSecondary }]}>Bedrooms</Text>
                 <TextInput
-                  style={styles.gridInput}
+                  style={[styles.gridInput, { color: c.text }]}
                   value={form.bedrooms}
                   onChangeText={(v) => updateField('bedrooms', v)}
                   keyboardType="number-pad"
@@ -842,7 +842,7 @@ export default function ProfileScreen() {
                 </View>
                 <Text style={[styles.gridLabel, { color: c.textSecondary }]}>Bathrooms</Text>
                 <TextInput
-                  style={styles.gridInput}
+                  style={[styles.gridInput, { color: c.text }]}
                   value={form.bathrooms}
                   onChangeText={(v) => updateField('bathrooms', v)}
                   keyboardType="decimal-pad"
@@ -857,7 +857,7 @@ export default function ProfileScreen() {
                 </View>
                 <Text style={[styles.gridLabel, { color: c.textSecondary }]}>Stories</Text>
                 <TextInput
-                  style={styles.gridInput}
+                  style={[styles.gridInput, { color: c.text }]}
                   value={form.stories}
                   onChangeText={(v) => updateField('stories', v)}
                   keyboardType="number-pad"
@@ -1239,9 +1239,37 @@ export default function ProfileScreen() {
           <Text style={styles.saveButtonLargeText}>Save Profile</Text>
         </TouchableOpacity>
 
+        <CollapsibleSection title="Legal" themeColors={c} globalDefault={sectionsDefaultOpen}>
+          <View style={[styles.card, { backgroundColor: c.surface }]}>
+            <Link href="/privacy-policy" asChild>
+              <TouchableOpacity style={styles.inputRow} activeOpacity={0.7} testID="privacy-policy-link">
+                <View style={[styles.inputIcon, { backgroundColor: c.primaryLight }]}>
+                  <Shield size={18} color={c.primary} />
+                </View>
+                <View style={styles.inputContent}>
+                  <Text style={{ fontSize: 16, fontWeight: '500' as const, color: c.text }}>Privacy Policy</Text>
+                </View>
+                <ChevronDown size={16} color={c.textTertiary} style={{ transform: [{ rotate: '-90deg' }] }} />
+              </TouchableOpacity>
+            </Link>
+            <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
+            <Link href="/terms-of-service" asChild>
+              <TouchableOpacity style={styles.inputRow} activeOpacity={0.7} testID="terms-of-service-link">
+                <View style={[styles.inputIcon, { backgroundColor: c.primaryLight }]}>
+                  <FileText size={18} color={c.primary} />
+                </View>
+                <View style={styles.inputContent}>
+                  <Text style={{ fontSize: 16, fontWeight: '500' as const, color: c.text }}>Terms of Service</Text>
+                </View>
+                <ChevronDown size={16} color={c.textTertiary} style={{ transform: [{ rotate: '-90deg' }] }} />
+              </TouchableOpacity>
+            </Link>
+          </View>
+        </CollapsibleSection>
+
         <CollapsibleSection title="Data" themeColors={c} globalDefault={sectionsDefaultOpen}>
           <TouchableOpacity
-            style={styles.resetButton}
+            style={[styles.resetButton, { backgroundColor: c.dangerLight }]}
             activeOpacity={0.7}
             disabled={isResetting}
             onPress={() => {
@@ -1262,11 +1290,38 @@ export default function ProfileScreen() {
             }}
             testID="reset-data-button"
           >
-            <RotateCcw size={18} color="#D1453B" />
-            <Text style={styles.resetButtonText}>
+            <RotateCcw size={18} color={c.danger} />
+            <Text style={[styles.resetButtonText, { color: c.danger }]}>
               {isResetting ? 'Resetting...' : 'Reset All Data'}
             </Text>
           </TouchableOpacity>
+
+          {isAuthenticated && (
+            <TouchableOpacity
+              style={[styles.deleteAccountButton, { backgroundColor: c.dangerLight }]}
+              activeOpacity={0.7}
+              onPress={() => {
+                Alert.alert(
+                  'Delete Account',
+                  'This will permanently delete your account, all cloud data, household memberships, and sync history. Your local data on this device will remain. This action cannot be undone.',
+                  [
+                    { text: 'Cancel', style: 'cancel' },
+                    {
+                      text: 'Delete Account',
+                      style: 'destructive',
+                      onPress: () => {
+                        void deleteAccount();
+                      },
+                    },
+                  ]
+                );
+              }}
+              testID="delete-account-button"
+            >
+              <TrashIcon size={18} color={c.danger} />
+              <Text style={[styles.deleteAccountText, { color: c.danger }]}>Delete Account</Text>
+            </TouchableOpacity>
+          )}
         </CollapsibleSection>
 
         <View style={{ height: 40 }} />
@@ -1420,7 +1475,7 @@ export default function ProfileScreen() {
             <View style={styles.modalActions}>
               {form.zillowLink ? (
                 <TouchableOpacity
-                  style={styles.modalRemoveButton}
+                  style={[styles.modalRemoveButton, { backgroundColor: c.dangerLight }]}
                   onPress={() => {
                     console.log('[Profile] Removing Zillow link');
                     updateField('zillowLink', undefined);
@@ -1429,7 +1484,7 @@ export default function ProfileScreen() {
                   }}
                   activeOpacity={0.7}
                 >
-                  <Text style={styles.modalRemoveText}>Remove</Text>
+                  <Text style={[styles.modalRemoveText, { color: c.danger }]}>Remove</Text>
                 </TouchableOpacity>
               ) : (
                 <View />
@@ -1437,6 +1492,7 @@ export default function ProfileScreen() {
               <TouchableOpacity
                 style={[
                   styles.modalSaveButton,
+                  { backgroundColor: c.primary },
                   !zillowInput.trim() && styles.modalSaveButtonDisabled,
                 ]}
                 onPress={() => {
@@ -1451,7 +1507,7 @@ export default function ProfileScreen() {
                 activeOpacity={0.7}
                 testID="save-zillow-link"
               >
-                <Text style={styles.modalSaveText}>Save</Text>
+                <Text style={[styles.modalSaveText, { color: c.white }]}>Save</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -1640,7 +1696,6 @@ const styles = StyleSheet.create({
   gridInput: {
     fontSize: 20,
     fontWeight: '700',
-    color: Colors.text,
     textAlign: 'center',
     padding: 0,
     minWidth: 40,
@@ -1694,7 +1749,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#FEF2F2',
     borderRadius: 14,
     paddingVertical: 16,
     gap: 10,
@@ -1702,7 +1756,19 @@ const styles = StyleSheet.create({
   resetButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#D1453B',
+  },
+  deleteAccountButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 14,
+    paddingVertical: 16,
+    gap: 10,
+    marginTop: 12,
+  },
+  deleteAccountText: {
+    fontSize: 16,
+    fontWeight: '600',
   },
   zillowPreviewContainer: {
     marginTop: 10,
@@ -1716,12 +1782,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 7,
     borderRadius: 8,
-    backgroundColor: Colors.primaryLight,
   },
   zillowEditText: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.primary,
   },
   zillowAddButton: {
     flexDirection: 'row',
@@ -1812,18 +1876,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 12,
-    backgroundColor: '#FEF2F2',
   },
   modalRemoveText: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#D1453B',
   },
   modalSaveButton: {
     paddingHorizontal: 28,
     paddingVertical: 12,
     borderRadius: 12,
-    backgroundColor: Colors.primary,
   },
   modalSaveButtonDisabled: {
     opacity: 0.4,

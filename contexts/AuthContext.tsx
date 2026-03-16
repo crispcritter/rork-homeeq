@@ -188,6 +188,21 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
     setHousehold(null);
   }, []);
 
+  const deleteAccount = useCallback(async () => {
+    try {
+      await trpcClient.auth.deleteAccount.mutate();
+      console.log('[Auth] Account deleted on server');
+    } catch (e) {
+      console.warn('[Auth] Delete account API call failed (continuing anyway):', e);
+    }
+    await SecureStore.deleteItemAsync(AUTH_TOKEN_KEY).catch(() => {});
+    setUser(null);
+    setHousehold(null);
+    setSyncStatus('idle');
+    setLastSyncedAt(null);
+    console.log('[Auth] Account deleted and local auth cleared');
+  }, []);
+
   const pushToCloud = useCallback(async () => {
     if (!user) return;
 
@@ -330,8 +345,9 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
     removeMember,
     leaveHousehold,
     deleteHousehold,
+    deleteAccount,
     refreshHousehold,
     pendingInviteCode,
     setPendingInviteCode,
-  }), [user, isLoading, loginMutation, registerMutation, signOut, syncStatus, lastSyncedAt, pushToCloud, pullFromCloud, applyCloudData, household, createHousehold, generateInvite, getInviteInfo, joinHousehold, removeMember, leaveHousehold, deleteHousehold, refreshHousehold, pendingInviteCode]);
+  }), [user, isLoading, loginMutation, registerMutation, signOut, syncStatus, lastSyncedAt, pushToCloud, pullFromCloud, applyCloudData, household, createHousehold, generateInvite, getInviteInfo, joinHousehold, removeMember, leaveHousehold, deleteHousehold, deleteAccount, refreshHousehold, pendingInviteCode]);
 });

@@ -1,23 +1,69 @@
-# Add a Pro manually from the Trusted Pros screen
+# iOS App Store Submission Readiness Fixes
 
-**Features**
-- [x] A new "+" button appears inline next to the "Your Saved Pros" section header
-- [x] Tapping it opens a bottom sheet modal with a full form to manually add a trusted pro
-- [x] The form includes: Name, Specialty, Phone, Email, Website, Address, License #, Insurance toggle, and Notes
-- [x] After filling in basic info, you can link the pro to one or more of your existing home items/appliances
-- [x] You can also pick one or more service categories (HVAC, Plumbing, Electrical, etc.) and set a service radius
-- [x] Tapping "Save" adds the pro to your saved list immediately and closes the sheet
+## Summary
 
-**Design**
-- [x] The "+" button sits beside the "Your Saved Pros" title, matching the existing primary-colored style
-- [x] The modal slides up from the bottom with a rounded top, consistent with the existing appliance-picker modal
-- [x] Form fields are grouped into sections: "Details", "Contact", "Service Info", and "Linked Items"
-- [x] Each section has a subtle label header in uppercase
-- [x] Service categories appear as tappable chips in a wrap layout
-- [x] Appliance linking uses a checklist of your existing items with category-colored dots
-- [x] A prominent "Save Pro" button at the bottom in the app's primary color
-- [x] The form scrolls smoothly if content exceeds screen height
+Several critical gaps and issues need to be addressed before the app can pass iOS App Store review. Here's everything I found and how I'll fix it.
 
-**Screens**
-- [x] **Trusted Pros tab (updated):** A "+" icon button is added next to the "Your Saved Pros" header badge
-- [x] **Add a Pro modal (new):** A bottom-sheet style form with all fields, service category chips, appliance linking checklist, and a save button
+---
+
+### 🔴 Critical (App Store Rejection Risks)
+
+**1. Add Privacy Policy & Terms of Service**
+
+- [x] Add a new "Legal" section in the Profile/Settings screen with links to Privacy Policy and Terms of Service
+- [x] Create placeholder in-app screens that display basic privacy policy and terms text (you'll want to replace with real legal text before submission)
+- [x] Add these links to the paywall screen as well (Apple requires them near subscription purchase buttons)
+
+**2. Add Account Deletion**
+
+- [x] Add a "Delete Account" button in the Profile screen under the account/cloud sync section
+- [x] Show a confirmation dialog warning the user this is permanent
+- [x] Add a backend endpoint to delete the user's account, sessions, and associated cloud data
+- [x] After deletion, sign the user out and clear local auth tokens
+
+**3. Add Subscription Legal Text to Paywall**
+
+- [x] The paywall is missing links to Privacy Policy and Terms of Service (required by Apple for auto-renewing subscriptions)
+- [x] Add tappable links below the existing legal disclaimer text
+
+---
+
+### 🟡 Important (Quality & Dark Mode Fixes)
+
+**4. Fix Dark Mode on Profile Screen**
+
+- [x] The profile screen (the longest screen in the app) uses hardcoded `Colors.xxx` in ~100+ style references instead of the dynamic theme colors
+- [x] Convert all hardcoded color references in the stylesheet to use the theme-aware `c.xxx` pattern, matching how other screens work
+
+**5. Make Splash Animation Theme-Aware**
+
+- [x] The splash screen currently hardcodes light-mode colors (cream background, sage green icon)
+- [x] Pass theme colors into the splash so it matches the user's selected theme on launch
+
+**6. Fix Not Found Screen for Dark Mode**
+
+- [x] The 404/not-found screen also uses static `Colors` import instead of theme colors
+
+---
+
+### 🟢 Minor (Polish & Best Practices)
+
+**7. Add "Restore Purchases" Accessibility**
+
+- [x] Ensure the "Restore Purchases" button on the paywall is clearly visible and accessible (it's already there, verified it meets Apple's guidelines)
+
+**8. Add `NSCameraUsageDescription` and permission strings**
+
+- [x] The app uses the camera (for profile photos) — added required iOS permission description strings to `app.json`
+
+---
+
+### Screens Affected
+
+- **Profile screen** — Account deletion button, legal links section, dark mode color fixes
+- **Paywall screen** — Privacy Policy & Terms links added
+- **Splash animation** — Theme-aware colors
+- **Not Found screen** — Theme-aware colors
+- **New "Privacy Policy" screen** — Placeholder legal text
+- **New "Terms of Service" screen** — Placeholder legal text
+- **Backend** — New account deletion endpoint

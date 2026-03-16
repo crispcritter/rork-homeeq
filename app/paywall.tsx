@@ -10,7 +10,7 @@ import {
   Animated,
   Platform,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, Link } from 'expo-router';
 import { Stack } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
@@ -366,8 +366,22 @@ export default function PaywallScreen() {
             </TouchableOpacity>
 
             <Text style={[styles.legalText, { color: c.textTertiary }]}>
-              Payment will be charged to your account. Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period.
+              Payment will be charged to your Apple ID account. Subscriptions automatically renew unless cancelled at least 24 hours before the end of the current period. You can manage subscriptions in your device Settings.
             </Text>
+
+            <View style={styles.legalLinksRow}>
+              <Link href="/privacy-policy" asChild>
+                <TouchableOpacity hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                  <Text style={[styles.legalLink, { color: c.textTertiary }]}>Privacy Policy</Text>
+                </TouchableOpacity>
+              </Link>
+              <Text style={[styles.legalLinkDivider, { color: c.textTertiary }]}>|</Text>
+              <Link href="/terms-of-service" asChild>
+                <TouchableOpacity hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                  <Text style={[styles.legalLink, { color: c.textTertiary }]}>Terms of Service</Text>
+                </TouchableOpacity>
+              </Link>
+            </View>
           </Animated.View>
         )}
       </ScrollView>
@@ -577,5 +591,21 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     marginTop: 12,
     paddingHorizontal: 8,
+  },
+  legalLinksRow: {
+    flexDirection: 'row' as const,
+    justifyContent: 'center' as const,
+    alignItems: 'center' as const,
+    gap: 8,
+    marginTop: 12,
+    paddingBottom: 8,
+  },
+  legalLink: {
+    fontSize: 12,
+    fontWeight: '500' as const,
+    textDecorationLine: 'underline' as const,
+  },
+  legalLinkDivider: {
+    fontSize: 12,
   },
 });

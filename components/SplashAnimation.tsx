@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Animated, StyleSheet, Dimensions } from 'react-native';
+import { View, Animated, StyleSheet, Dimensions, useColorScheme } from 'react-native';
 import { Home } from 'lucide-react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -9,6 +9,18 @@ interface SplashAnimationProps {
 }
 
 export default function SplashAnimation({ onFinish }: SplashAnimationProps) {
+  const systemScheme = useColorScheme();
+  const isDark = systemScheme === 'dark';
+
+  const bg = isDark ? '#141211' : '#FAF8F5';
+  const primaryColor = isDark ? '#6FA876' : '#5A8A60';
+  const accentColor = isDark ? '#D49A87' : '#C4826D';
+  const textColor = isDark ? '#EDE8E3' : '#2D2926';
+  const subtextColor = isDark ? '#9E9790' : '#AEA69D';
+  const blobColor1 = isDark ? 'rgba(111, 168, 118, 0.07)' : 'rgba(90, 138, 96, 0.07)';
+  const blobColor2 = isDark ? 'rgba(111, 168, 118, 0.05)' : 'rgba(90, 138, 96, 0.05)';
+  const iconBg = isDark ? 'rgba(111, 168, 118, 0.1)' : 'rgba(90, 138, 96, 0.1)';
+  const iconBorder = isDark ? 'rgba(111, 168, 118, 0.18)' : 'rgba(90, 138, 96, 0.18)';
   const iconScale = useRef(new Animated.Value(0.3)).current;
   const iconOpacity = useRef(new Animated.Value(0)).current;
   const titleOpacity = useRef(new Animated.Value(0)).current;
@@ -100,6 +112,7 @@ export default function SplashAnimation({ onFinish }: SplashAnimationProps) {
       style={[
         styles.container,
         {
+          backgroundColor: bg,
           opacity: containerOpacity,
           transform: [{ scale: containerScale }],
         },
@@ -109,6 +122,7 @@ export default function SplashAnimation({ onFinish }: SplashAnimationProps) {
         style={[
           styles.blob1,
           {
+            backgroundColor: blobColor1,
             opacity: blob1Opacity,
             transform: [{ scale: blob1Scale }],
           },
@@ -118,6 +132,7 @@ export default function SplashAnimation({ onFinish }: SplashAnimationProps) {
         style={[
           styles.blob2,
           {
+            backgroundColor: blobColor2,
             opacity: blob2Opacity,
             transform: [{ scale: blob2Scale }],
           },
@@ -134,8 +149,8 @@ export default function SplashAnimation({ onFinish }: SplashAnimationProps) {
             },
           ]}
         >
-          <View style={styles.iconCircle}>
-            <Home size={34} color="#5A8A60" strokeWidth={1.8} />
+          <View style={[styles.iconCircle, { backgroundColor: iconBg, borderColor: iconBorder }]}>
+            <Home size={34} color={primaryColor} strokeWidth={1.8} />
           </View>
         </Animated.View>
 
@@ -143,23 +158,24 @@ export default function SplashAnimation({ onFinish }: SplashAnimationProps) {
           style={[
             styles.title,
             {
+              color: textColor,
               opacity: titleOpacity,
               transform: [{ translateY: titleTranslateY }],
             },
           ]}
         >
           Home
-          <Animated.Text style={styles.titleBold}>EQ</Animated.Text>
+          <Animated.Text style={[styles.titleBold, { color: primaryColor }]}>EQ</Animated.Text>
         </Animated.Text>
 
-        <Animated.View style={[styles.line, { width: animatedLineWidth }]} />
+        <Animated.View style={[styles.line, { width: animatedLineWidth, backgroundColor: accentColor }]} />
 
-        <Animated.Text style={[styles.subtitle, { opacity: subtitleOpacity }]}>
+        <Animated.Text style={[styles.subtitle, { color: primaryColor, opacity: subtitleOpacity }]}>
           Your home, organized
         </Animated.Text>
       </View>
 
-      <Animated.Text style={[styles.footer, { opacity: subtitleOpacity }]}>
+      <Animated.Text style={[styles.footer, { color: subtextColor, opacity: subtitleOpacity }]}>
         Smart home management
       </Animated.Text>
     </Animated.View>
@@ -169,7 +185,6 @@ export default function SplashAnimation({ onFinish }: SplashAnimationProps) {
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: '#FAF8F5',
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 100,
@@ -182,7 +197,6 @@ const styles = StyleSheet.create({
     width: width * 0.9,
     height: width * 0.9,
     borderRadius: width * 0.45,
-    backgroundColor: 'rgba(90, 138, 96, 0.07)',
   },
   blob2: {
     position: 'absolute',
@@ -191,7 +205,6 @@ const styles = StyleSheet.create({
     width: width * 0.8,
     height: width * 0.8,
     borderRadius: width * 0.4,
-    backgroundColor: 'rgba(90, 138, 96, 0.05)',
   },
   content: {
     alignItems: 'center',
@@ -203,32 +216,26 @@ const styles = StyleSheet.create({
     width: 78,
     height: 78,
     borderRadius: 22,
-    backgroundColor: 'rgba(90, 138, 96, 0.1)',
     borderWidth: 1,
-    borderColor: 'rgba(90, 138, 96, 0.18)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   title: {
     fontSize: 38,
-    color: '#2D2926',
     fontWeight: '300',
     letterSpacing: 1,
   },
   titleBold: {
     fontWeight: '700',
-    color: '#5A8A60',
   },
   line: {
     height: 1.5,
-    backgroundColor: '#C4826D',
     borderRadius: 1,
     marginTop: 12,
     marginBottom: 12,
   },
   subtitle: {
     fontSize: 13,
-    color: '#5A8A60',
     fontWeight: '400',
     letterSpacing: 1.5,
     textTransform: 'uppercase' as const,
@@ -237,7 +244,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 60,
     fontSize: 11,
-    color: '#AEA69D',
     letterSpacing: 2,
     textTransform: 'uppercase' as const,
   },

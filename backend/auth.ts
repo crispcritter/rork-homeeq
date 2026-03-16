@@ -1,4 +1,4 @@
-import { dbGet, dbSet, dbHas } from "./db";
+import { dbGet, dbSet, dbHas, dbDelete, dbKeys } from "./db";
 
 export interface StoredUser {
   id: string;
@@ -181,4 +181,25 @@ export function revokeToken(token: string): void {
     dbSet(key, null);
     console.log("[Auth] Session revoked:", token.slice(0, 8) + "...");
   }
+}
+
+export function deleteUser(userId: string): void {
+  const storedUser = dbGet<StoredUser>(userByIdKey(userId));
+  if (!storedUser) {
+    console.warn("[Auth] deleteUser: user not found:", userId);
+    return;
+  }
+
+  dbDelete(userKey(storedUser.email));
+  dbDelete(userByIdKey(userId));
+
+  const sessionKeys = dbKeys("session:");
+  for (const key of sessionKeys) {
+    const session = dbGet<AuthSession>(key);
+    if (session?.userId === userId) {
+      dbDelete(key);
+    }
+  }
+
+  console.log("[Auth] User deleted:", storedUser.email, "id:", userId);
 }

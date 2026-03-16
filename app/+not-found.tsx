@@ -1,20 +1,22 @@
 import { Link, Stack } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 import { Home } from "lucide-react-native";
-import Colors from "@/constants/colors";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export default function NotFoundScreen() {
+  const { colors: c } = useTheme();
+
   return (
     <>
       <Stack.Screen options={{ title: "Not Found" }} />
-      <View style={styles.container}>
-        <View style={styles.iconContainer}>
-          <Home size={40} color={Colors.textTertiary} />
+      <View style={[styles.container, { backgroundColor: c.background }]}>
+        <View style={[styles.iconContainer, { backgroundColor: c.surfaceAlt }]}>
+          <Home size={40} color={c.textTertiary} />
         </View>
-        <Text style={styles.title}>Page not found</Text>
-        <Text style={styles.subtitle}>The page you're looking for doesn't exist.</Text>
-        <Link href="/" style={styles.link}>
-          <Text style={styles.linkText}>Back to Home</Text>
+        <Text style={[styles.title, { color: c.text }]}>Page not found</Text>
+        <Text style={[styles.subtitle, { color: c.textSecondary }]}>The page you're looking for doesn't exist.</Text>
+        <Link href="/" style={[styles.link, { backgroundColor: c.primary }]}>
+          <Text style={[styles.linkText, { color: c.white }]}>Back to Home</Text>
         </Link>
       </View>
     </>
@@ -27,13 +29,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
-    backgroundColor: Colors.background,
   },
   iconContainer: {
     width: 72,
     height: 72,
     borderRadius: 20,
-    backgroundColor: Colors.surfaceAlt,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 20,
@@ -41,24 +41,20 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: "700",
-    color: Colors.text,
     marginBottom: 6,
   },
   subtitle: {
     fontSize: 14,
-    color: Colors.textSecondary,
     marginBottom: 24,
   },
   link: {
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 12,
-    backgroundColor: Colors.primary,
     overflow: "hidden",
   },
   linkText: {
     fontSize: 14,
     fontWeight: "600",
-    color: Colors.white,
   },
 });

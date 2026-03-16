@@ -34,7 +34,7 @@ import {
   ChevronDown,
   RotateCcw,
   Camera,
-  Link,
+  Link as LinkIcon,
   X,
   Search,
   Users,
@@ -43,7 +43,7 @@ import {
   Palette,
 } from 'lucide-react-native';
 import { Alert, Linking, Modal, ActivityIndicator } from 'react-native';
-import { useRouter, Link } from 'expo-router';
+import { useRouter, Link as RouterLink } from 'expo-router';
 import { FileText, Shield, Trash2 as TrashIcon } from 'lucide-react-native';
 
 import { useHome } from '@/contexts/HomeContext';
@@ -810,7 +810,7 @@ export default function ProfileScreen() {
               testID="add-zillow-link"
             >
               <View style={[styles.zillowAddIconContainer, { backgroundColor: c.primaryLight }]}>
-                <Link size={16} color={c.primary} />
+                <LinkIcon size={16} color={c.primary} />
               </View>
               <Text style={[styles.zillowAddText, { color: c.text }]}>Zillow Profile</Text>
               <ChevronDown size={16} color={c.textTertiary} style={{ transform: [{ rotate: '-90deg' }] }} />
@@ -1241,7 +1241,7 @@ export default function ProfileScreen() {
 
         <CollapsibleSection title="Legal" themeColors={c} globalDefault={sectionsDefaultOpen}>
           <View style={[styles.card, { backgroundColor: c.surface }]}>
-            <Link href="/privacy-policy" asChild>
+            <RouterLink href="/privacy-policy" asChild>
               <TouchableOpacity style={styles.inputRow} activeOpacity={0.7} testID="privacy-policy-link">
                 <View style={[styles.inputIcon, { backgroundColor: c.primaryLight }]}>
                   <Shield size={18} color={c.primary} />
@@ -1251,9 +1251,9 @@ export default function ProfileScreen() {
                 </View>
                 <ChevronDown size={16} color={c.textTertiary} style={{ transform: [{ rotate: '-90deg' }] }} />
               </TouchableOpacity>
-            </Link>
+            </RouterLink>
             <View style={[styles.divider, { backgroundColor: c.borderLight }]} />
-            <Link href="/terms-of-service" asChild>
+            <RouterLink href="/terms-of-service" asChild>
               <TouchableOpacity style={styles.inputRow} activeOpacity={0.7} testID="terms-of-service-link">
                 <View style={[styles.inputIcon, { backgroundColor: c.primaryLight }]}>
                   <FileText size={18} color={c.primary} />
@@ -1263,7 +1263,7 @@ export default function ProfileScreen() {
                 </View>
                 <ChevronDown size={16} color={c.textTertiary} style={{ transform: [{ rotate: '-90deg' }] }} />
               </TouchableOpacity>
-            </Link>
+            </RouterLink>
           </View>
         </CollapsibleSection>
 
@@ -1454,7 +1454,7 @@ export default function ProfileScreen() {
             </View>
 
             <View style={[styles.modalInputContainer, { backgroundColor: c.background }]}>
-              <Link size={18} color={c.textTertiary} />
+              <LinkIcon size={18} color={c.textTertiary} />
               <TextInput
                 style={[styles.modalInput, { color: c.text }]}
                 value={zillowInput}

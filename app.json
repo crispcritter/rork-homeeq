@@ -16,10 +16,12 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "app.rork.home-care-tracker-uuwkqsu",
+      "buildNumber": "1",
       "infoPlist": {
         "NSCameraUsageDescription": "HomeEQ needs camera access to take photos of your home and appliances.",
         "NSPhotoLibraryUsageDescription": "HomeEQ needs photo library access to add photos of your home and appliances.",
-        "NSCalendarsUsageDescription": "HomeEQ needs calendar access to schedule maintenance reminders."
+        "NSCalendarsUsageDescription": "HomeEQ needs calendar access to schedule maintenance reminders.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {

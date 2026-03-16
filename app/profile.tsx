@@ -51,7 +51,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 import DatePickerField from '@/components/DatePickerField';
-import Colors, { ColorScheme, PALETTE_OPTIONS } from '@/constants/colors';
+import { ColorScheme, PALETTE_OPTIONS } from '@/constants/colors';
 import { Moon, Sun, Smartphone, ChevronsUpDown, Cloud, LogOut, LogIn, RefreshCw, CheckCircle, Crown } from 'lucide-react-native';
 import { successNotification } from '@/utils/haptics';
 import PickerModal from '@/components/PickerModal';
@@ -136,7 +136,7 @@ function CollapsibleSection({ title, children, defaultOpen, themeColors, globalD
   const resolvedDefault = defaultOpen !== undefined ? defaultOpen : (globalDefault ?? true);
   const [isOpen, setIsOpen] = useState<boolean>(resolvedDefault);
   const rotateAnim = useRef(new Animated.Value(defaultOpen ? 1 : 0)).current;
-  const c = themeColors ?? Colors;
+  const c = themeColors!;
 
   const toggle = useCallback(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -1520,7 +1520,6 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
   },
   content: {
     paddingHorizontal: 20,
@@ -1529,7 +1528,6 @@ const styles = StyleSheet.create({
   saveButton: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.primary,
   },
   heroSection: {
     alignItems: 'center',
@@ -1546,13 +1544,11 @@ const styles = StyleSheet.create({
     width: 96,
     height: 96,
     borderRadius: 48,
-    backgroundColor: Colors.surfaceAlt,
   },
   profileImagePlaceholder: {
     width: 96,
     height: 96,
     borderRadius: 48,
-    backgroundColor: Colors.primaryLight,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -1563,21 +1559,17 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: Colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2.5,
-    borderColor: Colors.background,
   },
   heroTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text,
     marginBottom: 6,
   },
   heroSubtitle: {
     fontSize: 14,
-    color: Colors.textSecondary,
     textAlign: 'center',
     lineHeight: 20,
     paddingHorizontal: 20,
@@ -1596,15 +1588,13 @@ const styles = StyleSheet.create({
   sectionLabel: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.textSecondary,
     textTransform: 'uppercase' as const,
     letterSpacing: 0.8,
   },
   card: {
-    backgroundColor: Colors.surface,
     borderRadius: 16,
     overflow: 'hidden',
-    shadowColor: Colors.black,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.04,
     shadowRadius: 6,
@@ -1620,7 +1610,6 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: Colors.primaryLight,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 14,
@@ -1631,13 +1620,11 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: 12,
     fontWeight: '500',
-    color: Colors.textSecondary,
     marginBottom: 4,
   },
   textInput: {
     fontSize: 16,
     fontWeight: '500',
-    color: Colors.text,
     padding: 0,
     margin: 0,
   },
@@ -1649,11 +1636,9 @@ const styles = StyleSheet.create({
   pickerValue: {
     fontSize: 16,
     fontWeight: '500',
-    color: Colors.text,
   },
   divider: {
     height: 1,
-    backgroundColor: Colors.borderLight,
     marginLeft: 66,
   },
   inlineRow: {
@@ -1682,7 +1667,6 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: Colors.primaryLight,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 6,
@@ -1690,7 +1674,6 @@ const styles = StyleSheet.create({
   gridLabel: {
     fontSize: 11,
     fontWeight: '500',
-    color: Colors.textSecondary,
     marginBottom: 6,
   },
   gridInput: {
@@ -1714,7 +1697,6 @@ const styles = StyleSheet.create({
   switchLabel: {
     fontSize: 16,
     fontWeight: '500',
-    color: Colors.text,
     marginLeft: 14,
   },
   notesRow: {
@@ -1727,13 +1709,11 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 15,
     fontWeight: '400',
-    color: Colors.text,
     minHeight: 80,
     padding: 0,
     margin: 0,
   },
   saveButtonLarge: {
-    backgroundColor: Colors.primary,
     borderRadius: 14,
     paddingVertical: 16,
     alignItems: 'center',
@@ -1742,7 +1722,7 @@ const styles = StyleSheet.create({
   saveButtonLargeText: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.white,
+    color: '#fff',
     letterSpacing: 0.3,
   },
   resetButton: {
@@ -1791,11 +1771,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 10,
-    backgroundColor: Colors.surface,
     borderRadius: 16,
     paddingHorizontal: 14,
     paddingVertical: 14,
-    shadowColor: Colors.black,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.04,
     shadowRadius: 6,
@@ -1805,7 +1784,6 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 10,
-    backgroundColor: Colors.primaryLight,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -1814,7 +1792,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     fontWeight: '500',
-    color: Colors.text,
   },
   modalOverlay: {
     flex: 1,
@@ -1825,7 +1802,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   modalContent: {
-    backgroundColor: Colors.surface,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingHorizontal: 24,
@@ -1841,18 +1817,15 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: Colors.text,
   },
   modalDescription: {
     fontSize: 14,
-    color: Colors.textSecondary,
     lineHeight: 20,
     marginBottom: 18,
   },
   modalInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background,
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 12,
@@ -1863,7 +1836,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 15,
     fontWeight: '400',
-    color: Colors.text,
     padding: 0,
     margin: 0,
   },
@@ -1892,7 +1864,6 @@ const styles = StyleSheet.create({
   modalSaveText: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.white,
   },
   zillowSearchButton: {
     flexDirection: 'row',
@@ -1907,11 +1878,10 @@ const styles = StyleSheet.create({
   zillowSearchButtonText: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.white,
+    color: '#fff',
   },
   zillowSearchHint: {
     fontSize: 12,
-    color: Colors.textTertiary,
     textAlign: 'center',
     marginBottom: 14,
     lineHeight: 17,
@@ -1925,7 +1895,6 @@ const styles = StyleSheet.create({
   zillowDividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: Colors.borderLight,
   },
   householdEmpty: {
     alignItems: 'center',
@@ -1936,7 +1905,6 @@ const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: 26,
-    backgroundColor: Colors.surfaceAlt,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
@@ -1944,12 +1912,10 @@ const styles = StyleSheet.create({
   householdEmptyTitle: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text,
     marginBottom: 4,
   },
   householdEmptySubtitle: {
     fontSize: 13,
-    color: Colors.textTertiary,
     textAlign: 'center',
     lineHeight: 18,
   },
@@ -1963,7 +1929,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: Colors.primaryLight,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 14,
@@ -1974,7 +1939,6 @@ const styles = StyleSheet.create({
   householdMemberName: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text,
     marginBottom: 3,
   },
   householdMemberMeta: {
@@ -1984,7 +1948,6 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   householdRoleBadge: {
-    backgroundColor: Colors.primaryLight,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 6,
@@ -1992,10 +1955,8 @@ const styles = StyleSheet.create({
   householdRoleBadgeText: {
     fontSize: 11,
     fontWeight: '600',
-    color: Colors.primary,
   },
   householdPendingBadge: {
-    backgroundColor: Colors.warningLight,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 6,
@@ -2003,11 +1964,9 @@ const styles = StyleSheet.create({
   householdPendingText: {
     fontSize: 11,
     fontWeight: '600',
-    color: Colors.warning,
   },
   householdMemberContact: {
     fontSize: 12,
-    color: Colors.textTertiary,
     marginTop: 1,
   },
   householdRemoveButton: {
@@ -2018,11 +1977,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 10,
-    backgroundColor: Colors.surface,
     borderRadius: 16,
     paddingHorizontal: 14,
     paddingVertical: 14,
-    shadowColor: Colors.black,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.04,
     shadowRadius: 6,
@@ -2032,7 +1990,6 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 10,
-    backgroundColor: Colors.primaryLight,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -2041,7 +1998,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     fontWeight: '500',
-    color: Colors.text,
   },
   inviteMethodToggle: {
     flexDirection: 'row',
@@ -2056,23 +2012,16 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingVertical: 10,
     borderRadius: 10,
-    backgroundColor: Colors.surfaceAlt,
   },
-  inviteMethodButtonActive: {
-    backgroundColor: Colors.primary,
-  },
+  inviteMethodButtonActive: {},
   inviteMethodText: {
     fontSize: 14,
     fontWeight: '500',
-    color: Colors.textSecondary,
   },
-  inviteMethodTextActive: {
-    color: Colors.white,
-  },
+  inviteMethodTextActive: {},
   inviteRoleLabel: {
     fontSize: 12,
     fontWeight: '500',
-    color: Colors.textSecondary,
     marginBottom: 8,
     marginLeft: 2,
   },
@@ -2086,23 +2035,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: Colors.surfaceAlt,
   },
-  inviteRoleChipActive: {
-    backgroundColor: Colors.primary,
-  },
+  inviteRoleChipActive: {},
   inviteRoleChipText: {
     fontSize: 13,
     fontWeight: '500',
-    color: Colors.textSecondary,
   },
-  inviteRoleChipTextActive: {
-    color: Colors.white,
-  },
+  inviteRoleChipTextActive: {},
   zillowDividerText: {
     fontSize: 12,
     fontWeight: '500',
-    color: Colors.textTertiary,
     textTransform: 'uppercase' as const,
     letterSpacing: 0.5,
   },

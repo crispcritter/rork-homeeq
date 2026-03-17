@@ -3,6 +3,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import * as SecureStore from 'expo-secure-store';
 import createContextHook from '@nkzw/create-context-hook';
 import { trpcClient, AUTH_TOKEN_KEY } from '@/lib/trpc';
+import { ALL_QUERY_KEYS } from '@/constants/queryKeys';
+import { Appliance, MaintenanceTask, BudgetItem, HomeProfile, TrustedPro } from '@/types';
+import { DEFAULT_PROFILE } from '@/constants/defaultProfile';
+import { RecommendedGroup, recommendedGroups as defaultRecommendedGroups } from '@/mocks/recommendedItems';
 
 export interface AuthUser {
   id: string;
@@ -206,38 +210,26 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
   const pushToCloud = useCallback(async () => {
     if (!user) return;
 
-    const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default;
-    const { STORAGE_KEYS, loadFromStorage, loadMonthlyBudget } = await import('@/contexts/storage');
-    const { DEFAULT_PROFILE } = await import('@/constants/defaultProfile');
-    const { recommendedGroups: defaultGroups } = await import('@/mocks/recommendedItems');
-
     setSyncStatus('syncing');
     try {
-      const [appliances, tasks, budgetItems, monthlyBudget, homeProfile, recommendedGroups, trustedPros] = await Promise.all([
-        loadFromStorage(STORAGE_KEYS.appliances, []),
-        loadFromStorage(STORAGE_KEYS.tasks, []),
-        loadFromStorage(STORAGE_KEYS.budgetItems, []),
-        loadMonthlyBudget(),
-        loadFromStorage(STORAGE_KEYS.homeProfile, DEFAULT_PROFILE),
-        loadFromStorage(STORAGE_KEYS.recommendedItems, defaultGroups),
-        loadFromStorage(STORAGE_KEYS.trustedPros, []),
-      ]);
-
-      let sectionsDefaultOpen = true;
-      try {
-        const stored = await AsyncStorage.getItem('home_sections_default_open');
-        if (stored !== null) sectionsDefaultOpen = stored === 'true';
-      } catch {}
+      const currentAppliances = queryClient.getQueryData<Appliance[]>(['appliances']) ?? [];
+      const currentTasks = queryClient.getQueryData<MaintenanceTask[]>(['tasks']) ?? [];
+      const currentBudgetItems = queryClient.getQueryData<BudgetItem[]>(['budgetItems']) ?? [];
+      const currentMonthlyBudget = queryClient.getQueryData<number>(['monthlyBudget']) ?? 1500;
+      const currentHomeProfile = queryClient.getQueryData<HomeProfile>(['homeProfile']) ?? DEFAULT_PROFILE;
+      const currentRecommendedGroups = queryClient.getQueryData<RecommendedGroup[]>(['recommendedGroups']) ?? defaultRecommendedGroups;
+      const currentTrustedPros = queryClient.getQueryData<TrustedPro[]>(['trustedPros']) ?? [];
+      const currentSectionsOpen = queryClient.getQueryData<boolean>(['sectionsDefaultOpen']) ?? true;
 
       const result = await trpcClient.sync.push.mutate({
-        appliances: appliances as any[],
-        tasks: tasks as any[],
-        budgetItems: budgetItems as any[],
-        monthlyBudget,
-        homeProfile,
-        recommendedGroups: recommendedGroups as any[],
-        trustedPros: trustedPros as any[],
-        sectionsDefaultOpen,
+        appliances: currentAppliances,
+        tasks: currentTasks,
+        budgetItems: currentBudgetItems,
+        monthlyBudget: currentMonthlyBudget,
+        homeProfile: currentHomeProfile,
+        recommendedGroups: currentRecommendedGroups,
+        trustedPros: currentTrustedPros,
+        sectionsDefaultOpen: currentSectionsOpen,
       });
 
       if (mountedRef.current) {
@@ -251,7 +243,7 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
       if (mountedRef.current) setSyncStatus('error');
       throw error;
     }
-  }, [user]);
+  }, [user, queryClient]);
 
   const pullFromCloud = useCallback(async () => {
     if (!user) return null;
@@ -314,8 +306,7 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
       await AsyncStorage.setItem(STORAGE_KEYS.sectionsDefaultOpen, syncData.sectionsDefaultOpen.toString());
     }
 
-    const queryKeys = ['appliances', 'tasks', 'budgetItems', 'monthlyBudget', 'homeProfile', 'recommendedGroups', 'trustedPros', 'sectionsDefaultOpen'];
-    queryKeys.forEach((key) => queryClient.invalidateQueries({ queryKey: [key] }));
+    ALL_QUERY_KEYS.forEach((key) => queryClient.invalidateQueries({ queryKey: [key] }));
 
     console.log('[Auth] Cloud data applied and queries invalidated');
   }, [queryClient]);

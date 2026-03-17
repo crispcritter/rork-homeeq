@@ -33,7 +33,7 @@ import {
   Unlink,
 } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
-import { categoryLabels, BUDGET_CATEGORY_COLORS, CATEGORY_AVATARS } from '@/constants/categories';
+import { categoryLabels, getBudgetCategoryColors, CATEGORY_AVATARS } from '@/constants/categories';
 import { ReviewRating, ProServiceCategory } from '@/types';
 import { REVIEW_SOURCES } from '@/constants/reviewSources';
 import { SERVICE_CATEGORY_OPTIONS, RADIUS_OPTIONS } from '@/constants/serviceCategories';
@@ -452,7 +452,7 @@ export default function ProviderDetailScreen() {
               <Text style={styles.sectionTitle}>Expense history</Text>
               {relatedExpenses.map((expense) => (
                 <TouchableOpacity key={expense.id} style={styles.expenseRow} onPress={() => { lightImpact(); router.push({ pathname: '/expense/[id]', params: { id: expense.id } }); }} activeOpacity={0.7}>
-                  <View style={[styles.expenseDot, { backgroundColor: BUDGET_CATEGORY_COLORS[expense.category] || c.textTertiary }]} />
+                  <View style={[styles.expenseDot, { backgroundColor: getBudgetCategoryColors(c)[expense.category] || c.textTertiary }]} />
                   <View style={styles.expenseInfo}>
                     <Text style={styles.expenseDesc}>{expense.description}</Text>
                     <Text style={styles.expenseMeta}>{categoryLabels[expense.category] || expense.category} · {parseLocalDate(expense.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</Text>

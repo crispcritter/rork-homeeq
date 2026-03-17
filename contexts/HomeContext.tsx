@@ -11,6 +11,7 @@ import * as SecureStore from 'expo-secure-store';
 import { trpcClient, AUTH_TOKEN_KEY } from '@/lib/trpc';
 import { deleteAppPassword } from '@/utils/appInfoSecure';
 import { generateId } from '@/utils/id';
+import { ALL_QUERY_KEYS } from '@/constants/queryKeys';
 
 export const [HomeProvider, useHome] = createContextHook(() => {
   const queryClient = useQueryClient();
@@ -511,14 +512,12 @@ export const [HomeProvider, useHome] = createContextHook(() => {
       const { initializeData } = await import('./storage');
       await initializeData();
       console.log('[HomeContext] Re-seeding complete after reset');
-      const queryKeys = ['appliances', 'tasks', 'budgetItems', 'monthlyBudget', 'homeProfile', 'recommendedGroups', 'trustedPros', 'sectionsDefaultOpen'];
-      queryKeys.forEach((key) => queryClient.invalidateQueries({ queryKey: [key] }));
+      ALL_QUERY_KEYS.forEach((key) => queryClient.invalidateQueries({ queryKey: [key] }));
       console.log('[HomeContext] All queries invalidated after re-seed');
     },
     onError: (error) => {
       console.error('[HomeContext] Reset failed, refetching to restore state:', error);
-      const queryKeys = ['appliances', 'tasks', 'budgetItems', 'monthlyBudget', 'homeProfile', 'recommendedGroups', 'trustedPros', 'sectionsDefaultOpen'];
-      queryKeys.forEach((key) => queryClient.invalidateQueries({ queryKey: [key] }));
+      ALL_QUERY_KEYS.forEach((key) => queryClient.invalidateQueries({ queryKey: [key] }));
     },
   });
 
@@ -566,18 +565,6 @@ export const [HomeProvider, useHome] = createContextHook(() => {
     );
   }, [tasks, tasksQuery.isLoading, listMutate]);
 
-  const totalSpent = useMemo(() => {
-    const now = new Date();
-    const currentMonth = now.getMonth();
-    const currentYear = now.getFullYear();
-    return budgetItems
-      .filter((item) => {
-        const d = parseLocalDate(item.date);
-        return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
-      })
-      .reduce((sum, item) => sum + item.amount, 0);
-  }, [budgetItems]);
-
   const upcomingTasks = useMemo(
     () => tasks.filter((t) => t.status === 'upcoming').sort((a, b) => a.dueDate.localeCompare(b.dueDate)),
     [tasks]
@@ -609,9 +596,8 @@ export const [HomeProvider, useHome] = createContextHook(() => {
   );
 
   const refreshAll = useCallback(() => {
-    const queryKeys = ['appliances', 'tasks', 'budgetItems', 'monthlyBudget', 'homeProfile', 'recommendedGroups', 'trustedPros', 'sectionsDefaultOpen'];
     console.log('[HomeContext] Pull-to-refresh: invalidating all queries');
-    return Promise.all(queryKeys.map((key) => queryClient.invalidateQueries({ queryKey: [key] })));
+    return Promise.all(ALL_QUERY_KEYS.map((key) => queryClient.invalidateQueries({ queryKey: [key] })));
   }, [queryClient]);
 
   const isRefreshing = useMemo(() => appliancesQuery.isRefetching || tasksQuery.isRefetching || budgetItemsQuery.isRefetching || monthlyBudgetQuery.isRefetching || homeProfileQuery.isRefetching || recommendedGroupsQuery.isRefetching || trustedProsQuery.isRefetching || sectionsDefaultOpenQuery.isRefetching, [appliancesQuery.isRefetching, tasksQuery.isRefetching, budgetItemsQuery.isRefetching, monthlyBudgetQuery.isRefetching, homeProfileQuery.isRefetching, recommendedGroupsQuery.isRefetching, trustedProsQuery.isRefetching, sectionsDefaultOpenQuery.isRefetching]);
@@ -626,7 +612,6 @@ export const [HomeProvider, useHome] = createContextHook(() => {
     isLoading,
     isError,
     errors,
-    totalSpent,
     upcomingTasks,
     overdueTasks,
     completedTasks,
@@ -674,7 +659,7 @@ export const [HomeProvider, useHome] = createContextHook(() => {
     setSectionsDefaultOpen,
   }), [
     appliances, tasks, budgetItems, monthlyBudget, homeProfile, customRecommendedGroups,
-    isLoading, isError, errors, totalSpent, upcomingTasks, overdueTasks, completedTasks,
+    isLoading, isError, errors, upcomingTasks, overdueTasks, completedTasks,
     archivedTasks, activeTasks, getApplianceById, addAppliance, updateAppliance, deleteAppliance,
     addTask, updateTask, completeTask, archiveTask, unarchiveTask, deleteTask, addTaskNote,
     removeTaskNote, updateTaskProductLink, updateTaskTrustedPro, trustedPros, addBudgetItem,

@@ -15,7 +15,7 @@ import { useHome } from '@/contexts/HomeContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 import { TaskPriority, RecurringUnit, asISODateString } from '@/types';
-import { PRIORITIES } from '@/constants/priorities';
+import { getPriorities, PriorityOption } from '@/constants/priorities';
 import createFormStyles from '@/constants/formStyles';
 import ApplianceChipSelector from '@/components/ApplianceChipSelector';
 import DatePickerField from '@/components/DatePickerField';
@@ -138,7 +138,7 @@ export default function AddTaskScreen() {
         <View style={formStyles.section}>
           <Text style={formStyles.sectionLabel}>Priority</Text>
           <View style={formStyles.priorityRow}>
-            {PRIORITIES.map((p) => (
+            {getPriorities(c).map((p: PriorityOption) => (
               <TouchableOpacity
                 key={p.key}
                 style={[

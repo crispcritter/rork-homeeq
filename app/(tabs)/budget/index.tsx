@@ -20,8 +20,8 @@ import {
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import { useTheme } from '@/contexts/ThemeContext';
-import { useRefresh } from '@/hooks/useRefresh';
-import { categoryLabels, BUDGET_CATEGORY_COLORS } from '@/constants/categories';
+
+import { categoryLabels } from '@/constants/categories';
 import FloatingActionButton from '@/components/FloatingActionButton';
 import ScreenHeader from '@/components/ScreenHeader';
 import ExportSection from '@/components/ExportSection';
@@ -62,8 +62,7 @@ export default function BudgetScreen() {
   const router = useRouter();
   const { colors: c } = useTheme();
   const styles = useMemo(() => createStyles(c), [c]);
-  const { trustedPros } = useHome();
-  const { onRefresh, isRefreshing } = useRefresh();
+  const { trustedPros, refreshAll, isRefreshing } = useHome();
   const {
     budgetItems,
     spentThisMonth,
@@ -101,7 +100,7 @@ export default function BudgetScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.content}
         refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={c.primary} colors={[c.primary]} />
+          <RefreshControl refreshing={isRefreshing} onRefresh={refreshAll} tintColor={c.primary} colors={[c.primary]} />
         }
       >
         <ScreenHeader title="Spending" subtitle="Track your home expenses" />
@@ -240,7 +239,7 @@ export default function BudgetScreen() {
                 }}
                 activeOpacity={0.7}
               >
-                <View style={[styles.expenseDot, { backgroundColor: BUDGET_CATEGORY_COLORS[item.category] || c.textTertiary }]} />
+                <View style={[styles.expenseDot, { backgroundColor: c.textTertiary }]} />
                 <View style={styles.expenseInfo}>
                   <Text style={styles.expenseDesc}>{item.description}</Text>
                   <View style={styles.expenseMeta}>

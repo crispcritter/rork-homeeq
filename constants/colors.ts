@@ -242,9 +242,6 @@ export const palettes: Record<PaletteId, { light: ColorScheme; dark: ColorScheme
   deepGrey: { light: deepGreyLight, dark: deepGreyDark },
 };
 
-export const LightColors = defaultLight;
-export const DarkColors = defaultDark;
-
-const Colors = LightColors;
-
+const Colors = defaultLight;
 export default Colors;
+

@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useHome } from '@/contexts/HomeContext';
-import { BUDGET_CATEGORY_COLORS } from '@/constants/categories';
+import { useTheme } from '@/contexts/ThemeContext';
+import { getBudgetCategoryColors } from '@/constants/categories';
 import { parseLocalDate } from '@/utils/dates';
 import { signedAmount } from '@/types';
 
@@ -18,6 +19,8 @@ export interface DateRange {
 
 export function useBudgetSummary() {
   const { budgetItems } = useHome();
+  const { colors: themeColors } = useTheme();
+  const budgetCategoryColors = useMemo(() => getBudgetCategoryColors(themeColors), [themeColors]);
 
   const now = new Date();
   const currentMonth = now.getMonth();
@@ -73,32 +76,18 @@ export function useBudgetSummary() {
           category,
           amount,
           percentage: total > 0 ? (amount / total) * 100 : 0,
-          color: BUDGET_CATEGORY_COLORS[category] || '#AEA69D',
+          color: budgetCategoryColors[category] || themeColors.textTertiary,
         }))
         .sort((a, b) => b.amount - a.amount);
     },
-    [budgetItems]
+    [budgetItems, budgetCategoryColors, themeColors.textTertiary]
   );
 
   const categoryBreakdown = useMemo((): CategoryBreakdown[] => {
-    const monthItems = budgetItems.filter((item) => {
-      const d = parseLocalDate(item.date);
-      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
-    });
-    const total = monthItems.reduce((s, i) => s + signedAmount(i), 0);
-    const breakdown: Record<string, number> = {};
-    monthItems.forEach((item) => {
-      breakdown[item.category] = (breakdown[item.category] || 0) + signedAmount(item);
-    });
-    return Object.entries(breakdown)
-      .map(([category, amount]) => ({
-        category,
-        amount,
-        percentage: total > 0 ? (amount / total) * 100 : 0,
-        color: BUDGET_CATEGORY_COLORS[category] || '#AEA69D',
-      }))
-      .sort((a, b) => b.amount - a.amount);
-  }, [budgetItems, currentMonth, currentYear]);
+    const monthStart = new Date(currentYear, currentMonth, 1);
+    const monthEnd = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59);
+    return categoryBreakdownForRange({ from: monthStart, to: monthEnd });
+  }, [currentYear, currentMonth, categoryBreakdownForRange]);
 
   const recentItems = useMemo(
     () => [...budgetItems].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10),

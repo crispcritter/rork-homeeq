@@ -52,7 +52,7 @@ import {
 import { useTheme } from '@/contexts/ThemeContext';
 import { useHome } from '@/contexts/HomeContext';
 import { TaskPriority, RecurringUnit, formatRecurringLabel } from '@/types';
-import { PRIORITIES } from '@/constants/priorities';
+import { getPriorities, PriorityOption } from '@/constants/priorities';
 import createFormStyles from '@/constants/formStyles';
 import { formatLongDate, formatRelativeDate } from '@/utils/dates';
 import { lightImpact } from '@/utils/haptics';
@@ -69,7 +69,7 @@ interface CollapsibleProps {
   children: React.ReactNode;
   defaultOpen?: boolean;
   rightElement?: React.ReactNode;
-  colors: typeof import('@/constants/colors').LightColors;
+  colors: Record<string, string>;
 }
 
 function CollapsibleSection({ title, icon, children, defaultOpen, rightElement, colors: c, globalDefault }: CollapsibleProps & { globalDefault?: boolean }) {
@@ -472,7 +472,7 @@ export default function TaskDetailScreen() {
           <View style={formStyles.section}>
             <Text style={formStyles.sectionLabel}>Priority</Text>
             <View style={formStyles.priorityRow}>
-              {PRIORITIES.map((p) => (
+              {getPriorities(c).map((p: PriorityOption) => (
                 <TouchableOpacity
                   key={p.key}
                   style={[

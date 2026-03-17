@@ -11,7 +11,7 @@ import { useRouter, type Href } from 'expo-router';
 import { AlertTriangle, ChevronRight, Plus, Clock, Star, CirclePlus, Wrench, DollarSign, Search, CalendarDays, Calendar, WifiOff } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import { useTheme } from '@/contexts/ThemeContext';
-import { useRefresh } from '@/hooks/useRefresh';
+
 import PressableCard from '@/components/PressableCard';
 import AnimatedCard from '@/components/AnimatedCard';
 import { formatRelativeDate } from '@/utils/dates';
@@ -43,9 +43,9 @@ export default function DashboardScreen() {
     isError,
     homeProfile,
     trustedPros,
+    refreshAll,
+    isRefreshing,
   } = useHome();
-
-  const { onRefresh, isRefreshing } = useRefresh();
 
   const { spentThisMonth, spentThisYear } = useBudgetSummary();
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -79,7 +79,7 @@ export default function DashboardScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={c.primary} colors={[c.primary]} />
+          <RefreshControl refreshing={isRefreshing} onRefresh={refreshAll} tintColor={c.primary} colors={[c.primary]} />
         }
       >
         <View style={styles.greetingSection}>
@@ -93,7 +93,7 @@ export default function DashboardScreen() {
           <AnimatedCard index={0}>
             <PressableCard
               style={[styles.alertBanner, { backgroundColor: c.warningLight }]}
-              onPress={onRefresh}
+              onPress={refreshAll}
             >
               <View style={styles.alertIconWrap}>
                 <WifiOff size={18} color={c.warning} />
@@ -238,7 +238,7 @@ export default function DashboardScreen() {
                     <View
                       style={[
                         styles.priorityIndicator,
-                        { backgroundColor: getPriorityColor(task.priority) },
+                        { backgroundColor: getPriorityColor(task.priority, c) },
                       ]}
                     />
                     <View style={styles.taskContent}>

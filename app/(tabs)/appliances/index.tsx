@@ -21,7 +21,7 @@ import {
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import { useTheme } from '@/contexts/ThemeContext';
-import { useRefresh } from '@/hooks/useRefresh';
+
 import PressableCard from '@/components/PressableCard';
 import FloatingActionButton from '@/components/FloatingActionButton';
 import ScreenHeader from '@/components/ScreenHeader';
@@ -61,9 +61,9 @@ export default function AppliancesScreen() {
     syncRecommendedItem,
     trustedPros,
     isError,
+    refreshAll,
+    isRefreshing,
   } = useHome();
-
-  const { onRefresh, isRefreshing } = useRefresh();
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -213,7 +213,7 @@ export default function AppliancesScreen() {
       {isError && (
         <TouchableOpacity
           style={[styles.errorBanner, { backgroundColor: c.warningLight }]}
-          onPress={onRefresh}
+          onPress={refreshAll}
           activeOpacity={0.7}
         >
           <WifiOff size={16} color={c.warning} />
@@ -263,7 +263,7 @@ export default function AppliancesScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.list}
         refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={c.primary} colors={[c.primary]} />
+          <RefreshControl refreshing={isRefreshing} onRefresh={refreshAll} tintColor={c.primary} colors={[c.primary]} />
         }
         testID="appliance-scroll"
       >

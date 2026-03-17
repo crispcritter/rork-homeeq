@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { Appliance, MaintenanceTask, toISODateString, daysToNaturalUnit } from '@/types';
 import { categoryLabels } from '@/constants/categories';
 import { successNotification, lightImpact } from '@/utils/haptics';
+import { generateId } from '@/utils/id';
 
 export interface MaintenanceRecommendation {
   title: string;
@@ -77,7 +78,7 @@ export function useMaintenanceRecommendations(
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + Math.min(rec.frequencyDays, 30));
     const newTask = {
-      id: Date.now().toString() + '_' + index,
+      id: generateId('task'),
       title: rec.title,
       description: rec.description,
       dueDate: toISODateString(dueDate),

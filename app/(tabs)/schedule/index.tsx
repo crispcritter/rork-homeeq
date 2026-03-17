@@ -22,7 +22,7 @@ import {
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import { useTheme } from '@/contexts/ThemeContext';
-import { useRefresh } from '@/hooks/useRefresh';
+
 import { ColorScheme } from '@/constants/colors';
 import createStyles from '@/styles/schedule';
 import PressableCard from '@/components/PressableCard';
@@ -106,16 +106,13 @@ function getWeekAccentColor(key: string, tc: ColorScheme): string {
   return tc.textTertiary;
 }
 
-function getImportanceAccentColor(priority: TaskPriority): string {
-  return getPriorityColor(priority);
-}
+
 
 export default function ScheduleScreen() {
   const router = useRouter();
   const { colors: c } = useTheme();
   const styles = useMemo(() => createStyles(c), [c]);
-  const { tasks, appliances, completeTask, trustedPros } = useHome();
-  const { onRefresh, isRefreshing } = useRefresh();
+  const { tasks, appliances, completeTask, trustedPros, refreshAll, isRefreshing } = useHome();
   const params = useLocalSearchParams<{ filter?: string }>();
   const initialFilterApplied = useRef(false);
   const [filter, setFilter] = useState<FilterType>(() => {
@@ -194,7 +191,7 @@ export default function ScheduleScreen() {
           return {
             key: priority,
             title: priority.charAt(0).toUpperCase() + priority.slice(1),
-            accentColor: getImportanceAccentColor(priority),
+            accentColor: getPriorityColor(priority, c),
             data: items,
           };
         })
@@ -363,13 +360,13 @@ export default function ScheduleScreen() {
           <View
             style={[
               styles.priorityTag,
-              { backgroundColor: getPriorityBgColor(task.priority) },
+              { backgroundColor: getPriorityBgColor(task.priority, c) },
             ]}
           >
             <Text
               style={[
                 styles.priorityText,
-                { color: getPriorityColor(task.priority) },
+                { color: getPriorityColor(task.priority, c) },
               ]}
             >
               {task.priority}
@@ -498,7 +495,7 @@ export default function ScheduleScreen() {
         <ScrollView
           contentContainerStyle={styles.list}
           refreshControl={
-            <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={c.primary} colors={[c.primary]} />
+            <RefreshControl refreshing={isRefreshing} onRefresh={refreshAll} tintColor={c.primary} colors={[c.primary]} />
           }
         >
           {renderEmpty()}
@@ -508,7 +505,7 @@ export default function ScheduleScreen() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.list}
           refreshControl={
-            <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={c.primary} colors={[c.primary]} />
+            <RefreshControl refreshing={isRefreshing} onRefresh={refreshAll} tintColor={c.primary} colors={[c.primary]} />
           }
         >
           {groupedTasks.map((group) => {

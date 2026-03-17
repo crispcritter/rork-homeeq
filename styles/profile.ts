@@ -1,6 +1,7 @@
 import { StyleSheet, Platform } from 'react-native';
+import { ColorScheme } from '@/constants/colors';
 
-const styles = StyleSheet.create({
+const createStyles = (c: ColorScheme) => StyleSheet.create({
   container: { flex: 1 },
   content: { paddingHorizontal: 20, paddingTop: 8 },
   saveButton: { fontSize: 16, fontWeight: '600' },
@@ -14,7 +15,7 @@ const styles = StyleSheet.create({
   section: { marginBottom: 20 },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8, paddingHorizontal: 4, paddingVertical: 4 },
   sectionLabel: { fontSize: 13, fontWeight: '600', textTransform: 'uppercase' as const, letterSpacing: 0.8 },
-  card: { borderRadius: 16, overflow: 'hidden', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 6, elevation: 1 },
+  card: { borderRadius: 16, overflow: 'hidden', shadowColor: c.cardShadow, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 6, elevation: 1 },
   inputRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 14 },
   inputIcon: { width: 36, height: 36, borderRadius: 10, justifyContent: 'center', alignItems: 'center', marginRight: 14 },
   inputContent: { flex: 1 },
@@ -37,7 +38,7 @@ const styles = StyleSheet.create({
   notesRow: { flexDirection: 'row', alignItems: 'flex-start', paddingHorizontal: 16, paddingVertical: 14 },
   notesInput: { flex: 1, fontSize: 15, fontWeight: '400', minHeight: 80, padding: 0, margin: 0 },
   saveButtonLarge: { borderRadius: 14, paddingVertical: 16, alignItems: 'center', marginTop: 4 },
-  saveButtonLargeText: { fontSize: 16, fontWeight: '700', color: '#fff', letterSpacing: 0.3 },
+  saveButtonLargeText: { fontSize: 16, fontWeight: '700', color: c.white, letterSpacing: 0.3 },
   resetButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 14, paddingVertical: 16, gap: 10 },
   resetButtonText: { fontSize: 16, fontWeight: '600' },
   deleteAccountButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 14, paddingVertical: 16, gap: 10, marginTop: 12 },
@@ -46,10 +47,10 @@ const styles = StyleSheet.create({
   zillowPreviewActions: { flexDirection: 'row', justifyContent: 'flex-end', marginTop: 8 },
   zillowEditButton: { paddingHorizontal: 14, paddingVertical: 7, borderRadius: 8 },
   zillowEditText: { fontSize: 13, fontWeight: '600' },
-  zillowAddButton: { flexDirection: 'row', alignItems: 'center', marginTop: 10, borderRadius: 16, paddingHorizontal: 14, paddingVertical: 14, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 6, elevation: 1 },
+  zillowAddButton: { flexDirection: 'row', alignItems: 'center', marginTop: 10, borderRadius: 16, paddingHorizontal: 14, paddingVertical: 14, shadowColor: c.cardShadow, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 6, elevation: 1 },
   zillowAddIconContainer: { width: 34, height: 34, borderRadius: 10, justifyContent: 'center', alignItems: 'center', marginRight: 12 },
   zillowAddText: { flex: 1, fontSize: 16, fontWeight: '500' },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
+  modalOverlay: { flex: 1, backgroundColor: c.overlay, justifyContent: 'flex-end' },
   modalDismissArea: { flex: 1 },
   modalContent: { borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 24, paddingTop: 20, paddingBottom: Platform.OS === 'ios' ? 40 : 24 },
   modalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 },
@@ -63,8 +64,8 @@ const styles = StyleSheet.create({
   modalSaveButton: { paddingHorizontal: 28, paddingVertical: 12, borderRadius: 12 },
   modalSaveButtonDisabled: { opacity: 0.4 },
   modalSaveText: { fontSize: 15, fontWeight: '600' },
-  zillowSearchButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#006AFF', borderRadius: 12, paddingVertical: 14, gap: 10, marginBottom: 8 },
-  zillowSearchButtonText: { fontSize: 15, fontWeight: '600', color: '#fff' },
+  zillowSearchButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: c.primary, borderRadius: 12, paddingVertical: 14, gap: 10, marginBottom: 8 },
+  zillowSearchButtonText: { fontSize: 15, fontWeight: '600', color: c.white },
   zillowSearchHint: { fontSize: 12, textAlign: 'center', marginBottom: 14, lineHeight: 17 },
   zillowDividerRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 14, gap: 10 },
   zillowDividerLine: { flex: 1, height: 1 },
@@ -84,4 +85,4 @@ const styles = StyleSheet.create({
   syncNowText: { fontSize: 13, fontWeight: '600' },
 });
 
-export default styles;
+export default createStyles;

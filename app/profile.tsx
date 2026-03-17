@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import {
   View,
   Text,
@@ -75,7 +75,7 @@ import {
   asISODateString,
 } from '@/types';
 import { numericToString, stringToNumeric } from '@/utils/numeric';
-import styles from '@/styles/profile';
+import createProfileStyles from '@/styles/profile';
 
 const NUMERIC_PROFILE_KEYS = [
   'yearBuilt',
@@ -130,13 +130,21 @@ interface CollapsibleSectionProps {
   title: string;
   children: React.ReactNode;
   defaultOpen?: boolean;
+  themeColors?: ColorScheme;
+  globalDefault?: boolean;
+  sectionStyles?: {
+    section: object;
+    sectionHeader: object;
+    sectionLabel: object;
+  };
 }
 
-function CollapsibleSection({ title, children, defaultOpen, themeColors, globalDefault }: CollapsibleSectionProps & { themeColors?: ColorScheme; globalDefault?: boolean }) {
+function CollapsibleSection({ title, children, defaultOpen, themeColors, globalDefault, sectionStyles }: CollapsibleSectionProps) {
   const resolvedDefault = defaultOpen !== undefined ? defaultOpen : (globalDefault ?? true);
   const [isOpen, setIsOpen] = useState<boolean>(resolvedDefault);
   const rotateAnim = useRef(new Animated.Value(defaultOpen ? 1 : 0)).current;
   const c = themeColors!;
+  const s = sectionStyles!;
 
   const toggle = useCallback(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -154,13 +162,13 @@ function CollapsibleSection({ title, children, defaultOpen, themeColors, globalD
   });
 
   return (
-    <View style={styles.section}>
+    <View style={s.section}>
       <TouchableOpacity
-        style={styles.sectionHeader}
+        style={s.sectionHeader}
         onPress={toggle}
         activeOpacity={0.6}
       >
-        <Text style={[styles.sectionLabel, { color: c.textSecondary }]}>{title}</Text>
+        <Text style={[s.sectionLabel, { color: c.textSecondary }]}>{title}</Text>
         <Animated.View style={{ transform: [{ rotate: rotation }] }}>
           <ChevronDown size={16} color={c.textSecondary} />
         </Animated.View>
@@ -191,6 +199,7 @@ export default function ProfileScreen() {
   const { user, isAuthenticated, signOut, deleteAccount, syncStatus, lastSyncedAt, pushToCloud, household, createHousehold, generateInvite, removeMember, leaveHousehold, refreshHousehold } = useAuth();
   const { isPro } = useSubscription();
   const navRouter = useRouter();
+  const styles = useMemo(() => createProfileStyles(c), [c]);
   const [form, setForm] = useState<ProfileFormState>(() => profileToForm(homeProfile));
   const [activePicker, setActivePicker] = useState<string | null>(null);
   const [showZillowModal, setShowZillowModal] = useState<boolean>(false);
@@ -487,7 +496,7 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         )}
 
-        <CollapsibleSection title="Account & Household" themeColors={c} globalDefault={sectionsDefaultOpen}>
+        <CollapsibleSection title="Account & Household" themeColors={c} globalDefault={sectionsDefaultOpen} sectionStyles={styles}>
           <View style={[styles.card, { backgroundColor: c.surface }]}>
             {isAuthenticated ? (
               <>
@@ -659,7 +668,7 @@ export default function ProfileScreen() {
           )}
         </CollapsibleSection>
 
-        <CollapsibleSection title="Basics" themeColors={c} globalDefault={sectionsDefaultOpen}>
+        <CollapsibleSection title="Basics" themeColors={c} globalDefault={sectionsDefaultOpen} sectionStyles={styles}>
           <View style={[styles.card, { backgroundColor: c.surface }]}>
             <View style={styles.inputRow}>
               <View style={styles.inputIcon}>
@@ -733,7 +742,7 @@ export default function ProfileScreen() {
           </View>
         </CollapsibleSection>
 
-        <CollapsibleSection title="Address" themeColors={c} globalDefault={sectionsDefaultOpen}>
+        <CollapsibleSection title="Address" themeColors={c} globalDefault={sectionsDefaultOpen} sectionStyles={styles}>
           <View style={[styles.card, { backgroundColor: c.surface }]}>
             <View style={styles.inputRow}>
               <View style={styles.inputIcon}>
@@ -818,7 +827,7 @@ export default function ProfileScreen() {
           )}
         </CollapsibleSection>
 
-        <CollapsibleSection title="Size & Layout" themeColors={c} globalDefault={sectionsDefaultOpen}>
+        <CollapsibleSection title="Size & Layout" themeColors={c} globalDefault={sectionsDefaultOpen} sectionStyles={styles}>
           <View style={[styles.card, { backgroundColor: c.surface }]}>
             <View style={styles.gridRow}>
               <View style={styles.gridItem}>
@@ -904,7 +913,7 @@ export default function ProfileScreen() {
           </View>
         </CollapsibleSection>
 
-        <CollapsibleSection title="Systems & Structure" themeColors={c} globalDefault={sectionsDefaultOpen}>
+        <CollapsibleSection title="Systems & Structure" themeColors={c} globalDefault={sectionsDefaultOpen} sectionStyles={styles}>
           <View style={[styles.card, { backgroundColor: c.surface }]}>
             <TouchableOpacity
               style={styles.inputRow}
@@ -1021,7 +1030,7 @@ export default function ProfileScreen() {
           </View>
         </CollapsibleSection>
 
-        <CollapsibleSection title="Extras" themeColors={c} globalDefault={sectionsDefaultOpen}>
+        <CollapsibleSection title="Extras" themeColors={c} globalDefault={sectionsDefaultOpen} sectionStyles={styles}>
           <View style={[styles.card, { backgroundColor: c.surface }]}>
             <View style={styles.switchRow}>
               <View style={styles.switchLeft}>
@@ -1076,7 +1085,7 @@ export default function ProfileScreen() {
           </View>
         </CollapsibleSection>
 
-        <CollapsibleSection title="Notes" themeColors={c} globalDefault={sectionsDefaultOpen}>
+        <CollapsibleSection title="Notes" themeColors={c} globalDefault={sectionsDefaultOpen} sectionStyles={styles}>
           <View style={[styles.card, { backgroundColor: c.surface }]}>
             <View style={styles.notesRow}>
               <View style={[styles.inputIcon, { backgroundColor: c.surfaceAlt }]}>
@@ -1098,7 +1107,7 @@ export default function ProfileScreen() {
 
 
 
-        <CollapsibleSection title="App Settings" themeColors={c} globalDefault={sectionsDefaultOpen}>
+        <CollapsibleSection title="App Settings" themeColors={c} globalDefault={sectionsDefaultOpen} sectionStyles={styles}>
           <View style={[styles.card, { backgroundColor: c.surface }]}>
             <View style={styles.switchRow}>
               <View style={styles.switchLeft}>
@@ -1239,7 +1248,7 @@ export default function ProfileScreen() {
           <Text style={styles.saveButtonLargeText}>Save Profile</Text>
         </TouchableOpacity>
 
-        <CollapsibleSection title="Legal" themeColors={c} globalDefault={sectionsDefaultOpen}>
+        <CollapsibleSection title="Legal" themeColors={c} globalDefault={sectionsDefaultOpen} sectionStyles={styles}>
           <View style={[styles.card, { backgroundColor: c.surface }]}>
             <RouterLink href="/privacy-policy" asChild>
               <TouchableOpacity style={styles.inputRow} activeOpacity={0.7} testID="privacy-policy-link">
@@ -1267,7 +1276,7 @@ export default function ProfileScreen() {
           </View>
         </CollapsibleSection>
 
-        <CollapsibleSection title="Data" themeColors={c} globalDefault={sectionsDefaultOpen}>
+        <CollapsibleSection title="Data" themeColors={c} globalDefault={sectionsDefaultOpen} sectionStyles={styles}>
           <TouchableOpacity
             style={[styles.resetButton, { backgroundColor: c.dangerLight }]}
             activeOpacity={0.7}

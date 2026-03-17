@@ -6,7 +6,6 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { useHome } from '@/contexts/HomeContext';
 
 interface TabStackLayoutProps {
-  screenName?: string;
   title: string;
 }
 

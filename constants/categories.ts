@@ -1,4 +1,4 @@
-import Colors from '@/constants/colors';
+import { ColorScheme } from '@/constants/colors';
 
 export const CATEGORY_AVATARS: Record<string, string> = {
   hvac: '#5A8A60',
@@ -13,13 +13,15 @@ export const CATEGORY_AVATARS: Record<string, string> = {
   other: '#AEA69D',
 };
 
-export const BUDGET_CATEGORY_COLORS: Record<string, string> = {
-  maintenance: Colors.categoryMaintenance,
-  repair: Colors.categoryRepair,
-  upgrade: Colors.categoryUpgrade,
-  emergency: Colors.categoryEmergency,
-  inspection: Colors.categoryInspection,
-};
+export function getBudgetCategoryColors(c: ColorScheme): Record<string, string> {
+  return {
+    maintenance: c.categoryMaintenance,
+    repair: c.categoryRepair,
+    upgrade: c.categoryUpgrade,
+    emergency: c.categoryEmergency,
+    inspection: c.categoryInspection,
+  };
+}
 
 export const categoryLabels: Record<string, string> = {
   hvac: 'HVAC',

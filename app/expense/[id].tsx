@@ -32,7 +32,7 @@ import {
 } from 'lucide-react-native';
 import { useHome } from '@/contexts/HomeContext';
 import { useTheme } from '@/contexts/ThemeContext';
-import { categoryLabels, BUDGET_CATEGORY_COLORS } from '@/constants/categories';
+import { categoryLabels, getBudgetCategoryColors } from '@/constants/categories';
 import { lightImpact } from '@/utils/haptics';
 
 export default function ExpenseDetailScreen() {
@@ -83,7 +83,7 @@ export default function ExpenseDetailScreen() {
     );
   }
 
-  const catColor = BUDGET_CATEGORY_COLORS[expense.category] || c.textTertiary;
+  const catColor = getBudgetCategoryColors(c)[expense.category] || c.textTertiary;
 
   return (
     <View style={styles.container}>

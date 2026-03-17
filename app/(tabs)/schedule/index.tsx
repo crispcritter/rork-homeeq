@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -117,14 +117,21 @@ export default function ScheduleScreen() {
   const { tasks, appliances, completeTask, trustedPros } = useHome();
   const { onRefresh, isRefreshing } = useRefresh();
   const params = useLocalSearchParams<{ filter?: string }>();
-  const [filter, setFilter] = useState<FilterType>('all');
+  const initialFilterApplied = useRef(false);
+  const [filter, setFilter] = useState<FilterType>(() => {
+    const validFilters: FilterType[] = ['all', 'upcoming', 'overdue', 'completed', 'archived'];
+    if (params.filter && validFilters.includes(params.filter as FilterType)) {
+      return params.filter as FilterType;
+    }
+    return 'all';
+  });
 
   useEffect(() => {
+    if (initialFilterApplied.current) return;
+    initialFilterApplied.current = true;
     const validFilters: FilterType[] = ['all', 'upcoming', 'overdue', 'completed', 'archived'];
     if (params.filter && validFilters.includes(params.filter as FilterType)) {
       setFilter(params.filter as FilterType);
-    } else {
-      setFilter('all');
     }
   }, [params.filter]);
   const [sortMode, setSortMode] = useState<SortMode>('item');

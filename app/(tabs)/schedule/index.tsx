@@ -117,13 +117,16 @@ export default function ScheduleScreen() {
   const { tasks, appliances, completeTask, trustedPros } = useHome();
   const { onRefresh, isRefreshing } = useRefresh();
   const params = useLocalSearchParams<{ filter?: string }>();
-  const [filter, setFilter] = useState<FilterType>(() => {
+  const [filter, setFilter] = useState<FilterType>('all');
+
+  useEffect(() => {
     const validFilters: FilterType[] = ['all', 'upcoming', 'overdue', 'completed', 'archived'];
     if (params.filter && validFilters.includes(params.filter as FilterType)) {
-      return params.filter as FilterType;
+      setFilter(params.filter as FilterType);
+    } else {
+      setFilter('all');
     }
-    return 'all';
-  });
+  }, [params.filter]);
   const [sortMode, setSortMode] = useState<SortMode>('item');
   const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
   const [completedCollapsed, setCompletedCollapsed] = useState<boolean>(true);

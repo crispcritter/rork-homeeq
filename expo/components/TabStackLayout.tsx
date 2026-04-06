@@ -59,7 +59,7 @@ const layoutStyles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    justifyContent: 'center' as const,
-    alignItems: 'center' as const,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

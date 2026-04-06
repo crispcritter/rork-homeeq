@@ -61,8 +61,9 @@ export const [SubscriptionProvider, useSubscription] = createContextHook(() => {
         const info = await Purchases.getCustomerInfo();
         console.log('[Subscription] Customer info fetched:', JSON.stringify(info.entitlements.active));
         return info;
-      } catch (e: any) {
-        console.error('[Subscription] Failed to get customer info:', JSON.stringify(e?.message ?? e));
+      } catch (e: unknown) {
+        const message = e instanceof Error ? e.message : String(e);
+        console.error('[Subscription] Failed to get customer info:', message);
         return null;
       }
     },
@@ -81,8 +82,9 @@ export const [SubscriptionProvider, useSubscription] = createContextHook(() => {
         const offerings = await Purchases.getOfferings();
         console.log('[Subscription] Offerings fetched:', offerings.current?.identifier);
         return offerings.current ?? null;
-      } catch (e: any) {
-        console.error('[Subscription] Failed to get offerings:', JSON.stringify(e?.message ?? e));
+      } catch (e: unknown) {
+        const message = e instanceof Error ? e.message : String(e);
+        console.error('[Subscription] Failed to get offerings:', message);
         return null;
       }
     },
@@ -118,8 +120,8 @@ export const [SubscriptionProvider, useSubscription] = createContextHook(() => {
       console.log('[Subscription] Purchase success:', result.customerInfo.entitlements.active);
       queryClient.setQueryData(['rc_customerInfo'], result.customerInfo);
     },
-    onError: (error: any) => {
-      if (error?.userCancelled) {
+    onError: (error: unknown) => {
+      if (error && typeof error === 'object' && 'userCancelled' in error && (error as { userCancelled?: boolean }).userCancelled) {
         console.log('[Subscription] User cancelled purchase');
       } else {
         console.error('[Subscription] Purchase failed:', error);

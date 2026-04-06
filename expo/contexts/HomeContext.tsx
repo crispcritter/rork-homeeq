@@ -8,7 +8,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DEFAULT_PROFILE } from '@/constants/defaultProfile';
 import { parseLocalDate, normalizeToMidnight } from '@/utils/dates';
 import * as SecureStore from 'expo-secure-store';
-import { trpcClient, AUTH_TOKEN_KEY } from '@/lib/trpc';
+import { AUTH_TOKEN_KEY } from '@/lib/trpc';
+import { pushSyncPayload } from '@/utils/cloudSync';
 import { deleteAppPassword } from '@/utils/appInfoSecure';
 import { generateId } from '@/utils/id';
 import { ALL_QUERY_KEYS } from '@/constants/queryKeys';
@@ -30,25 +31,7 @@ export const [HomeProvider, useHome] = createContextHook(() => {
         const token = await SecureStore.getItemAsync(AUTH_TOKEN_KEY);
         if (!token) return;
 
-        const currentAppliances = queryClient.getQueryData<Appliance[]>(['appliances']) ?? [];
-        const currentTasks = queryClient.getQueryData<MaintenanceTask[]>(['tasks']) ?? [];
-        const currentBudgetItems = queryClient.getQueryData<BudgetItem[]>(['budgetItems']) ?? [];
-        const currentMonthlyBudget = queryClient.getQueryData<number>(['monthlyBudget']) ?? 1500;
-        const currentHomeProfile = queryClient.getQueryData<HomeProfile>(['homeProfile']) ?? DEFAULT_PROFILE;
-        const currentRecommendedGroups = queryClient.getQueryData<RecommendedGroup[]>(['recommendedGroups']) ?? defaultRecommendedGroups;
-        const currentTrustedPros = queryClient.getQueryData<TrustedPro[]>(['trustedPros']) ?? [];
-        const currentSectionsOpen = queryClient.getQueryData<boolean>(['sectionsDefaultOpen']) ?? true;
-
-        await trpcClient.sync.push.mutate({
-          appliances: currentAppliances,
-          tasks: currentTasks,
-          budgetItems: currentBudgetItems,
-          monthlyBudget: currentMonthlyBudget,
-          homeProfile: currentHomeProfile,
-          recommendedGroups: currentRecommendedGroups,
-          trustedPros: currentTrustedPros,
-          sectionsDefaultOpen: currentSectionsOpen,
-        });
+        await pushSyncPayload(queryClient);
         console.log('[HomeContext] Background cloud sync complete');
       } catch (e) {
         console.warn('[HomeContext] Background cloud sync failed:', e);
@@ -56,39 +39,48 @@ export const [HomeProvider, useHome] = createContextHook(() => {
     }, 3000);
   }, [queryClient]);
 
+  const STALE_TIME = 1000 * 60 * 5;
+
   const appliancesQuery = useQuery({
     queryKey: ['appliances'],
     queryFn: () => loadFromStorage<Appliance[]>(STORAGE_KEYS.appliances, []),
+    staleTime: STALE_TIME,
   });
 
   const tasksQuery = useQuery({
     queryKey: ['tasks'],
     queryFn: () => loadFromStorage<MaintenanceTask[]>(STORAGE_KEYS.tasks, []),
+    staleTime: STALE_TIME,
   });
 
   const budgetItemsQuery = useQuery({
     queryKey: ['budgetItems'],
     queryFn: () => loadFromStorage<BudgetItem[]>(STORAGE_KEYS.budgetItems, []),
+    staleTime: STALE_TIME,
   });
 
   const monthlyBudgetQuery = useQuery({
     queryKey: ['monthlyBudget'],
     queryFn: loadMonthlyBudget,
+    staleTime: STALE_TIME,
   });
 
   const homeProfileQuery = useQuery({
     queryKey: ['homeProfile'],
     queryFn: () => loadFromStorage<HomeProfile>(STORAGE_KEYS.homeProfile, DEFAULT_PROFILE),
+    staleTime: STALE_TIME,
   });
 
   const recommendedGroupsQuery = useQuery({
     queryKey: ['recommendedGroups'],
     queryFn: () => loadFromStorage<RecommendedGroup[]>(STORAGE_KEYS.recommendedItems, defaultRecommendedGroups),
+    staleTime: STALE_TIME,
   });
 
   const trustedProsQuery = useQuery({
     queryKey: ['trustedPros'],
     queryFn: () => loadFromStorage<TrustedPro[]>(STORAGE_KEYS.trustedPros, []),
+    staleTime: STALE_TIME,
   });
 
   const sectionsDefaultOpenQuery = useQuery({
@@ -103,16 +95,17 @@ export const [HomeProvider, useHome] = createContextHook(() => {
         return true;
       }
     },
+    staleTime: STALE_TIME,
   });
 
   const appliances = useMemo(() => appliancesQuery.data ?? [], [appliancesQuery.data]);
   const tasks = useMemo(() => tasksQuery.data ?? [], [tasksQuery.data]);
   const budgetItems = useMemo(() => budgetItemsQuery.data ?? [], [budgetItemsQuery.data]);
-  const monthlyBudget = useMemo(() => monthlyBudgetQuery.data ?? 1500, [monthlyBudgetQuery.data]);
-  const homeProfile = useMemo(() => homeProfileQuery.data ?? DEFAULT_PROFILE, [homeProfileQuery.data]);
-  const customRecommendedGroups = useMemo(() => recommendedGroupsQuery.data ?? defaultRecommendedGroups, [recommendedGroupsQuery.data]);
+  const monthlyBudget = monthlyBudgetQuery.data ?? 1500;
+  const homeProfile = homeProfileQuery.data ?? DEFAULT_PROFILE;
+  const customRecommendedGroups = recommendedGroupsQuery.data ?? defaultRecommendedGroups;
   const trustedPros = useMemo(() => trustedProsQuery.data ?? [], [trustedProsQuery.data]);
-  const sectionsDefaultOpen = useMemo(() => sectionsDefaultOpenQuery.data ?? true, [sectionsDefaultOpenQuery.data]);
+  const sectionsDefaultOpen = sectionsDefaultOpenQuery.data ?? true;
   const isLoading = useMemo(() => appliancesQuery.isLoading || tasksQuery.isLoading || budgetItemsQuery.isLoading || monthlyBudgetQuery.isLoading || homeProfileQuery.isLoading || recommendedGroupsQuery.isLoading || trustedProsQuery.isLoading || sectionsDefaultOpenQuery.isLoading, [appliancesQuery.isLoading, tasksQuery.isLoading, budgetItemsQuery.isLoading, monthlyBudgetQuery.isLoading, homeProfileQuery.isLoading, recommendedGroupsQuery.isLoading, trustedProsQuery.isLoading, sectionsDefaultOpenQuery.isLoading]);
   const isError = useMemo(() => appliancesQuery.isError || tasksQuery.isError || budgetItemsQuery.isError || monthlyBudgetQuery.isError || homeProfileQuery.isError || recommendedGroupsQuery.isError || trustedProsQuery.isError || sectionsDefaultOpenQuery.isError, [appliancesQuery.isError, tasksQuery.isError, budgetItemsQuery.isError, monthlyBudgetQuery.isError, homeProfileQuery.isError, recommendedGroupsQuery.isError, trustedProsQuery.isError, sectionsDefaultOpenQuery.isError]);
   const errors = useMemo(() => {
@@ -332,7 +325,7 @@ export const [HomeProvider, useHome] = createContextHook(() => {
   }, [listMutate]);
 
   const addProPrivateNote = useCallback((proId: string, text: string) => {
-    const note: PrivateNote = { id: `note-${Date.now()}`, text, createdAt: toISOTimestamp(new Date()) };
+    const note: PrivateNote = { id: generateId('note'), text, createdAt: toISOTimestamp(new Date()) };
     void listMutate<TrustedPro>(STORAGE_KEYS.trustedPros, ['trustedPros'], (items) =>
       items.map((p) => p.id === proId ? { ...p, privateNotes: [...(p.privateNotes ?? []), note] } : p)
     );
@@ -452,7 +445,7 @@ export const [HomeProvider, useHome] = createContextHook(() => {
       if (!original) return g;
       const duplicate: RecommendedItem = {
         ...original,
-        id: `rec-custom-${Date.now()}`,
+        id: generateId('rec'),
         name: `${original.name} (Copy)`,
         isCustom: true,
       };

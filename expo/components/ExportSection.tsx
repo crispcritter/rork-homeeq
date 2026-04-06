@@ -1,10 +1,9 @@
-import React, { useState, useCallback, useRef, useMemo } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  Animated,
 } from 'react-native';
 import {
   Download,
@@ -51,18 +50,11 @@ function ExportSection({
   const { colors: c } = useTheme();
   const styles = useMemo(() => createStyles(c), [c]);
   const [expanded, setExpanded] = useState(false);
-  const exportAnim = useRef(new Animated.Value(0)).current;
 
   const toggleExport = useCallback(() => {
     lightImpact();
-    const toValue = expanded ? 0 : 1;
-    setExpanded(!expanded);
-    Animated.timing(exportAnim, {
-      toValue,
-      duration: 250,
-      useNativeDriver: false,
-    }).start();
-  }, [expanded, exportAnim]);
+    setExpanded((prev) => !prev);
+  }, []);
 
   const actions = useMemo(() => ({
     getCSV,
@@ -108,8 +100,8 @@ function ExportSection({
             activeOpacity={0.7}
             testID={`${testIDPrefix}-email`}
           >
-            <View style={[styles.exportGridIcon, { backgroundColor: '#EEF2FF' }]}>
-              <Mail size={22} color="#4F46E5" />
+            <View style={[styles.exportGridIcon, { backgroundColor: c.primaryLight }]}>
+              <Mail size={22} color={c.primary} />
             </View>
             <Text style={styles.exportGridTitle}>Email</Text>
             <Text style={styles.exportGridDesc}>Send as attachment</Text>
@@ -121,8 +113,8 @@ function ExportSection({
             activeOpacity={0.7}
             testID={`${testIDPrefix}-pdf`}
           >
-            <View style={[styles.exportGridIcon, { backgroundColor: '#FEF2F2' }]}>
-              <FileDown size={22} color="#DC2626" />
+            <View style={[styles.exportGridIcon, { backgroundColor: c.dangerLight }]}>
+              <FileDown size={22} color={c.danger} />
             </View>
             <Text style={styles.exportGridTitle}>PDF</Text>
             <Text style={styles.exportGridDesc}>Save or share</Text>
@@ -134,8 +126,8 @@ function ExportSection({
             activeOpacity={0.7}
             testID={`${testIDPrefix}-csv`}
           >
-            <View style={[styles.exportGridIcon, { backgroundColor: '#FFF7ED' }]}>
-              <Share2 size={22} color="#EA580C" />
+            <View style={[styles.exportGridIcon, { backgroundColor: c.warningLight }]}>
+              <Share2 size={22} color={c.warning} />
             </View>
             <Text style={styles.exportGridTitle}>CSV</Text>
             <Text style={styles.exportGridDesc}>Spreadsheet data</Text>
@@ -147,8 +139,8 @@ function ExportSection({
             activeOpacity={0.7}
             testID={`${testIDPrefix}-print`}
           >
-            <View style={[styles.exportGridIcon, { backgroundColor: '#F0FDF4' }]}>
-              <Printer size={22} color="#16A34A" />
+            <View style={[styles.exportGridIcon, { backgroundColor: c.successLight }]}>
+              <Printer size={22} color={c.success} />
             </View>
             <Text style={styles.exportGridTitle}>Print</Text>
             <Text style={styles.exportGridDesc}>AirPrint</Text>

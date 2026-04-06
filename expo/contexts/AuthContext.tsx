@@ -4,9 +4,7 @@ import * as SecureStore from 'expo-secure-store';
 import createContextHook from '@nkzw/create-context-hook';
 import { trpcClient, AUTH_TOKEN_KEY } from '@/lib/trpc';
 import { ALL_QUERY_KEYS } from '@/constants/queryKeys';
-import { Appliance, MaintenanceTask, BudgetItem, HomeProfile, TrustedPro } from '@/types';
-import { DEFAULT_PROFILE } from '@/constants/defaultProfile';
-import { RecommendedGroup, recommendedGroups as defaultRecommendedGroups } from '@/mocks/recommendedItems';
+import { pushSyncPayload } from '@/utils/cloudSync';
 
 export interface AuthUser {
   id: string;
@@ -212,25 +210,7 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
 
     setSyncStatus('syncing');
     try {
-      const currentAppliances = queryClient.getQueryData<Appliance[]>(['appliances']) ?? [];
-      const currentTasks = queryClient.getQueryData<MaintenanceTask[]>(['tasks']) ?? [];
-      const currentBudgetItems = queryClient.getQueryData<BudgetItem[]>(['budgetItems']) ?? [];
-      const currentMonthlyBudget = queryClient.getQueryData<number>(['monthlyBudget']) ?? 1500;
-      const currentHomeProfile = queryClient.getQueryData<HomeProfile>(['homeProfile']) ?? DEFAULT_PROFILE;
-      const currentRecommendedGroups = queryClient.getQueryData<RecommendedGroup[]>(['recommendedGroups']) ?? defaultRecommendedGroups;
-      const currentTrustedPros = queryClient.getQueryData<TrustedPro[]>(['trustedPros']) ?? [];
-      const currentSectionsOpen = queryClient.getQueryData<boolean>(['sectionsDefaultOpen']) ?? true;
-
-      const result = await trpcClient.sync.push.mutate({
-        appliances: currentAppliances,
-        tasks: currentTasks,
-        budgetItems: currentBudgetItems,
-        monthlyBudget: currentMonthlyBudget,
-        homeProfile: currentHomeProfile,
-        recommendedGroups: currentRecommendedGroups,
-        trustedPros: currentTrustedPros,
-        sectionsDefaultOpen: currentSectionsOpen,
-      });
+      const result = await pushSyncPayload(queryClient);
 
       if (mountedRef.current) {
         setSyncStatus('synced');

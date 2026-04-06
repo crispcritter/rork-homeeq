@@ -13,12 +13,14 @@ import { useHome } from '@/contexts/HomeContext';
 import { useTheme } from '@/contexts/ThemeContext';
 
 import PressableCard from '@/components/PressableCard';
+import SwipeableRow from '@/components/SwipeableRow';
 import AnimatedCard from '@/components/AnimatedCard';
 import { formatRelativeDate } from '@/utils/dates';
 import { useBudgetSummary } from '@/hooks/useBudgetSummary';
 import { getAverageRating, formatRating } from '@/utils/ratings';
 import { getPriorityColor } from '@/constants/priorities';
-import { lightImpact } from '@/utils/haptics';
+import { Check, Archive as ArchiveIcon } from 'lucide-react-native';
+import { lightImpact, successNotification } from '@/utils/haptics';
 import createStyles from '@/styles/dashboard';
 
 const PROVIDER_COLORS = ['#C4826D', '#5A8A60', '#B08D57', '#A08670'];
@@ -39,6 +41,8 @@ export default function DashboardScreen() {
     upcomingTasks,
     overdueTasks,
     getApplianceById,
+    completeTask,
+    archiveTask,
     isLoading,
     isError,
     homeProfile,
@@ -234,6 +238,21 @@ export default function DashboardScreen() {
               const appliance = task.applianceId ? getApplianceById(task.applianceId) : null;
               return (
                 <AnimatedCard key={task.id} index={4 + idx}>
+                  <SwipeableRow
+                    leftActions={[{
+                      icon: <Check size={20} color="#FFFFFF" />,
+                      label: 'Done',
+                      color: '#16A34A',
+                      onPress: () => { successNotification(); completeTask(task.id); },
+                    }]}
+                    rightActions={[{
+                      icon: <ArchiveIcon size={20} color="#FFFFFF" />,
+                      label: 'Archive',
+                      color: '#6B7280',
+                      onPress: () => { lightImpact(); archiveTask(task.id); },
+                    }]}
+                    onFullSwipeRight={() => { successNotification(); completeTask(task.id); }}
+                  >
                   <PressableCard style={[styles.taskCard, { backgroundColor: c.surface, shadowColor: c.cardShadow }]} onPress={() => handlePress(`/task/${task.id}`)}>
                     <View
                       style={[
@@ -258,6 +277,7 @@ export default function DashboardScreen() {
                       <Text style={[styles.taskCost, { color: c.text }]}>${task.estimatedCost}</Text>
                     )}
                   </PressableCard>
+                  </SwipeableRow>
                 </AnimatedCard>
               );
             })

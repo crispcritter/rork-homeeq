@@ -51,6 +51,7 @@ import {
   Copy,
 } from 'lucide-react-native';
 import LinkPreview from '@/components/LinkPreview';
+import SwipeableRow from '@/components/SwipeableRow';
 import { useHome } from '@/contexts/HomeContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { categoryLabels } from '@/constants/categories';
@@ -834,7 +835,23 @@ export default function ApplianceDetailScreen() {
               </View>
             ) : (
               relatedTasks.map((task) => (
-                <View key={task.id} style={[styles.taskRow, task.status === 'overdue' && styles.taskRowOverdue]}>
+                <SwipeableRow
+                  key={task.id}
+                  leftActions={task.status !== 'completed' ? [{
+                    icon: <Check size={18} color="#FFFFFF" />,
+                    label: 'Done',
+                    color: '#16A34A',
+                    onPress: () => { completeTask(task.id); },
+                  }] : []}
+                  rightActions={[{
+                    icon: <ChevronRight size={18} color="#FFFFFF" />,
+                    label: 'View',
+                    color: '#3B82F6',
+                    onPress: () => { router.push({ pathname: '/task/[id]', params: { id: task.id } }); },
+                  }]}
+                  onFullSwipeRight={task.status !== 'completed' ? () => { completeTask(task.id); } : undefined}
+                >
+                <View style={[styles.taskRow, task.status === 'overdue' && styles.taskRowOverdue]}>
                   <View style={[styles.taskStatusDot, { backgroundColor: task.status === 'completed' ? c.success : task.status === 'overdue' ? c.danger : c.warning }]} />
                   <View style={styles.taskInfo}>
                     <Text style={[styles.taskTitle, task.status === 'completed' && styles.taskTitleDone]}>{task.title}</Text>
@@ -851,6 +868,7 @@ export default function ApplianceDetailScreen() {
                     <Text style={[styles.statusChipText, { color: task.status === 'completed' ? c.success : task.status === 'overdue' ? c.danger : c.warning }]}>{task.status}</Text>
                   </View>
                 </View>
+                </SwipeableRow>
               ))
             )}
 
@@ -930,7 +948,16 @@ export default function ApplianceDetailScreen() {
             >
             <View style={styles.section}>
               {relatedExpenses.map((expense) => (
-                <View key={expense.id} style={styles.expenseRow}>
+                <SwipeableRow
+                  key={expense.id}
+                  rightActions={[{
+                    icon: <ChevronRight size={18} color="#FFFFFF" />,
+                    label: 'View',
+                    color: '#3B82F6',
+                    onPress: () => { router.push({ pathname: '/expense/[id]', params: { id: expense.id } }); },
+                  }]}
+                >
+                <View style={styles.expenseRow}>
                   <View style={styles.expenseInfo}>
                     <Text style={styles.expenseDesc}>{expense.description}</Text>
                     <Text style={styles.expenseMeta}>
@@ -939,6 +966,7 @@ export default function ApplianceDetailScreen() {
                   </View>
                   <Text style={styles.expenseAmount}>${expense.amount}</Text>
                 </View>
+                </SwipeableRow>
               ))}
             </View>
             </CollapsibleSection>

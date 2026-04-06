@@ -60,6 +60,7 @@ import { isCalendarAvailable, isRemindersAvailable } from '@/utils/calendar';
 import { ActivityIndicator } from 'react-native';
 import LinkPreview from '@/components/LinkPreview';
 import ApplianceChipSelector from '@/components/ApplianceChipSelector';
+import SwipeableRow from '@/components/SwipeableRow';
 import { useTaskDetail } from '@/hooks/useTaskDetail';
 import createStyles from '@/styles/taskDetail';
 
@@ -1064,13 +1065,23 @@ export default function TaskDetailScreen() {
             </View>
           ) : (
             (task.notes ?? []).map((note, idx) => (
-              <View key={`note-${idx}`} style={styles.noteItem}>
+              <SwipeableRow
+                key={`note-${idx}`}
+                rightActions={[{
+                  icon: <Trash2 size={18} color="#FFFFFF" />,
+                  label: 'Delete',
+                  color: c.danger ?? '#DC2626',
+                  onPress: () => handleRemoveNote(idx),
+                }]}
+              >
+              <View style={styles.noteItem}>
                 <View style={styles.noteDot} />
                 <Text style={styles.noteText}>{note}</Text>
                 <TouchableOpacity style={styles.noteDeleteBtn} onPress={() => handleRemoveNote(idx)} hitSlop={8}>
                   <X size={12} color={c.textTertiary} />
                 </TouchableOpacity>
               </View>
+              </SwipeableRow>
             ))
           )}
         </CollapsibleSection>

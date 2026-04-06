@@ -25,8 +25,10 @@ import { categoryLabels } from '@/constants/categories';
 import FloatingActionButton from '@/components/FloatingActionButton';
 import ScreenHeader from '@/components/ScreenHeader';
 import ExportSection from '@/components/ExportSection';
+import SwipeableRow from '@/components/SwipeableRow';
+import { Trash2, Pencil } from 'lucide-react-native';
 import { useBudgetSummary } from '@/hooks/useBudgetSummary';
-import { mediumImpact, lightImpact } from '@/utils/haptics';
+import { mediumImpact, lightImpact, warningNotification } from '@/utils/haptics';
 import { rowsToCSV, buildHtmlReport } from '@/utils/export';
 import createStyles from '@/styles/budget';
 import { BudgetItem } from '@/types';
@@ -62,7 +64,7 @@ export default function BudgetScreen() {
   const router = useRouter();
   const { colors: c } = useTheme();
   const styles = useMemo(() => createStyles(c), [c]);
-  const { trustedPros, refreshAll, isRefreshing } = useHome();
+  const { trustedPros, deleteBudgetItem, refreshAll, isRefreshing } = useHome();
   const {
     budgetItems,
     spentThisMonth,
@@ -230,8 +232,43 @@ export default function BudgetScreen() {
             </View>
           ) : (
             recentItems.map((item) => (
-              <TouchableOpacity
+              <SwipeableRow
                 key={item.id}
+                rightActions={[
+                  {
+                    icon: <Pencil size={20} color="#FFFFFF" />,
+                    label: 'Edit',
+                    color: '#3B82F6',
+                    onPress: () => {
+                      lightImpact();
+                      router.push({ pathname: '/edit-expense', params: { id: item.id } });
+                    },
+                  },
+                  {
+                    icon: <Trash2 size={20} color="#FFFFFF" />,
+                    label: 'Delete',
+                    color: c.danger ?? '#DC2626',
+                    onPress: () => {
+                      Alert.alert(
+                        'Delete Expense',
+                        `Delete "${item.description}"?`,
+                        [
+                          { text: 'Cancel', style: 'cancel' },
+                          {
+                            text: 'Delete',
+                            style: 'destructive',
+                            onPress: () => {
+                              warningNotification();
+                              deleteBudgetItem(item.id);
+                            },
+                          },
+                        ]
+                      );
+                    },
+                  },
+                ]}
+              >
+              <TouchableOpacity
                 style={styles.expenseRow}
                 onPress={() => {
                   lightImpact();
@@ -277,6 +314,7 @@ export default function BudgetScreen() {
                   )}
                 </View>
               </TouchableOpacity>
+              </SwipeableRow>
             ))
           )}
         </View>

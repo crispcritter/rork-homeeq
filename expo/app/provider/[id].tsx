@@ -42,6 +42,7 @@ import { useProviderDetail } from '@/hooks/useProviderDetail';
 import { formatRating } from '@/utils/ratings';
 import { lightImpact } from '@/utils/haptics';
 import createStyles from '@/styles/providerDetail';
+import SwipeableRow from '@/components/SwipeableRow';
 
 export default function ProviderDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -389,7 +390,16 @@ export default function ProviderDetailScreen() {
               </TouchableOpacity>
             ) : (
               linkedAppliances.map((appliance) => (
-                <View key={appliance.id} style={styles.linkedApplianceCard}>
+                <SwipeableRow
+                  key={appliance.id}
+                  rightActions={[{
+                    icon: <Unlink size={18} color="#FFFFFF" />,
+                    label: 'Unlink',
+                    color: '#F59E0B',
+                    onPress: () => handleUnlinkAppliance(appliance.id),
+                  }]}
+                >
+                <View style={styles.linkedApplianceCard}>
                   <TouchableOpacity style={styles.linkedApplianceMain} onPress={() => { lightImpact(); router.push({ pathname: '/appliance/[id]', params: { id: appliance.id } }); }} activeOpacity={0.7}>
                     <View style={[styles.applianceDot, { backgroundColor: CATEGORY_AVATARS[appliance.category] || c.textTertiary }]} />
                     <View style={styles.applianceInfo}>
@@ -402,6 +412,7 @@ export default function ProviderDetailScreen() {
                     <Unlink size={14} color={c.danger} />
                   </TouchableOpacity>
                 </View>
+                </SwipeableRow>
               ))
             )}
           </View>
@@ -415,7 +426,24 @@ export default function ProviderDetailScreen() {
             </View>
 
             {(pro.privateNotes ?? []).map((note) => (
-              <View key={note.id} style={styles.noteCard}>
+              <SwipeableRow
+                key={note.id}
+                rightActions={editingNoteId === note.id ? [] : [
+                  {
+                    icon: <Pencil size={18} color="#FFFFFF" />,
+                    label: 'Edit',
+                    color: '#3B82F6',
+                    onPress: () => { setEditingNoteId(note.id); setEditingNoteText(note.text); },
+                  },
+                  {
+                    icon: <Trash2 size={18} color="#FFFFFF" />,
+                    label: 'Delete',
+                    color: c.danger ?? '#DC2626',
+                    onPress: () => handleDeleteNote(note.id),
+                  },
+                ]}
+              >
+              <View style={styles.noteCard}>
                 {editingNoteId === note.id ? (
                   <View style={styles.noteEditWrap}>
                     <TextInput style={styles.noteEditInput} value={editingNoteText} onChangeText={setEditingNoteText} multiline autoFocus />
@@ -437,6 +465,7 @@ export default function ProviderDetailScreen() {
                   </>
                 )}
               </View>
+              </SwipeableRow>
             ))}
 
             <View style={styles.addNoteWrap}>
@@ -451,7 +480,16 @@ export default function ProviderDetailScreen() {
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Expense history</Text>
               {relatedExpenses.map((expense) => (
-                <TouchableOpacity key={expense.id} style={styles.expenseRow} onPress={() => { lightImpact(); router.push({ pathname: '/expense/[id]', params: { id: expense.id } }); }} activeOpacity={0.7}>
+                <SwipeableRow
+                  key={expense.id}
+                  rightActions={[{
+                    icon: <ChevronRight size={18} color="#FFFFFF" />,
+                    label: 'View',
+                    color: '#3B82F6',
+                    onPress: () => { lightImpact(); router.push({ pathname: '/expense/[id]', params: { id: expense.id } }); },
+                  }]}
+                >
+                <TouchableOpacity style={styles.expenseRow} onPress={() => { lightImpact(); router.push({ pathname: '/expense/[id]', params: { id: expense.id } }); }} activeOpacity={0.7}>
                   <View style={[styles.expenseDot, { backgroundColor: getBudgetCategoryColors(c)[expense.category] || c.textTertiary }]} />
                   <View style={styles.expenseInfo}>
                     <Text style={styles.expenseDesc}>{expense.description}</Text>
@@ -459,6 +497,7 @@ export default function ProviderDetailScreen() {
                   </View>
                   <Text style={styles.expenseAmount}>-${expense.amount}</Text>
                 </TouchableOpacity>
+                </SwipeableRow>
               ))}
             </View>
           )}

@@ -26,11 +26,13 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { ColorScheme } from '@/constants/colors';
 import createStyles from '@/styles/schedule';
 import PressableCard from '@/components/PressableCard';
+import SwipeableRow from '@/components/SwipeableRow';
 import FloatingActionButton from '@/components/FloatingActionButton';
 import ScreenHeader from '@/components/ScreenHeader';
 import ExportSection from '@/components/ExportSection';
 import { formatRelativeDate, formatWeekdayShortDate, getWeekEndingSaturday, formatWeekEnding, parseLocalDate } from '@/utils/dates';
-import { lightImpact, mediumImpact, successNotification } from '@/utils/haptics';
+import { Trash2 } from 'lucide-react-native';
+import { lightImpact, mediumImpact, successNotification, warningNotification } from '@/utils/haptics';
 import { rowsToCSV, buildHtmlReport } from '@/utils/export';
 import { getPriorityColor, getPriorityBgColor } from '@/constants/priorities';
 import { MaintenanceTask, TaskPriority } from '@/types';
@@ -112,7 +114,7 @@ export default function ScheduleScreen() {
   const router = useRouter();
   const { colors: c } = useTheme();
   const styles = useMemo(() => createStyles(c), [c]);
-  const { tasks, appliances, completeTask, trustedPros, refreshAll, isRefreshing } = useHome();
+  const { tasks, appliances, completeTask, archiveTask, deleteTask, trustedPros, refreshAll, isRefreshing } = useHome();
   const params = useLocalSearchParams<{ filter?: string }>();
   const initialFilterApplied = useRef(false);
   const [filter, setFilter] = useState<FilterType>(() => {
@@ -275,6 +277,34 @@ export default function ScheduleScreen() {
     );
   }, [completeTask]);
 
+  const handleSwipeComplete = useCallback((taskId: string) => {
+    successNotification();
+    completeTask(taskId);
+  }, [completeTask]);
+
+  const handleSwipeArchive = useCallback((taskId: string) => {
+    lightImpact();
+    archiveTask(taskId);
+  }, [archiveTask]);
+
+  const handleSwipeDelete = useCallback((taskId: string, taskTitle: string) => {
+    Alert.alert(
+      'Delete Task',
+      `Delete "${taskTitle}"? This can't be undone.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            warningNotification();
+            deleteTask(taskId);
+          },
+        },
+      ]
+    );
+  }, [deleteTask]);
+
   const handleTaskPress = useCallback((taskId: string) => {
     lightImpact();
     router.push({ pathname: '/task/[id]', params: { id: taskId } });
@@ -294,9 +324,45 @@ export default function ScheduleScreen() {
     const isOverdue = task.status === 'overdue';
     const isArchived = task.status === 'archived';
 
+    const leftActions = !isCompleted && !isArchived ? [
+      {
+        icon: <Check size={20} color="#FFFFFF" />,
+        label: 'Done',
+        color: c.success ?? '#16A34A',
+        onPress: () => handleSwipeComplete(task.id),
+      },
+    ] : [];
+
+    const rightActions = isArchived ? [
+      {
+        icon: <Trash2 size={20} color="#FFFFFF" />,
+        label: 'Delete',
+        color: c.danger ?? '#DC2626',
+        onPress: () => handleSwipeDelete(task.id, task.title),
+      },
+    ] : [
+      ...(!isCompleted && !isArchived ? [{
+        icon: <Archive size={20} color="#FFFFFF" />,
+        label: 'Archive',
+        color: '#6B7280',
+        onPress: () => handleSwipeArchive(task.id),
+      }] : []),
+      {
+        icon: <Trash2 size={20} color="#FFFFFF" />,
+        label: 'Delete',
+        color: c.danger ?? '#DC2626',
+        onPress: () => handleSwipeDelete(task.id, task.title),
+      },
+    ];
+
     return (
-      <PressableCard
+      <SwipeableRow
         key={task.id}
+        leftActions={leftActions}
+        rightActions={rightActions}
+        onFullSwipeRight={!isCompleted && !isArchived ? () => handleSwipeComplete(task.id) : undefined}
+      >
+      <PressableCard
         style={[
           styles.taskCard,
           isOverdue && styles.taskCardOverdue,
@@ -375,8 +441,9 @@ export default function ScheduleScreen() {
           <ChevronRight size={14} color={c.textTertiary} />
         </View>
       </PressableCard>
+      </SwipeableRow>
     );
-  }, [appliances, handleComplete, handleTaskPress, styles, c]);
+  }, [appliances, handleComplete, handleTaskPress, handleSwipeComplete, handleSwipeArchive, handleSwipeDelete, styles, c]);
 
   const renderGroupHeader = useCallback((group: TaskGroup) => {
     const isCollapsed = collapsedGroups[group.key] ?? false;

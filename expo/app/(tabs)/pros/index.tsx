@@ -52,6 +52,7 @@ import StarRating from '@/components/StarRating';
 import { searchPlaces, PlaceResult } from '@/utils/googlePlaces';
 import { useMutation } from '@tanstack/react-query';
 import createStyles from '@/styles/trustedPros';
+import SwipeableRow from '@/components/SwipeableRow';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -837,8 +838,25 @@ export default function TrustedProsScreen() {
             const linkedCount = pro.linkedApplianceIds?.length ?? 0;
 
             return (
-              <TouchableOpacity
+              <SwipeableRow
                 key={pro.id}
+                leftActions={pro.phone ? [{
+                  icon: <Phone size={20} color="#FFFFFF" />,
+                  label: 'Call',
+                  color: '#16A34A',
+                  onPress: () => {
+                    lightImpact();
+                    Linking.openURL(`tel:${pro.phone!.replace(/[^\d+]/g, '')}`).catch(() => {});
+                  },
+                }] : []}
+                rightActions={[{
+                  icon: <Trash2 size={20} color="#FFFFFF" />,
+                  label: 'Remove',
+                  color: c.danger ?? '#DC2626',
+                  onPress: () => handleDelete(pro.id, pro.name),
+                }]}
+              >
+              <TouchableOpacity
                 style={styles.proCard}
                 onPress={() => {
                   lightImpact();
@@ -865,17 +883,6 @@ export default function TrustedProsScreen() {
                       </View>
                     )}
                   </View>
-                  <TouchableOpacity
-                    style={styles.deleteBtn}
-                    onPress={(e) => {
-                      e.stopPropagation();
-                      handleDelete(pro.id, pro.name);
-                    }}
-                    activeOpacity={0.7}
-                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                  >
-                    <Trash2 size={16} color={c.danger} />
-                  </TouchableOpacity>
                 </View>
 
                 <View style={styles.proDetails}>
@@ -946,6 +953,7 @@ export default function TrustedProsScreen() {
                   <ChevronRight size={16} color={c.textTertiary} />
                 </View>
               </TouchableOpacity>
+              </SwipeableRow>
             );
           })
         )}

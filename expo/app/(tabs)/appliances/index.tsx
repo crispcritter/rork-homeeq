@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   TextInput,
   RefreshControl,
+  Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { generateId } from '@/utils/id';
@@ -23,12 +24,14 @@ import { useHome } from '@/contexts/HomeContext';
 import { useTheme } from '@/contexts/ThemeContext';
 
 import PressableCard from '@/components/PressableCard';
+import SwipeableRow from '@/components/SwipeableRow';
 import FloatingActionButton from '@/components/FloatingActionButton';
 import ScreenHeader from '@/components/ScreenHeader';
 import RecommendedChecklist from '@/components/RecommendedChecklist';
 import { CATEGORY_AVATARS } from '@/constants/categories';
 import { getWarrantyStatus } from '@/utils/dates';
-import { lightImpact } from '@/utils/haptics';
+import { Trash2, Pencil } from 'lucide-react-native';
+import { lightImpact, warningNotification } from '@/utils/haptics';
 import { rowsToCSV, buildHtmlReport } from '@/utils/export';
 import createStyles from '@/styles/appliances';
 import ExportSection from '@/components/ExportSection';
@@ -54,6 +57,7 @@ export default function AppliancesScreen() {
   const {
     appliances,
     addAppliance,
+    deleteAppliance,
     customRecommendedGroups,
     addRecommendedItem,
     removeRecommendedItem,
@@ -289,8 +293,43 @@ export default function AppliancesScreen() {
           filtered.map(({ appliance, warranty }) => {
             const avatarColor = CATEGORY_AVATARS[appliance.category] || c.textTertiary;
             return (
-              <PressableCard
+              <SwipeableRow
                 key={appliance.id}
+                rightActions={[
+                  {
+                    icon: <Pencil size={20} color="#FFFFFF" />,
+                    label: 'Edit',
+                    color: '#3B82F6',
+                    onPress: () => {
+                      lightImpact();
+                      router.push({ pathname: '/edit-appliance', params: { id: appliance.id } });
+                    },
+                  },
+                  {
+                    icon: <Trash2 size={20} color="#FFFFFF" />,
+                    label: 'Delete',
+                    color: c.danger ?? '#DC2626',
+                    onPress: () => {
+                      Alert.alert(
+                        'Remove Item',
+                        `Remove "${appliance.name}"? This can't be undone.`,
+                        [
+                          { text: 'Keep it', style: 'cancel' },
+                          {
+                            text: 'Remove',
+                            style: 'destructive',
+                            onPress: () => {
+                              warningNotification();
+                              deleteAppliance(appliance.id);
+                            },
+                          },
+                        ]
+                      );
+                    },
+                  },
+                ]}
+              >
+              <PressableCard
                 style={styles.card}
                 onPress={() => handleAppliancePress(appliance.id)}
                 testID={`appliance-${appliance.id}`}
@@ -322,6 +361,7 @@ export default function AppliancesScreen() {
                   <ChevronRight size={18} color={c.textTertiary} />
                 </View>
               </PressableCard>
+              </SwipeableRow>
             );
           })
         )}

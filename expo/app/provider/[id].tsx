@@ -393,9 +393,9 @@ export default function ProviderDetailScreen() {
                 <SwipeableRow
                   key={appliance.id}
                   rightActions={[{
-                    icon: <Unlink size={18} color="#FFFFFF" />,
+                    icon: <Unlink size={18} color={c.white} />,
                     label: 'Unlink',
-                    color: '#F59E0B',
+                    color: c.warning,
                     onPress: () => handleUnlinkAppliance(appliance.id),
                   }]}
                 >
@@ -430,15 +430,15 @@ export default function ProviderDetailScreen() {
                 key={note.id}
                 rightActions={editingNoteId === note.id ? [] : [
                   {
-                    icon: <Pencil size={18} color="#FFFFFF" />,
+                    icon: <Pencil size={18} color={c.white} />,
                     label: 'Edit',
-                    color: '#3B82F6',
+                    color: c.primary,
                     onPress: () => { setEditingNoteId(note.id); setEditingNoteText(note.text); },
                   },
                   {
-                    icon: <Trash2 size={18} color="#FFFFFF" />,
+                    icon: <Trash2 size={18} color={c.white} />,
                     label: 'Delete',
-                    color: c.danger ?? '#DC2626',
+                    color: c.danger,
                     onPress: () => handleDeleteNote(note.id),
                   },
                 ]}

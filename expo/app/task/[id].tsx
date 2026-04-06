@@ -876,7 +876,7 @@ export default function TaskDetailScreen() {
               </View>
               {linkedPro.ratings && linkedPro.ratings.length > 0 && (
                 <View style={styles.proRatingBadge}>
-                  <Star size={11} color="#F5A623" />
+                  <Star size={11} color={c.warning} />
                   <Text style={styles.proRatingText}>{linkedPro.ratings[0].rating.toFixed(1)}</Text>
                 </View>
               )}
@@ -946,7 +946,7 @@ export default function TaskDetailScreen() {
               <View style={styles.calendarRow}>
                 {task.calendarEventId ? (
                   <View style={styles.calendarSyncedBtn}>
-                    <CalendarCheck size={18} color="#2563EB" />
+                    <CalendarCheck size={18} color={c.primary} />
                     <View style={styles.calendarSyncedContent}>
                       <Text style={styles.calendarSyncedLabel}>In Calendar</Text>
                       <Text style={styles.calendarSyncedSub}>With 1-day & 1-hour alerts</Text>
@@ -956,7 +956,7 @@ export default function TaskDetailScreen() {
                       onPress={handleRemoveFromCalendar}
                       hitSlop={8}
                     >
-                      <XCircle size={16} color="#93B8F0" />
+                      <XCircle size={16} color={c.primary + '70'} />
                     </TouchableOpacity>
                   </View>
                 ) : (
@@ -982,7 +982,7 @@ export default function TaskDetailScreen() {
               <View style={[styles.calendarRow, styles.calendarRowLast]}>
                 {task.reminderEventId ? (
                   <View style={styles.reminderSyncedBtn}>
-                    <BellRing size={18} color="#D97706" />
+                    <BellRing size={18} color={c.warning} />
                     <View style={styles.calendarSyncedContent}>
                       <Text style={styles.reminderSyncedLabel}>In Reminders</Text>
                       <Text style={styles.reminderSyncedSub}>Synced with Apple Reminders</Text>
@@ -992,7 +992,7 @@ export default function TaskDetailScreen() {
                       onPress={handleRemoveFromReminders}
                       hitSlop={8}
                     >
-                      <XCircle size={16} color="#E5C78E" />
+                      <XCircle size={16} color={c.warning + '70'} />
                     </TouchableOpacity>
                   </View>
                 ) : (
@@ -1068,9 +1068,9 @@ export default function TaskDetailScreen() {
               <SwipeableRow
                 key={`note-${idx}`}
                 rightActions={[{
-                  icon: <Trash2 size={18} color="#FFFFFF" />,
+                  icon: <Trash2 size={18} color={c.white} />,
                   label: 'Delete',
-                  color: c.danger ?? '#DC2626',
+                  color: c.danger,
                   onPress: () => handleRemoveNote(idx),
                 }]}
               >

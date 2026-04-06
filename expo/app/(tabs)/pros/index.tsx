@@ -841,18 +841,18 @@ export default function TrustedProsScreen() {
               <SwipeableRow
                 key={pro.id}
                 leftActions={pro.phone ? [{
-                  icon: <Phone size={20} color="#FFFFFF" />,
+                  icon: <Phone size={20} color={c.white} />,
                   label: 'Call',
-                  color: '#16A34A',
+                  color: c.success,
                   onPress: () => {
                     lightImpact();
                     Linking.openURL(`tel:${pro.phone!.replace(/[^\d+]/g, '')}`).catch(() => {});
                   },
                 }] : []}
                 rightActions={[{
-                  icon: <Trash2 size={20} color="#FFFFFF" />,
+                  icon: <Trash2 size={20} color={c.white} />,
                   label: 'Remove',
-                  color: c.danger ?? '#DC2626',
+                  color: c.danger,
                   onPress: () => handleDelete(pro.id, pro.name),
                 }]}
               >

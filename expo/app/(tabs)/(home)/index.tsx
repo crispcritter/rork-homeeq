@@ -23,7 +23,7 @@ import { Check, Archive as ArchiveIcon } from 'lucide-react-native';
 import { lightImpact, successNotification } from '@/utils/haptics';
 import createStyles from '@/styles/dashboard';
 
-const PROVIDER_COLORS = ['#C4826D', '#5A8A60', '#B08D57', '#A08670'];
+
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -240,15 +240,15 @@ export default function DashboardScreen() {
                 <AnimatedCard key={task.id} index={4 + idx}>
                   <SwipeableRow
                     leftActions={[{
-                      icon: <Check size={20} color="#FFFFFF" />,
+                      icon: <Check size={20} color={c.white} />,
                       label: 'Done',
-                      color: '#16A34A',
+                      color: c.success,
                       onPress: () => { successNotification(); completeTask(task.id); },
                     }]}
                     rightActions={[{
-                      icon: <ArchiveIcon size={20} color="#FFFFFF" />,
+                      icon: <ArchiveIcon size={20} color={c.white} />,
                       label: 'Archive',
-                      color: '#6B7280',
+                      color: c.textSecondary,
                       onPress: () => { lightImpact(); archiveTask(task.id); },
                     }]}
                     onFullSwipeRight={() => { successNotification(); completeTask(task.id); }}
@@ -309,8 +309,8 @@ export default function DashboardScreen() {
                     style={styles.providerCard}
                     onPress={() => handlePress(`/provider/${pro.id}`)}
                   >
-                    <View style={[styles.providerAvatar, { backgroundColor: (PROVIDER_COLORS[idx % PROVIDER_COLORS.length]) + '20' }]}>
-                      <Text style={[styles.providerInitial, { color: PROVIDER_COLORS[idx % PROVIDER_COLORS.length] }]}>{pro.name?.[0] ?? '?'}</Text>
+                    <View style={[styles.providerAvatar, { backgroundColor: [c.accent, c.primary, c.warning, c.textSecondary][idx % 4] + '20' }]}>
+                      <Text style={[styles.providerInitial, { color: [c.accent, c.primary, c.warning, c.textSecondary][idx % 4] }]}>{pro.name?.[0] ?? '?'}</Text>
                     </View>
                     <Text style={styles.providerName} numberOfLines={1}>{pro.name}</Text>
                     <Text style={styles.providerSpecialty} numberOfLines={1}>{pro.specialty}</Text>

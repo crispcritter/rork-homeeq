@@ -326,31 +326,31 @@ export default function ScheduleScreen() {
 
     const leftActions = !isCompleted && !isArchived ? [
       {
-        icon: <Check size={20} color="#FFFFFF" />,
+        icon: <Check size={20} color={c.white} />,
         label: 'Done',
-        color: c.success ?? '#16A34A',
+        color: c.success,
         onPress: () => handleSwipeComplete(task.id),
       },
     ] : [];
 
     const rightActions = isArchived ? [
       {
-        icon: <Trash2 size={20} color="#FFFFFF" />,
+        icon: <Trash2 size={20} color={c.white} />,
         label: 'Delete',
-        color: c.danger ?? '#DC2626',
+        color: c.danger,
         onPress: () => handleSwipeDelete(task.id, task.title),
       },
     ] : [
       ...(!isCompleted && !isArchived ? [{
-        icon: <Archive size={20} color="#FFFFFF" />,
+        icon: <Archive size={20} color={c.white} />,
         label: 'Archive',
-        color: '#6B7280',
+        color: c.textSecondary,
         onPress: () => handleSwipeArchive(task.id),
       }] : []),
       {
-        icon: <Trash2 size={20} color="#FFFFFF" />,
+        icon: <Trash2 size={20} color={c.white} />,
         label: 'Delete',
-        color: c.danger ?? '#DC2626',
+        color: c.danger,
         onPress: () => handleSwipeDelete(task.id, task.title),
       },
     ];

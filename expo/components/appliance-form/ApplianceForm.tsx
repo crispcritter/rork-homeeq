@@ -14,14 +14,15 @@ import {
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { Camera, X, Sparkles, ChevronRight, ScanLine, Hash, Receipt, Plus, Star, ImagePlus, BookOpen, Upload, Search, ExternalLink, Smartphone } from 'lucide-react-native';
-import Colors from '@/constants/colors';
+import { useTheme } from '@/contexts/ThemeContext';
+import createApplianceFormStyles from '@/components/appliance-form/styles';
 import { PAYMENT_METHODS } from '@/constants/expenseOptions';
 import { Appliance, ApplianceCategory, PurchaseData, AppliancePhoto, ManualInfo, AppInfo, asISODateString, toISODateString } from '@/types';
 import { getAppPassword, setAppPassword, deleteAppPassword } from '@/utils/appInfoSecure';
 import { successNotification } from '@/utils/haptics';
 import DatePickerField from '@/components/DatePickerField';
 import { CATEGORIES } from '@/components/appliance-form/constants';
-import { formStyles as styles } from '@/components/appliance-form/styles';
+
 import { useApplianceAnalysis } from '@/components/appliance-form/useApplianceAnalysis';
 import { useManualSearch } from '@/hooks/useManualSearch';
 
@@ -33,6 +34,8 @@ interface ApplianceFormProps {
 
 export default function ApplianceForm({ mode, initialData, onSave }: ApplianceFormProps) {
   const router = useRouter();
+  const { colors: Colors } = useTheme();
+  const styles = React.useMemo(() => createApplianceFormStyles(Colors), [Colors]);
 
   const [name, setName] = useState(initialData?.name ?? '');
   const [brand, setBrand] = useState(initialData?.brand ?? '');

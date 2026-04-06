@@ -1,10 +1,10 @@
 import { StyleSheet } from 'react-native';
-import Colors from '@/constants/colors';
+import { ColorScheme } from '@/constants/colors';
 
-export const formStyles = StyleSheet.create({
+const createApplianceFormStyles = (c: ColorScheme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: c.background,
   },
   content: {
     paddingHorizontal: 20,
@@ -17,32 +17,32 @@ export const formStyles = StyleSheet.create({
   scanCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: c.primaryLight,
     borderRadius: 16,
     padding: 16,
     gap: 12,
     borderWidth: 1.5,
-    borderColor: Colors.primary + '25',
+    borderColor: c.primary + '25',
     borderStyle: 'dashed',
   },
   scanCardLabel: {
-    backgroundColor: Colors.accentLight,
-    borderColor: Colors.accent + '25',
+    backgroundColor: c.accentLight,
+    borderColor: c.accent + '25',
   },
   scanCardActive: {
-    borderColor: Colors.primary + '60',
-    backgroundColor: Colors.primaryLight,
+    borderColor: c.primary + '60',
+    backgroundColor: c.primaryLight,
   },
   scanIconWrap: {
     width: 44,
     height: 44,
     borderRadius: 12,
-    backgroundColor: Colors.white,
+    backgroundColor: c.white,
     justifyContent: 'center',
     alignItems: 'center',
   },
   scanIconWrapLabel: {
-    backgroundColor: Colors.white,
+    backgroundColor: c.white,
   },
   scanTextWrap: {
     flex: 1,
@@ -55,28 +55,28 @@ export const formStyles = StyleSheet.create({
   scanTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.primaryDark,
+    color: c.primaryDark,
     lineHeight: 19,
   },
   scanTitleLabel: {
-    color: Colors.accentDark,
+    color: c.accentDark,
   },
   scanSubtitle: {
     fontSize: 12,
-    color: Colors.primary,
+    color: c.primary,
     marginTop: 1,
     opacity: 0.8,
     lineHeight: 16,
   },
   scanSubtitleLabel: {
-    color: Colors.accent,
+    color: c.accent,
   },
   imagePreviewCard: {
     borderRadius: 16,
     overflow: 'hidden',
     marginBottom: 24,
-    backgroundColor: Colors.surface,
-    shadowColor: Colors.cardShadow,
+    backgroundColor: c.surface,
+    shadowColor: c.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 8,
@@ -111,7 +111,7 @@ export const formStyles = StyleSheet.create({
     borderRadius: 20,
   },
   analyzingText: {
-    color: Colors.white,
+    color: c.white,
     fontSize: 13,
     fontWeight: '600',
     lineHeight: 17,
@@ -132,12 +132,12 @@ export const formStyles = StyleSheet.create({
   rescanDivider: {
     width: 1,
     height: 16,
-    backgroundColor: Colors.borderLight,
+    backgroundColor: c.borderLight,
   },
   rescanText: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.primary,
+    color: c.primary,
     lineHeight: 19,
   },
   section: {
@@ -146,7 +146,7 @@ export const formStyles = StyleSheet.create({
   sectionLabel: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     textTransform: 'uppercase' as const,
     letterSpacing: 0.8,
     marginBottom: 8,
@@ -154,10 +154,10 @@ export const formStyles = StyleSheet.create({
     lineHeight: 17,
   },
   card: {
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderRadius: 16,
     overflow: 'hidden',
-    shadowColor: Colors.cardShadow,
+    shadowColor: c.cardShadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 8,
@@ -175,21 +175,21 @@ export const formStyles = StyleSheet.create({
   inputLabel: {
     fontSize: 12,
     fontWeight: '500',
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     marginBottom: 4,
     lineHeight: 16,
   },
   textInput: {
     fontSize: 16,
     fontWeight: '500',
-    color: Colors.text,
+    color: c.text,
     padding: 0,
     margin: 0,
     lineHeight: 22,
   },
   divider: {
     height: 1,
-    backgroundColor: Colors.borderLight,
+    backgroundColor: c.borderLight,
     marginLeft: 16,
   },
   categoryGrid: {
@@ -201,22 +201,22 @@ export const formStyles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 22,
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: c.border,
   },
   categoryChipActive: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
+    backgroundColor: c.primary,
+    borderColor: c.primary,
   },
   categoryChipText: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     lineHeight: 17,
   },
   categoryChipTextActive: {
-    color: Colors.white,
+    color: c.white,
   },
   notesRow: {
     paddingHorizontal: 16,
@@ -225,7 +225,7 @@ export const formStyles = StyleSheet.create({
   notesInput: {
     fontSize: 15,
     fontWeight: '400',
-    color: Colors.text,
+    color: c.text,
     minHeight: 80,
     padding: 0,
     margin: 0,
@@ -234,35 +234,35 @@ export const formStyles = StyleSheet.create({
   receiptScanCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.warningLight,
+    backgroundColor: c.warningLight,
     borderRadius: 16,
     padding: 16,
     gap: 12,
     borderWidth: 1.5,
-    borderColor: Colors.warning + '25',
+    borderColor: c.warning + '25',
     borderStyle: 'dashed' as const,
     marginBottom: 4,
   },
   receiptScanCardActive: {
-    borderColor: Colors.warning + '60',
+    borderColor: c.warning + '60',
   },
   receiptScanIconWrap: {
     width: 44,
     height: 44,
     borderRadius: 12,
-    backgroundColor: Colors.white,
+    backgroundColor: c.white,
     justifyContent: 'center',
     alignItems: 'center',
   },
   receiptScanTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#8B6914',
+    color: c.warning,
     lineHeight: 19,
   },
   receiptScanSubtitle: {
     fontSize: 12,
-    color: Colors.warning,
+    color: c.warning,
     marginTop: 1,
     opacity: 0.9,
     lineHeight: 16,
@@ -271,7 +271,7 @@ export const formStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    backgroundColor: Colors.surface,
+    backgroundColor: c.surface,
     borderRadius: 12,
     padding: 10,
     marginTop: 8,
@@ -288,12 +288,12 @@ export const formStyles = StyleSheet.create({
   receiptPreviewLabel: {
     fontSize: 13,
     fontWeight: '500',
-    color: Colors.text,
+    color: c.text,
   },
   receiptRemoveText: {
     fontSize: 12,
     fontWeight: '600',
-    color: Colors.danger,
+    color: c.danger,
   },
   photosSectionHeader: {
     flexDirection: 'row',
@@ -308,13 +308,13 @@ export const formStyles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
-    backgroundColor: Colors.primaryLight,
+    backgroundColor: c.primaryLight,
     marginBottom: 8,
   },
   addPhotoSmallText: {
     fontSize: 12,
     fontWeight: '600',
-    color: Colors.primary,
+    color: c.primary,
   },
   photosRow: {
     gap: 10,
@@ -330,11 +330,11 @@ export const formStyles = StyleSheet.create({
     borderRadius: 14,
     overflow: 'hidden',
     borderWidth: 2,
-    borderColor: Colors.border,
+    borderColor: c.border,
     position: 'relative' as const,
   },
   photoThumbPrimary: {
-    borderColor: Colors.primary,
+    borderColor: c.primary,
     borderWidth: 2.5,
   },
   photoThumbImage: {
@@ -345,7 +345,7 @@ export const formStyles = StyleSheet.create({
     position: 'absolute' as const,
     bottom: 4,
     left: 4,
-    backgroundColor: Colors.primary,
+    backgroundColor: c.primary,
     borderRadius: 8,
     width: 18,
     height: 18,
@@ -366,7 +366,7 @@ export const formStyles = StyleSheet.create({
   photoThumbLabel: {
     fontSize: 9,
     fontWeight: '500',
-    color: Colors.textTertiary,
+    color: c.textTertiary,
     textAlign: 'center' as const,
   },
   addPhotoThumb: {
@@ -374,14 +374,14 @@ export const formStyles = StyleSheet.create({
     height: 80,
     borderRadius: 14,
     borderWidth: 1.5,
-    borderColor: Colors.border,
+    borderColor: c.border,
     borderStyle: 'dashed' as const,
     justifyContent: 'center' as const,
     alignItems: 'center' as const,
-    backgroundColor: Colors.surfaceAlt,
+    backgroundColor: c.surfaceAlt,
   },
   saveBtn: {
-    backgroundColor: Colors.primary,
+    backgroundColor: c.primary,
     borderRadius: 14,
     paddingVertical: 16,
     alignItems: 'center' as const,
@@ -393,31 +393,31 @@ export const formStyles = StyleSheet.create({
   saveBtnText: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.white,
+    color: c.white,
     lineHeight: 22,
   },
   notFound: {
     flex: 1,
     justifyContent: 'center' as const,
     alignItems: 'center' as const,
-    backgroundColor: Colors.background,
+    backgroundColor: c.background,
   },
   notFoundText: {
     fontSize: 18,
     fontWeight: '600',
-    color: Colors.textSecondary,
+    color: c.textSecondary,
     marginBottom: 16,
   },
   backBtn: {
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderRadius: 12,
-    backgroundColor: Colors.primary,
+    backgroundColor: c.primary,
   },
   backBtnText: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.white,
+    color: c.white,
   },
   warrantyToggleRow: {
     flexDirection: 'row',
@@ -437,20 +437,22 @@ export const formStyles = StyleSheet.create({
     paddingHorizontal: 18,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: Colors.surfaceAlt,
+    backgroundColor: c.surfaceAlt,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: c.border,
   },
   warrantyToggleBtnActive: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
+    backgroundColor: c.primary,
+    borderColor: c.primary,
   },
   warrantyToggleBtnText: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.textSecondary,
+    color: c.textSecondary,
   },
   warrantyToggleBtnTextActive: {
-    color: Colors.white,
+    color: c.white,
   },
 });
+
+export default createApplianceFormStyles;

@@ -237,18 +237,18 @@ export default function BudgetScreen() {
                 key={item.id}
                 rightActions={[
                   {
-                    icon: <Pencil size={20} color="#FFFFFF" />,
+                    icon: <Pencil size={20} color={c.white} />,
                     label: 'Edit',
-                    color: '#3B82F6',
+                    color: c.primary,
                     onPress: () => {
                       lightImpact();
                       router.push({ pathname: '/edit-expense', params: { id: item.id } });
                     },
                   },
                   {
-                    icon: <Trash2 size={20} color="#FFFFFF" />,
+                    icon: <Trash2 size={20} color={c.white} />,
                     label: 'Delete',
-                    color: c.danger ?? '#DC2626',
+                    color: c.danger,
                     onPress: () => {
                       Alert.alert(
                         'Delete Expense',

@@ -369,8 +369,8 @@ export default function ApplianceDetailScreen() {
             </View>
             <View style={styles.detailDivider} />
             <View style={styles.detailItem}>
-              <View style={[styles.detailIcon, { backgroundColor: hasWarranty ? '#DCFCE7' : '#FEE2E2' }]}>
-                <Shield size={16} color={hasWarranty ? '#16A34A' : '#DC2626'} />
+              <View style={[styles.detailIcon, { backgroundColor: hasWarranty ? c.successLight : c.dangerLight }]}>
+                <Shield size={16} color={hasWarranty ? c.success : c.danger} />
               </View>
               <View style={styles.detailTextWrap}>
                 <Text style={styles.detailLabel}>Warranty</Text>
@@ -381,7 +381,7 @@ export default function ApplianceDetailScreen() {
               <>
                 <View style={styles.detailDivider} />
                 <View style={styles.detailItem}>
-                  <View style={[styles.detailIcon, { backgroundColor: '#FEF3C7' }]}>
+                  <View style={[styles.detailIcon, { backgroundColor: c.warningLight }]}>
                     <Calendar size={16} color={c.warning} />
                   </View>
                   <View style={styles.detailTextWrap}>
@@ -393,8 +393,8 @@ export default function ApplianceDetailScreen() {
             ) : null}
             <View style={styles.detailDivider} />
             <View style={styles.detailItem}>
-              <View style={[styles.detailIcon, { backgroundColor: '#EDE9FE' }]}>
-                <Hash size={16} color="#7C3AED" />
+              <View style={[styles.detailIcon, { backgroundColor: c.surfaceAlt }]}>
+                <Hash size={16} color={c.textSecondary} />
               </View>
               <View style={styles.detailTextWrap}>
                 <Text style={styles.detailLabel}>Serial Number</Text>
@@ -403,8 +403,8 @@ export default function ApplianceDetailScreen() {
             </View>
             <View style={styles.detailDivider} />
             <View style={styles.detailItem}>
-              <View style={[styles.detailIcon, { backgroundColor: '#DBEAFE' }]}>
-                <Wrench size={16} color="#5B8CB8" />
+              <View style={[styles.detailIcon, { backgroundColor: c.primaryLight }]}>
+                <Wrench size={16} color={c.primary} />
               </View>
               <View style={styles.detailTextWrap}>
                 <Text style={styles.detailLabel}>Type</Text>
@@ -416,7 +416,7 @@ export default function ApplianceDetailScreen() {
 
           <CollapsibleSection
             title="Replace Item"
-            icon={<ShoppingCart size={16} color="#16A34A" />}
+            icon={<ShoppingCart size={16} color={c.success} />}
             isCollapsed={collapsedSections['replace'] ?? false}
             onToggle={() => toggleSection('replace')}
             styles={styles}
@@ -445,7 +445,7 @@ export default function ApplianceDetailScreen() {
               {appliance.purchaseData.price ? (
                 <>
                   <View style={styles.purchaseItem}>
-                    <View style={[styles.detailIcon, { backgroundColor: '#FEF3C7' }]}>
+                    <View style={[styles.detailIcon, { backgroundColor: c.warningLight }]}>
                       <DollarSign size={16} color={c.warning} />
                     </View>
                     <View style={styles.detailTextWrap}>
@@ -473,8 +473,8 @@ export default function ApplianceDetailScreen() {
               {appliance.purchaseData.paymentMethod ? (
                 <>
                   <View style={styles.purchaseItem}>
-                    <View style={[styles.detailIcon, { backgroundColor: '#EDE9FE' }]}>
-                      <CreditCard size={16} color="#7C3AED" />
+                    <View style={[styles.detailIcon, { backgroundColor: c.surfaceAlt }]}>
+                      <CreditCard size={16} color={c.textSecondary} />
                     </View>
                     <View style={styles.detailTextWrap}>
                       <Text style={styles.detailLabel}>Payment Method</Text>
@@ -486,8 +486,8 @@ export default function ApplianceDetailScreen() {
               ) : null}
               {appliance.purchaseData.orderNumber ? (
                 <View style={styles.purchaseItem}>
-                  <View style={[styles.detailIcon, { backgroundColor: '#DBEAFE' }]}>
-                    <FileText size={16} color="#5B8CB8" />
+                  <View style={[styles.detailIcon, { backgroundColor: c.primaryLight }]}>
+                    <FileText size={16} color={c.primary} />
                   </View>
                   <View style={styles.detailTextWrap}>
                     <Text style={styles.detailLabel}>Order / Receipt #</Text>
@@ -511,7 +511,7 @@ export default function ApplianceDetailScreen() {
           {appliance.notes ? (
             <CollapsibleSection
               title="Notes"
-              icon={<FileText size={16} color="#7C3AED" />}
+              icon={<FileText size={16} color={c.textSecondary} />}
               isCollapsed={collapsedSections['notes'] ?? false}
               onToggle={() => toggleSection('notes')}
               styles={styles}
@@ -525,7 +525,7 @@ export default function ApplianceDetailScreen() {
 
           <CollapsibleSection
             title="User Manual"
-            icon={<BookOpen size={16} color="#5B8CB8" />}
+            icon={<BookOpen size={16} color={c.primary} />}
             isCollapsed={collapsedSections['manual'] ?? false}
             onToggle={() => toggleSection('manual')}
             styles={styles}
@@ -537,14 +537,14 @@ export default function ApplianceDetailScreen() {
                 {appliance.manual.type === 'link' ? (
                   <TouchableOpacity style={styles.manualLinkRow} onPress={handleOpenManual} activeOpacity={0.7} testID="open-manual-link">
                     <View style={styles.manualLinkIcon}>
-                      <ExternalLink size={18} color="#5B8CB8" />
+                      <ExternalLink size={18} color={c.primary} />
                     </View>
                     <View style={styles.manualLinkInfo}>
                       <Text style={styles.manualLinkTitle} numberOfLines={1}>{appliance.manual.title || 'View Manual'}</Text>
                       <Text style={styles.manualLinkUrl} numberOfLines={1}>{appliance.manual.uri}</Text>
                       {appliance.manual.foundVia === 'search' && (
                         <View style={styles.manualFoundBadge}>
-                          <Search size={9} color="#5B8CB8" />
+                          <Search size={9} color={c.primary} />
                           <Text style={styles.manualFoundText}>Found via search</Text>
                         </View>
                       )}
@@ -584,11 +584,11 @@ export default function ApplianceDetailScreen() {
                 </TouchableOpacity>
                 <View style={styles.manualDivider} />
                 <TouchableOpacity style={styles.manualActionBtn} onPress={handleFindManualAction} activeOpacity={0.7} disabled={isSearchingManual} testID="find-manual">
-                  <View style={[styles.manualActionIcon, { backgroundColor: '#DBEAFE' }]}>
-                    {isSearchingManual ? <ActivityIndicator size="small" color="#5B8CB8" /> : <Search size={18} color="#5B8CB8" />}
+                  <View style={[styles.manualActionIcon, { backgroundColor: c.primaryLight }]}>
+                    {isSearchingManual ? <ActivityIndicator size="small" color={c.primary} /> : <Search size={18} color={c.primary} />}
                   </View>
                   <View style={styles.manualActionTextWrap}>
-                    <Text style={[styles.manualActionTitle, { color: '#5B8CB8' }]}>{isSearchingManual ? 'Searching...' : 'Find Manual'}</Text>
+                    <Text style={[styles.manualActionTitle, { color: c.primary }]}>{isSearchingManual ? 'Searching...' : 'Find Manual'}</Text>
                     <Text style={styles.manualActionSub}>Search using brand & model info</Text>
                   </View>
                   {!isSearchingManual && <ChevronRight size={16} color={c.textTertiary} />}
@@ -600,7 +600,7 @@ export default function ApplianceDetailScreen() {
 
           <CollapsibleSection
             title="Associated App"
-            icon={<Smartphone size={16} color="#0A84FF" />}
+            icon={<Smartphone size={16} color={c.primary} />}
             isCollapsed={collapsedSections['app'] ?? false}
             onToggle={() => toggleSection('app')}
             styles={styles}
@@ -609,7 +609,7 @@ export default function ApplianceDetailScreen() {
           <View style={styles.appInfoCard}>
             {isSearchingApp ? (
               <View style={styles.appSearchLoading}>
-                <ActivityIndicator size="small" color="#0A84FF" />
+                <ActivityIndicator size="small" color={c.primary} />
                 <Text style={styles.appSearchLoadingText}>Searching App Store...</Text>
               </View>
             ) : appStoreResult ? (
@@ -635,7 +635,7 @@ export default function ApplianceDetailScreen() {
                   <View style={styles.appStoreResultMeta}>
                     {appStoreResult.averageUserRating != null && (
                       <View style={styles.appStoreRatingRow}>
-                        <Star size={10} color="#F5A623" fill="#F5A623" />
+                        <Star size={10} color={c.warning} fill={c.warning} />
                         <Text style={styles.appStoreRatingText}>{appStoreResult.averageUserRating.toFixed(1)}</Text>
                         {appStoreResult.userRatingCount != null && (
                           <Text style={styles.appStoreRatingCount}>({appStoreResult.userRatingCount > 1000 ? `${(appStoreResult.userRatingCount / 1000).toFixed(1)}K` : appStoreResult.userRatingCount})</Text>
@@ -663,8 +663,8 @@ export default function ApplianceDetailScreen() {
                 <View style={styles.appInfoDivider} />
                 {appliance.appInfo.username ? (
                   <View style={styles.appInfoCredRow}>
-                    <View style={[styles.appInfoCredIcon, { backgroundColor: '#E8F5E9' }]}>
-                      <User size={15} color="#43A047" />
+                    <View style={[styles.appInfoCredIcon, { backgroundColor: c.successLight }]}>
+                      <User size={15} color={c.success} />
                     </View>
                     <View style={styles.appInfoCredContent}>
                       <Text style={styles.appInfoCredLabel}>Username</Text>
@@ -687,8 +687,8 @@ export default function ApplianceDetailScreen() {
                   <>
                     {appliance.appInfo.username ? <View style={styles.appInfoDivider} /> : null}
                     <View style={styles.appInfoCredRow}>
-                      <View style={[styles.appInfoCredIcon, { backgroundColor: '#FFF3E0' }]}>
-                        <Lock size={15} color="#EF6C00" />
+                      <View style={[styles.appInfoCredIcon, { backgroundColor: c.warningLight }]}>
+                        <Lock size={15} color={c.warning} />
                       </View>
                       <View style={styles.appInfoCredContent}>
                         <Text style={styles.appInfoCredLabel}>Password</Text>
@@ -760,7 +760,7 @@ export default function ApplianceDetailScreen() {
                 </View>
                 {linkedPro.ratings && linkedPro.ratings.length > 0 && (
                   <View style={styles.proRatingBadge}>
-                    <Star size={11} color="#F5A623" />
+                    <Star size={11} color={c.warning} />
                     <Text style={styles.proRatingText}>{linkedPro.ratings[0].rating.toFixed(1)}</Text>
                   </View>
                 )}
@@ -838,15 +838,15 @@ export default function ApplianceDetailScreen() {
                 <SwipeableRow
                   key={task.id}
                   leftActions={task.status !== 'completed' ? [{
-                    icon: <Check size={18} color="#FFFFFF" />,
+                    icon: <Check size={18} color={c.white} />,
                     label: 'Done',
-                    color: '#16A34A',
+                    color: c.success,
                     onPress: () => { completeTask(task.id); },
                   }] : []}
                   rightActions={[{
-                    icon: <ChevronRight size={18} color="#FFFFFF" />,
+                    icon: <ChevronRight size={18} color={c.white} />,
                     label: 'View',
-                    color: '#3B82F6',
+                    color: c.primary,
                     onPress: () => { router.push({ pathname: '/task/[id]', params: { id: task.id } }); },
                   }]}
                   onFullSwipeRight={task.status !== 'completed' ? () => { completeTask(task.id); } : undefined}
@@ -889,7 +889,7 @@ export default function ApplianceDetailScreen() {
               <View style={styles.recsCard}>
                 <View style={styles.recsHeader}>
                   <View style={styles.recsHeaderLeft}>
-                    <Sparkles size={16} color="#C9943A" />
+                    <Sparkles size={16} color={c.warning} />
                     <Text style={styles.recsTitle}>AI Recommendations</Text>
                   </View>
                   {recommendations.some((_, i) => !addedRecIds.has(i)) && (
@@ -951,9 +951,9 @@ export default function ApplianceDetailScreen() {
                 <SwipeableRow
                   key={expense.id}
                   rightActions={[{
-                    icon: <ChevronRight size={18} color="#FFFFFF" />,
+                    icon: <ChevronRight size={18} color={c.white} />,
                     label: 'View',
-                    color: '#3B82F6',
+                    color: c.primary,
                     onPress: () => { router.push({ pathname: '/expense/[id]', params: { id: expense.id } }); },
                   }]}
                 >
@@ -1147,13 +1147,13 @@ const createApplianceStyles = (c: any) => StyleSheet.create({
   manualCard: { padding: 6 },
   manualHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 14, paddingTop: 6, paddingBottom: 6 },
   manualContent: { padding: 8 },
-  manualLinkRow: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: '#F0F7FF', borderRadius: 14, padding: 14 },
-  manualLinkIcon: { width: 40, height: 40, borderRadius: 12, backgroundColor: '#DBEAFE', justifyContent: 'center', alignItems: 'center' },
+  manualLinkRow: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: c.primaryLight, borderRadius: 14, padding: 14 },
+  manualLinkIcon: { width: 40, height: 40, borderRadius: 12, backgroundColor: c.primaryLight, borderWidth: 1, borderColor: c.primary + '20', justifyContent: 'center', alignItems: 'center' },
   manualLinkInfo: { flex: 1 },
   manualLinkTitle: { fontSize: 14, fontWeight: '600', color: c.text, marginBottom: 2 },
   manualLinkUrl: { fontSize: 11, color: c.textTertiary, marginBottom: 4 },
   manualFoundBadge: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  manualFoundText: { fontSize: 10, fontWeight: '500', color: '#5B8CB8' },
+  manualFoundText: { fontSize: 10, fontWeight: '500', color: c.primary },
   manualUploadedRow: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: c.primaryLight, borderRadius: 14, padding: 14 },
   manualUploadedIcon: { width: 40, height: 40, borderRadius: 12, backgroundColor: c.primaryLight, borderWidth: 1, borderColor: c.primary + '30', justifyContent: 'center', alignItems: 'center' },
   manualRemoveBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 10, paddingVertical: 8 },
@@ -1166,16 +1166,16 @@ const createApplianceStyles = (c: any) => StyleSheet.create({
   manualActionSub: { fontSize: 12, color: c.textTertiary },
   manualDivider: { height: 1, backgroundColor: c.borderLight, marginHorizontal: 12 },
   maintenanceActions: { flexDirection: 'row', gap: 10, marginTop: 10 },
-  generateRecsBtn: { flex: 1, backgroundColor: '#C9943A', borderRadius: 14, overflow: 'hidden' },
+  generateRecsBtn: { flex: 1, backgroundColor: c.warning, borderRadius: 14, overflow: 'hidden' },
   generateRecsBtnInner: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 13, paddingHorizontal: 14 },
   generateRecsBtnText: { fontSize: 13, fontWeight: '600', color: c.white },
   addCustomTaskBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 13, paddingHorizontal: 14, borderRadius: 14, borderWidth: 1, borderColor: c.primary + '30', backgroundColor: c.primaryLight },
   addCustomTaskBtnText: { fontSize: 13, fontWeight: '600', color: c.primary },
-  recsCard: { backgroundColor: c.surface, borderRadius: 16, marginTop: 14, overflow: 'hidden', borderWidth: 1, borderColor: '#C9943A' + '25' },
-  recsHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 14, paddingBottom: 10, backgroundColor: '#FBF4E4' },
+  recsCard: { backgroundColor: c.surface, borderRadius: 16, marginTop: 14, overflow: 'hidden', borderWidth: 1, borderColor: c.warning + '25' },
+  recsHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 14, paddingBottom: 10, backgroundColor: c.warningLight },
   recsHeaderLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  recsTitle: { fontSize: 14, fontWeight: '600', color: '#8B6914' },
-  addAllBtn: { backgroundColor: '#C9943A', paddingHorizontal: 12, paddingVertical: 5, borderRadius: 10 },
+  recsTitle: { fontSize: 14, fontWeight: '600', color: c.warning },
+  addAllBtn: { backgroundColor: c.warning, paddingHorizontal: 12, paddingVertical: 5, borderRadius: 10 },
   addAllBtnText: { fontSize: 11, fontWeight: '600', color: c.white },
   recItem: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingVertical: 12, borderTopWidth: 1, borderTopColor: c.borderLight },
   recItemContent: { flex: 1, marginRight: 10 },
@@ -1191,15 +1191,15 @@ const createApplianceStyles = (c: any) => StyleSheet.create({
   recAddBtnDone: { backgroundColor: c.successLight, borderColor: c.success + '25' },
   appInfoCard: { padding: 6 },
   appInfoNameRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 14, paddingVertical: 12 },
-  appInfoIconWrap: { width: 42, height: 42, borderRadius: 13, backgroundColor: '#E3F2FD', justifyContent: 'center', alignItems: 'center' },
+  appInfoIconWrap: { width: 42, height: 42, borderRadius: 13, backgroundColor: c.primaryLight, justifyContent: 'center', alignItems: 'center' },
   appInfoNameText: { flex: 1 },
   appInfoAppName: { fontSize: 16, fontWeight: '600', color: c.text },
   appInfoAppLabel: { fontSize: 12, color: c.textTertiary, marginTop: 1 },
   appInfoDivider: { height: 1, backgroundColor: c.borderLight, marginHorizontal: 14 },
   appInfoLinkRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 14, paddingVertical: 12 },
-  appInfoLinkIcon: { width: 38, height: 38, borderRadius: 11, backgroundColor: '#E3F2FD', justifyContent: 'center', alignItems: 'center' },
+  appInfoLinkIcon: { width: 38, height: 38, borderRadius: 11, backgroundColor: c.primaryLight, justifyContent: 'center', alignItems: 'center' },
   appInfoLinkContent: { flex: 1 },
-  appInfoLinkTitle: { fontSize: 14, fontWeight: '600', color: '#0A84FF', marginBottom: 2 },
+  appInfoLinkTitle: { fontSize: 14, fontWeight: '600', color: c.primary, marginBottom: 2 },
   appInfoLinkUrl: { fontSize: 11, color: c.textTertiary },
   appInfoCredRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 14, paddingVertical: 12 },
   appInfoCredIcon: { width: 34, height: 34, borderRadius: 10, justifyContent: 'center', alignItems: 'center' },
@@ -1208,7 +1208,7 @@ const createApplianceStyles = (c: any) => StyleSheet.create({
   appInfoCredValue: { fontSize: 14, fontWeight: '500', color: c.text },
   appInfoCopyBtn: { padding: 6 },
   appSearchLoading: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 20, paddingHorizontal: 14 },
-  appSearchLoadingText: { fontSize: 13, color: '#0A84FF', fontWeight: '500' },
+  appSearchLoadingText: { fontSize: 13, color: c.primary, fontWeight: '500' },
   appStoreResultRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 14, paddingVertical: 12 },
   appStoreIcon: { width: 56, height: 56, borderRadius: 13, backgroundColor: c.surfaceAlt },
   appStoreResultInfo: { flex: 1 },
@@ -1219,7 +1219,7 @@ const createApplianceStyles = (c: any) => StyleSheet.create({
   appStoreRatingText: { fontSize: 11, fontWeight: '600', color: c.text },
   appStoreRatingCount: { fontSize: 11, color: c.textTertiary },
   appStorePrice: { fontSize: 11, fontWeight: '500', color: c.textTertiary },
-  appStoreGetBtn: { backgroundColor: '#0A84FF', paddingHorizontal: 16, paddingVertical: 7, borderRadius: 16 },
+  appStoreGetBtn: { backgroundColor: c.primary, paddingHorizontal: 16, paddingVertical: 7, borderRadius: 16 },
   appStoreGetBtnText: { fontSize: 13, fontWeight: '700', color: c.white },
   appSearchEmpty: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 20, paddingHorizontal: 14 },
   appSearchEmptyText: { fontSize: 13, color: c.textTertiary },

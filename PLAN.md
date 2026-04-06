@@ -1,120 +1,40 @@
-# Add Swipe Gestures & Native iOS Interactions Across All Pages
+# Fix theme color inconsistencies across the entire app
 
+## Problem
+When you change the color palette (e.g. from Sage green to Ocean blue), several pages still show the old default green colors. The biggest offender is the **Add/Edit Appliance** form, but many detail pages also have colors that don't respond to palette changes.
 
-After reviewing every screen in the app, here are my recommendations for embedding native iOS-style swipe gestures and quick-action interactions on each page. These follow patterns from Apple's Mail, Reminders, and Notes apps.
+## What will be fixed
 
----
+### 1. Appliance Form (Add & Edit) — **Critical**
+- The entire appliance form currently ignores your chosen palette
+- All colors (buttons, inputs, labels, cards, category chips, scan cards, save button) will be updated to use your active theme
+- The style file will be converted from static colors to dynamic theme-aware styles
 
-## 1. To-Do / Schedule Page (My Tasks)
+### 2. Appliance Detail Page
+- Warranty status icons, detail icons, manual search buttons, app info section, star ratings, and AI recommendation cards all use hardcoded colors
+- These will be mapped to appropriate theme colors (primary, accent, warning, success, etc.)
 
-**Swipe Left on a task card → Destructive actions**
-- **Delete** (red) — removes the task entirely
-- **Archive** (gray) — archives the task
+### 3. Task Detail Page
+- Calendar, reminder, and status icons use hardcoded blues/greens
+- Star ratings and action buttons will use theme colors
+- Note: Brand-specific colors (YouTube red, Amazon orange) will remain as-is since those represent external brands
 
-**Swipe Right on a task card → Positive action**
-- **Mark as Done** (green checkmark) — completes the task instantly without an alert dialog
+### 4. Swipe Action Colors (All List Pages)
+- Home, Schedule, Appliances, Budget, and Pros pages all have hardcoded swipe action colors
+- "Complete" actions will use the theme's success color
+- "Edit" actions will use the theme's primary color
+- "Delete" actions already mostly use theme danger color
+- "Archive" actions will use the theme's text secondary color
 
-*This is the highest-impact addition — users manage tasks frequently and this removes multiple taps.*
+### 5. Provider Detail Page
+- Edit and unlink swipe actions use hardcoded blue/amber
+- Will be updated to use theme primary and warning colors
 
----
+### 6. Home Dashboard
+- Provider color dots use a hardcoded array — will derive from theme palette instead
 
-## 2. My Items / Appliances Page
-
-**Swipe Left on an item card → Quick actions**
-- **Delete** (red) — removes the item with confirmation
-- **Edit** (blue) — navigates to the edit screen
-
-*Items are less frequently deleted, but the swipe-to-edit shortcut saves navigating into the detail screen first.*
-
----
-
-## 3. Spending / Budget Page
-
-**Swipe Left on a recent expense row → Quick actions**
-- **Delete** (red) — removes the expense
-- **Edit** (blue) — navigates to the edit expense screen
-
-*Expenses are the most "list-like" data — swipe actions feel very natural here, similar to banking apps.*
-
----
-
-## 4. Trusted Pros Page
-
-**Swipe Left on a saved pro card → Destructive action**
-- **Remove** (red) — removes the pro from your saved list (replaces the current small trash icon)
-
-**Swipe Right on a saved pro card → Quick contact**
-- **Call** (green, phone icon) — instantly dials the pro if they have a phone number
-
-*This replaces the existing small trash icon button with a more native-feeling interaction and adds a quick-call shortcut.*
-
----
-
-## 5. Dashboard / Home Page
-
-**Swipe Left on an upcoming task card → Quick actions**
-- **Mark as Done** (green) — completes the task directly from the dashboard
-- **Archive** (gray) — archives it
-
-*Users often see overdue/upcoming tasks on the dashboard and want to act immediately without navigating to the task detail.*
-
----
-
-## 6. Task Detail Page
-
-**Swipe Left on individual notes → Delete**
-- **Delete** (red) — removes the note (replaces the small X button)
-
-*Notes are small list items — swipe-to-delete is more natural than the tiny X icon.*
-
----
-
-## 7. Provider Detail Page
-
-**Swipe Left on linked items → Unlink**
-- **Unlink** (orange) — removes the item-to-pro association
-
-**Swipe Left on private notes → Actions**
-- **Delete** (red) — removes the note
-- **Edit** (blue) — enters edit mode for that note
-
-**Swipe Left on expense history rows → View**
-- **View** (blue) — navigates to the expense detail
-
----
-
-## 8. Appliance Detail Page
-
-**Swipe Left on maintenance task rows → Quick actions**
-- **Mark Done** (green) — completes the task
-- **View** (blue) — navigates to the task detail
-
-**Swipe Left on expense rows → View**
-- **View** (blue) — navigates to the expense detail
-
----
-
-## Design & Behavior
-
-- Swipe actions will use a reusable **SwipeableRow** component built with React Native's PanResponder
-- Actions reveal colored buttons behind the card as the user swipes (iOS Mail style)
-- A subtle haptic tap fires when the action buttons are revealed
-- Swipe thresholds: partial swipe reveals buttons; full swipe triggers the primary action automatically
-- Works on both iOS and Android; falls back gracefully on web (buttons still accessible via tap)
-- All destructive actions (delete/remove) still show a confirmation alert before executing
-- Existing tap-to-navigate behavior on all cards remains unchanged
-
----
-
-## Summary of Changes by Priority
-
-| Priority | Screen | Gesture | Why |
-|----------|--------|---------|-----|
-| 🔴 High | To-Do | Swipe to complete/delete/archive | Most-used interaction in the app |
-| 🔴 High | Spending | Swipe to delete/edit expenses | Very natural for list data |
-| 🟡 Medium | Dashboard | Swipe upcoming tasks to complete | Quick action from home screen |
-| 🟡 Medium | Trusted Pros | Swipe to remove/call | Replaces small icon buttons |
-| 🟡 Medium | My Items | Swipe to delete/edit | Convenience shortcut |
-| 🟢 Lower | Task Detail | Swipe notes to delete | Small quality-of-life improvement |
-| 🟢 Lower | Provider Detail | Swipe notes/items to act | Consistency with other screens |
-| 🟢 Lower | Appliance Detail | Swipe tasks/expenses to act | Consistency with other screens |
+## What stays the same
+- Paywall page (uses its own branded gradient design — intentional)
+- Privacy policy page (simple utility page)
+- Brand-specific colors (YouTube red, Amazon orange) — these represent real brands
+- Color guide page (shows all palette colors — working correctly)

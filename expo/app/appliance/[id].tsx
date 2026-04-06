@@ -68,7 +68,7 @@ export default function ApplianceDetailScreen() {
   const router = useRouter();
   const { colors: c } = useTheme();
   const styles = useMemo(() => createApplianceStyles(c), [c]);
-  const { getApplianceById, tasks, deleteAppliance, budgetItems, updateAppliance, addTask, trustedPros, linkApplianceToPro, unlinkApplianceFromPro, sectionsDefaultOpen } = useHome();
+  const { getApplianceById, tasks, deleteAppliance, budgetItems, updateAppliance, addTask, completeTask, trustedPros, linkApplianceToPro, unlinkApplianceFromPro, sectionsDefaultOpen } = useHome();
 
   const appliance = getApplianceById(id ?? '');
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
